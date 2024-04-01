@@ -2,6 +2,9 @@
 
 int main()
 {
+    int a = 10;
+    a = a + 10;
+
     Engine::Graphics(1024, 768);
 
     LPMESH camera;
