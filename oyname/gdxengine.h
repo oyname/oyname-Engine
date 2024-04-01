@@ -7,7 +7,6 @@
 #include "InputLayoutManager.h"
 #include "ObjectManager.h"
 #include "BufferManager.h"
-#include "IndexBufferManager.h"
 #include "ShaderManager.h"
 #include "RenderManager.h"
 #include "Camera.h"
@@ -18,7 +17,7 @@ namespace gdx {
 
 	bool MainLoop();
 
-	// Zurück Main-Thread beeenden
+	// ZurÃ¼ck Main-Thread beeenden
 	int ShutDown();
 
 	class CGIDX {
@@ -27,7 +26,7 @@ namespace gdx {
 		HWND m_hwnd;		   // Fensterhandle
 		int m_colorDepth;	   // Farbtiefe (z.B. 32-Bit-Farben) 
 		int m_screenWidth;	   // Bildschirmweite
-		int m_screenHeight;	   // Bildschirmhöhe	
+		int m_screenHeight;	   // BildschirmhÃ¶he	
 		int m_adapterIndex;	   // Aktueller Adapter
         int m_monitorIndex;	   // Index des Monitors
 
@@ -55,7 +54,7 @@ namespace gdx {
 		HRESULT Graphic(unsigned int width, unsigned int height, bool windowed);
 		HRESULT Cls(float r, float g, float b, float a);
 
-		// Getter-Funktionen für private Variablen
+		// Getter-Funktionen fÃ¼r private Variablen
 		HWND GetHWND();
 		unsigned int GetAdapterIndex();
 		unsigned int GetOutputIndex();
@@ -69,7 +68,7 @@ namespace gdx {
 		InputLayoutManager& GetILM();
 		Camera& GetCam();
 		
-		// Setter-Funktionen für private Variablen
+		// Setter-Funktionen fÃ¼r private Variablen
 		void SetAdapter(unsigned int index);
 		void SetOutput(unsigned int index);
 		void SetFormat(DXGI_FORMAT format);
