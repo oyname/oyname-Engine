@@ -1,0 +1,12 @@
+# Ignoriere alle Ordner im Stammverzeichnis
+/*/
+
+# Aber verfolge .cpp- und .h-Dateien im Stammverzeichnis
+!/*.cpp
+!/*.h
+
+# Ignoriere den Ordner .vs und alle seine Dateien und Unterverzeichnisse
+.vs/
+
+# Ignoriere alle Ordner im oyname-Verzeichnis und deren Dateien und Unterverzeichnisse
+oyname*/
