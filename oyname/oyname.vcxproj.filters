@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="01_Windows">
+      <UniqueIdentifier>{bdda119b-8005-419a-abb8-306307f1ce77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_DirectX">
+      <UniqueIdentifier>{fb61c909-32ee-4abc-a804-46a280b6ac7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_DirectX\Interface">
+      <UniqueIdentifier>{2057a197-ac2a-4249-9c21-68c4be7563be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_DirectX\Device">
+      <UniqueIdentifier>{e0f18073-c779-412b-b9f7-3cbab514c31c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_DirectX\Common">
+      <UniqueIdentifier>{9c466ec8-1998-4019-89c0-9abd6ad634e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine">
+      <UniqueIdentifier>{80106f27-a53d-4679-804c-e6c752e20c42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Manager">
+      <UniqueIdentifier>{1c8298c1-6b31-4d2c-b6a5-73f031c1a1aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Manager\ObjectManager">
+      <UniqueIdentifier>{ac7a7a5e-4fb4-4faa-a6b7-ad53c1639fdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Engine">
+      <UniqueIdentifier>{8d9dcfa2-55fa-492a-b7d0-c7bae370e5d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05_Beispiele">
+      <UniqueIdentifier>{7a9d120d-87b8-4abd-9eaf-8e446d482981}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Manager\RenderManager">
+      <UniqueIdentifier>{ce6832ad-1fce-4767-a764-2862af829e02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\InputLayout">
+      <UniqueIdentifier>{b12912a0-da6c-40b7-a781-9dec879f936e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Shader">
+      <UniqueIdentifier>{32b5d446-6e07-4ba3-9677-6e649161a84f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Vertexbuffer">
+      <UniqueIdentifier>{4154e97b-46f1-47d8-92f7-72d7a7dc156c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04_Shader">
+      <UniqueIdentifier>{6310a97e-5fc5-4d73-82f1-45f08c5b0a7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Camera">
+      <UniqueIdentifier>{0074fd9c-dac5-4849-b987-005c955868ee}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BufferManager.cpp">
+      <Filter>03_Engine\Vertexbuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>03_Engine\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>03_Engine\Manager\ObjectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="InputLayoutManager.cpp">
+      <Filter>03_Engine\InputLayout</Filter>
+    </ClCompile>
+    <ClCompile Include="gdxengine.cpp">
+      <Filter>03_Engine\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="gdxinterface.cpp">
+      <Filter>02_DirectX\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="gdxdevice.cpp">
+      <Filter>02_DirectX\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="gidx.cpp">
+      <Filter>02_DirectX\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="gidxwin.cpp">
+      <Filter>01_Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>01_Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="triangle.cpp">
+      <Filter>05_Beispiele</Filter>
+    </ClCompile>
+    <ClCompile Include="adapter.cpp">
+      <Filter>05_Beispiele</Filter>
+    </ClCompile>
+    <ClCompile Include="simple.cpp">
+      <Filter>05_Beispiele</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>03_Engine\Manager\RenderManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>03_Engine\Camera</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="gidx.h">
+      <Filter>03_Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferManager.h">
+      <Filter>03_Engine\Vertexbuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.h">
+      <Filter>03_Engine\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>03_Engine\Manager\ObjectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="InputLayoutManager.h">
+      <Filter>03_Engine\InputLayout</Filter>
+    </ClInclude>
+    <ClInclude Include="gdxengine.h">
+      <Filter>03_Engine\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="gdxinterface.h">
+      <Filter>02_DirectX\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="gdxdevice.h">
+      <Filter>02_DirectX\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="gdxutil.h">
+      <Filter>02_DirectX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="gidxwin.h">
+      <Filter>01_Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>01_Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>03_Engine\Manager\RenderManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>03_Engine\Camera</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="pixelshader.hlsl">
+      <Filter>04_Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="vertexshader.hlsl">
+      <Filter>04_Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
