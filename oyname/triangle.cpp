@@ -3,8 +3,6 @@
 
 int main()
 {
-    HRESULT result = S_OK;
-
     Engine::Graphics(1024, 768);
 
     LPMESH camera;
