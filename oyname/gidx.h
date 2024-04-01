@@ -155,4 +155,6 @@ namespace Engine
 
     inline unsigned int Graphics(unsigned int width, unsigned int height, bool windowed = true) { return static_cast<int>(engine->Graphic(width, height, windowed)); }
 
+    inline void RenderWorld() { engine->RenderWorld(); }
+
 } // End of namespace Engine

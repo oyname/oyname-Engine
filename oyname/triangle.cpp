@@ -33,7 +33,7 @@ int main()
     {
         Engine::Cls(32, 64, 128);
 
-        Engine::engine->RenderWorld();
+        Engine::RenderWorld();
 
         Engine::Flip();
     }
