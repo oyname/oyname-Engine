@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gdxutil.h"
-#include "ObjectManager.h"
+#include "MeshManager.h"
 
 class Camera
 {

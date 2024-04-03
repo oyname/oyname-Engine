@@ -1,11 +1,11 @@
-#include "ObjectManager.h"
+#include "MeshManager.h"
 
-ObjectManager::ObjectManager() : m_device(nullptr)
+MeshManager::MeshManager() : m_device(nullptr)
 {
 
 }
 
-ObjectManager::~ObjectManager() 
+MeshManager::~MeshManager() 
 {
     // Durchlaufen aller Surfaces
     for (auto& surface : m_surfaces) {
@@ -29,12 +29,12 @@ ObjectManager::~ObjectManager()
     m_shaders.clear();
 }
 
-void ObjectManager::Init(gdx::CDevice& device)
+void MeshManager::Init(gdx::CDevice& device)
 {
     m_device = &device;
 }
 
-void ObjectManager::RenderLoop()
+void MeshManager::RenderLoop()
 {
     //m_device->ClearRenderTargetDepthStencil();
     //
@@ -89,49 +89,49 @@ void ObjectManager::RenderLoop()
     //}
 }
 
-SURFACE* ObjectManager::createSurface() {
+SURFACE* MeshManager::createSurface() {
     SURFACE* surface = new SURFACE;
     m_surfaces.push_back(surface);
     return surface;
 }
 
-MESH* ObjectManager::createMesh() {
+MESH* MeshManager::createMesh() {
     MESH* mesh = new MESH;
     mesh->surfaces = new std::list<SURFACE*>;
     m_meshes.push_back(mesh);
     return mesh;
 }
 
-BRUSH* ObjectManager::createBrush() {
+BRUSH* MeshManager::createBrush() {
     BRUSH* brush = new BRUSH;
     brush->meshes = new std::list<MESH*>;
     m_brushes.push_back(brush);
     return brush;
 }
 
-SHADER* ObjectManager::createShader() {
+SHADER* MeshManager::createShader() {
     SHADER* shader = new SHADER;
     shader->brushes = new std::list<BRUSH*>;
     m_shaders.push_back(shader);
     return shader;
 }
 
-void ObjectManager::addSurfaceToMesh(MESH* mesh, SURFACE* surface) {
+void MeshManager::addSurfaceToMesh(MESH* mesh, SURFACE* surface) {
     surface->pShader = mesh->pShader;
     mesh->surfaces->push_back(surface);
 }
 
-void ObjectManager::addMeshToBrush(BRUSH* brush, MESH* mesh) {
+void MeshManager::addMeshToBrush(BRUSH* brush, MESH* mesh) {
     mesh->pShader = brush->pShader;
     brush->meshes->push_back(mesh);
 }
 
-void ObjectManager::addBrushToShader(SHADER* shader, BRUSH* brush) {
+void MeshManager::addBrushToShader(SHADER* shader, BRUSH* brush) {
     brush->pShader = shader;
     shader->brushes->push_back(brush);
 }
 
-void ObjectManager::deleteSurface(SURFACE* surface) {
+void MeshManager::deleteSurface(SURFACE* surface) {
 
     // Durchlaufen aller Surfaces
     for (auto& mesh : m_meshes) {
@@ -154,7 +154,7 @@ void ObjectManager::deleteSurface(SURFACE* surface) {
     }
 }
 
-void ObjectManager::deleteMesh(MESH* mesh) {
+void MeshManager::deleteMesh(MESH* mesh) {
     // Durchlaufen aller Brushes
     for (auto& brush : m_brushes) {
         // Durchlaufen aller Meshes im aktuellen Brush
@@ -176,7 +176,7 @@ void ObjectManager::deleteMesh(MESH* mesh) {
     }
 }
 
-void ObjectManager::deleteBrush(BRUSH* brush) {
+void MeshManager::deleteBrush(BRUSH* brush) {
     // Durchlaufen aller Brushes
     for (auto& shader : m_shaders) {
         // Durchlaufen aller Brush im selben Shader
@@ -198,7 +198,7 @@ void ObjectManager::deleteBrush(BRUSH* brush) {
     }
 }
 
-void ObjectManager::removeSurfacefromMesh(MESH* mesh, SURFACE* surface) {
+void MeshManager::removeSurfacefromMesh(MESH* mesh, SURFACE* surface) {
     // Durchlaufen aller Brushes
 
     auto& surfaces = *(mesh->surfaces);
@@ -211,7 +211,7 @@ void ObjectManager::removeSurfacefromMesh(MESH* mesh, SURFACE* surface) {
     }
 }
 
-void ObjectManager::removeMeshfromBrush(BRUSH* brush, MESH* mesh) {
+void MeshManager::removeMeshfromBrush(BRUSH* brush, MESH* mesh) {
     // Durchlaufen aller Brushes
 
     auto& meshes = *(brush->meshes);
@@ -224,7 +224,7 @@ void ObjectManager::removeMeshfromBrush(BRUSH* brush, MESH* mesh) {
     }
 }
 
-void ObjectManager::removeBrushfromShader(SHADER* shader, BRUSH* brush) {
+void MeshManager::removeBrushfromShader(SHADER* shader, BRUSH* brush) {
     // Durchlaufen aller Brushes
 
     auto& brushes = *(shader->brushes);
@@ -237,7 +237,7 @@ void ObjectManager::removeBrushfromShader(SHADER* shader, BRUSH* brush) {
     }
 }
 
-SURFACE* ObjectManager::getPreviousSurface(SURFACE* currentSurface) {
+SURFACE* MeshManager::getPreviousSurface(SURFACE* currentSurface) {
     for (auto it = m_surfaces.begin(); it != m_surfaces.end(); ++it) {
         if (*it == currentSurface) {
             if (it != m_surfaces.begin()) {
@@ -252,7 +252,7 @@ SURFACE* ObjectManager::getPreviousSurface(SURFACE* currentSurface) {
     return nullptr;
 }
 
-MESH* ObjectManager::getPreviousMesh(MESH* currentMesh) {
+MESH* MeshManager::getPreviousMesh(MESH* currentMesh) {
     for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it) {
         if (*it == currentMesh) {
             if (it != m_meshes.begin()) {
@@ -267,7 +267,7 @@ MESH* ObjectManager::getPreviousMesh(MESH* currentMesh) {
     return nullptr;
 }
 
-BRUSH* ObjectManager::getPreviousBrush(BRUSH* currentBrush) {
+BRUSH* MeshManager::getPreviousBrush(BRUSH* currentBrush) {
     for (auto it = m_brushes.begin(); it != m_brushes.end(); ++it) {
         if (*it == currentBrush) {
             if (it != m_brushes.begin()) {
@@ -283,7 +283,7 @@ BRUSH* ObjectManager::getPreviousBrush(BRUSH* currentBrush) {
 }
 
 // Funktion zum Zugriff auf das vorangegangene Element in m_shaders
-SHADER* ObjectManager::getPreviousShader(SHADER* currentShader)
+SHADER* MeshManager::getPreviousShader(SHADER* currentShader)
 {
     for (auto it = m_shaders.begin(); it != m_shaders.end(); ++it) {
         if (*it == currentShader) {
@@ -300,17 +300,17 @@ SHADER* ObjectManager::getPreviousShader(SHADER* currentShader)
 }
 
 
-SHADER* ObjectManager::getShader(SURFACE surface)
+SHADER* MeshManager::getShader(SURFACE surface)
 {
     return surface.pShader;
 }
 
-SHADER* ObjectManager::getShader(MESH mesh)
+SHADER* MeshManager::getShader(MESH mesh)
 {
     return mesh.pShader;
 }
 
-SHADER* ObjectManager::getShader(BRUSH brush)
+SHADER* MeshManager::getShader(BRUSH brush)
 {
     return brush.pShader;
 }

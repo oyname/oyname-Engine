@@ -3,8 +3,8 @@
 namespace gdx
 {
 	CGIDX::CGIDX(HWND hwnd, HINSTANCE hinst, unsigned int bpp, unsigned int screenX, unsigned int screenY, int* result) :
-	m_objManager(),
-	m_renderManager(m_objManager)
+	m_meshManager(),
+	m_renderManager(m_meshManager)
 	{
 		m_colorDepth = bpp;
 		m_screenWidth = screenX;
@@ -97,7 +97,7 @@ namespace gdx
 		// Objekt zum organisieren des Renders
 		// 
 		// Objektmanager
-		m_objManager.Init(m_device);
+		m_meshManager.Init(m_device);
 		// Buffer-Manager initialisieren
 		m_bufferManager.Init(m_device.GetDevice());
 		// Shader-Manager initialisieren
@@ -105,7 +105,7 @@ namespace gdx
 		// Input-Layout Managers initialisieren
 		m_inputLayoutManager.Init(m_device.GetDevice());
 		// Standardshader erstellen.
-		GetSM().SetStandardShader(m_objManager.createShader());
+		GetSM().SetStandardShader(m_meshManager.createShader());
 
 		// Standarshader erstellen...
 		hr = GetSM().CreateShader(GetSM().GetStandardShader(), L"vertexshader.cso", L"pixelshader.cso");
@@ -131,7 +131,7 @@ namespace gdx
 
 	void CGIDX::UpdateWorld()
 	{
-		//
+		
 	}
 
 	HRESULT CGIDX::Cls(float r, float g, float b, float a)
@@ -186,8 +186,8 @@ namespace gdx
 		return m_bufferManager;
 	}
 
-	ObjectManager& CGIDX::GetOM() {
-		return m_objManager;
+	MeshManager& CGIDX::GetMM() {
+		return m_meshManager;
 	}
 
 	ShaderManager& CGIDX::GetSM() {

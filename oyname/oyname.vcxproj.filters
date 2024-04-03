@@ -22,9 +22,6 @@
     <Filter Include="03_Engine\Manager">
       <UniqueIdentifier>{1c8298c1-6b31-4d2c-b6a5-73f031c1a1aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_Engine\Manager\ObjectManager">
-      <UniqueIdentifier>{ac7a7a5e-4fb4-4faa-a6b7-ad53c1639fdc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03_Engine\Engine">
       <UniqueIdentifier>{8d9dcfa2-55fa-492a-b7d0-c7bae370e5d0}</UniqueIdentifier>
     </Filter>
@@ -49,6 +46,12 @@
     <Filter Include="03_Engine\Camera">
       <UniqueIdentifier>{0074fd9c-dac5-4849-b987-005c955868ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03_Engine\Entity">
+      <UniqueIdentifier>{1b52b435-cf43-4a9c-98b9-aa456e99830b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Manager\MeshManager">
+      <UniqueIdentifier>{ac7a7a5e-4fb4-4faa-a6b7-ad53c1639fdc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BufferManager.cpp">
@@ -57,8 +60,8 @@
     <ClCompile Include="ShaderManager.cpp">
       <Filter>03_Engine\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectManager.cpp">
-      <Filter>03_Engine\Manager\ObjectManager</Filter>
+    <ClCompile Include="MeshManager.cpp">
+      <Filter>03_Engine\Manager\MeshManager</Filter>
     </ClCompile>
     <ClCompile Include="InputLayoutManager.cpp">
       <Filter>03_Engine\InputLayout</Filter>
@@ -96,6 +99,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>03_Engine\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>03_Engine\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gidx.h">
@@ -107,8 +113,8 @@
     <ClInclude Include="ShaderManager.h">
       <Filter>03_Engine\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectManager.h">
-      <Filter>03_Engine\Manager\ObjectManager</Filter>
+    <ClInclude Include="MeshManager.h">
+      <Filter>03_Engine\Manager\MeshManager</Filter>
     </ClInclude>
     <ClInclude Include="InputLayoutManager.h">
       <Filter>03_Engine\InputLayout</Filter>
@@ -136,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>03_Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>03_Engine\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -56,7 +56,7 @@ namespace Engine
     {   
          HRESULT result = S_OK;
 
-        *lplpShader = engine->GetOM().createShader();
+        *lplpShader = engine->GetMM().createShader();
         
         // Shader erstellen und laden
         engine->GetSM().CreateShader(*lplpShader, vertexShaderFile, pixelShaderFile);
@@ -71,23 +71,19 @@ namespace Engine
     }
 
     inline void CreateBrush(BRUSH** lplpBrush, SHADER* shader = nullptr) {
-        *lplpBrush = engine->GetOM().createBrush();
+        *lplpBrush = engine->GetMM().createBrush();
         shader = shader == nullptr ? engine->GetSM().GetStandardShader() : shader;
-        engine->GetOM().addBrushToShader(shader, *lplpBrush);
+        engine->GetMM().addBrushToShader(shader, *lplpBrush);
     }
 
-    inline void CreateMesh(LPMESH *mesh, BRUSH* lpBrush) {
-        *mesh = engine->GetOM().createMesh();
-        engine->GetOM().addMeshToBrush(lpBrush, *mesh);
+    inline void CreateMesh(LPMESH *mesh, BRUSH* lpBrush) 
+    {
+        *mesh = engine->GetMM().createMesh();
+        engine->GetMM().addMeshToBrush(lpBrush, *mesh);
 
-        XMFLOAT3 scale(1.0f, 1.0f, 1.0f);
-        XMFLOAT3 position(0.0f, 0.0f, 3.0f);
-
-        XMVECTOR rotationAxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-        XMMATRIX mRotation = XMMatrixRotationAxis(rotationAxis, 0.0f);
-
-        XMMATRIX mScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-        XMMATRIX mTranslation = XMMatrixTranslation(position.x, position.y, position.z);
+        XMMATRIX mRotation = XMMatrixIdentity();
+        XMMATRIX mScale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+        XMMATRIX mTranslation = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
 
         XMMATRIX mWorld = mScale * mRotation * mTranslation;
 
@@ -98,10 +94,31 @@ namespace Engine
         engine->GetBM().CreateBuffer(&(*mesh)->cb, sizeof(ConstantBuffer), 1, D3D11_BIND_CONSTANT_BUFFER, &(*mesh)->constantBuffer);
     }
 
+    inline void TranslationMatrix(LPMESH mesh, float x, float y, float z)
+    {
+        // Erzeuge den Translationsvektor aus den gegebenen Komponenten
+        XMVECTOR translation = XMVectorSet(x, y, z, 0.0f);
+
+        // Aktualisiere die Position des Meshes um den Translationsvektor
+        mesh->position = XMVectorAdd(mesh->position, translation);
+
+        XMMATRIX mTranslation = XMMatrixTranslationFromVector(mesh->position);
+
+        mesh->cb.viewMatrix = engine->GetCam().GetView()->cb.viewMatrix;
+        mesh->cb.projectionMatrix = engine->GetCam().GetView()->cb.projectionMatrix;
+        mesh->cb.worldMatrix = mTranslation;
+    }
+
+    // Funktion zur Rotation eines Objekts um seine lokalen Achsen
+    inline void RotateObjectLocalAxes(MESH mesh, float angleX_deg, float angleY_deg, float angleZ_deg, XMVECTOR localTranslation)
+    {
+        // Wandle die Eingabewinkel in Radian um
+    }
+
     inline void CreateCamera(LPMESH* camera, bool perspektive = true)
     {
         // Kamera erstellen. Das macht der Objectmanager
-        *camera = engine->GetOM().createMesh(); 
+        *camera = engine->GetMM().createMesh(); 
  
         engine->GetCam().SetPerspective(XMConvertToRadians(75.0f),
                                         (static_cast<float>(engine->GetWidth()) / static_cast<float>(engine->GetHeight())),
@@ -115,8 +132,8 @@ namespace Engine
     }
 
     inline void CreateSurface(SURFACE** lplpSurface, MESH* lpMesh){
-        *lplpSurface = engine->GetOM().createSurface();
-        engine->GetOM().addSurfaceToMesh(lpMesh, *lplpSurface);
+        *lplpSurface = engine->GetMM().createSurface();
+        engine->GetMM().addSurfaceToMesh(lpMesh, *lplpSurface);
     }
 
     inline void FillBuffer(SURFACE* surface) {

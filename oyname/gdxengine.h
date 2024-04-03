@@ -5,10 +5,11 @@
 #include "gdxinterface.h"
 #include "gdxdevice.h"
 #include "InputLayoutManager.h"
-#include "ObjectManager.h"
+#include "MeshManager.h"
 #include "BufferManager.h"
 #include "ShaderManager.h"
 #include "RenderManager.h"
+#include "Entity.h"
 #include "Camera.h"
 
 namespace gdx {
@@ -31,7 +32,7 @@ namespace gdx {
         int m_monitorIndex;	   // Index des Monitors
 
 		// Manager-Klassen
-		ObjectManager		m_objManager;
+		MeshManager		    m_meshManager;
 		RenderManager		m_renderManager;
 		ShaderManager		m_shaderManager;
 		InputLayoutManager	m_inputLayoutManager;
@@ -63,7 +64,7 @@ namespace gdx {
 		unsigned int GetColorDepth();
 
 		BufferManager& GetBM();
-		ObjectManager& GetOM();
+		MeshManager&  GetMM();
 		ShaderManager& GetSM();
 		InputLayoutManager& GetILM();
 		Camera& GetCam();

@@ -4,6 +4,7 @@
 #include "gdxutil.h"
 #include "gdxdevice.h"
 #include "gdxinterface.h"
+#include "gdxengine.h"
 
 using namespace DirectX;
 
@@ -64,6 +65,7 @@ struct MESH
     XMVECTOR position;     // Position des Objekts
     XMVECTOR lookAt;       // Blickrichtung
     XMVECTOR up;           // Up-Vektor
+    XMVECTOR right;        // Right-Vektor
 
     ConstantBuffer cb;
 
@@ -81,7 +83,8 @@ struct MESH
         pShader(nullptr),
         position(XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f)),
         lookAt(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f)),
-        up(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
+        up(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)),
+        right(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f))
     {
         cb.projectionMatrix = DirectX::XMMatrixIdentity();
         cb.viewMatrix = DirectX::XMMatrixIdentity();
@@ -166,13 +169,13 @@ struct SHADER
 
 class RenderManager; // Vorwärtsdeklaration
 
-class ObjectManager {
+class MeshManager {
 
     friend class RenderManager; 
 
 public:
-    ObjectManager();
-    ~ObjectManager();
+    MeshManager();
+    ~MeshManager();
 
     void Init(gdx::CDevice& device);
 
@@ -213,6 +216,7 @@ public:
     void RenderLoop(); // leere Methode siehe RenderManager
 
 private:
+    gdx::CGIDX*         m_engine;
     gdx::CDevice*       m_device;      
     std::list<SURFACE*> m_surfaces;
     std::list<MESH*>    m_meshes;

@@ -1,16 +1,16 @@
 #pragma once
 
-#include "ObjectManager.h"
+#include "MeshManager.h"
 
 class RenderManager {
 public:
     RenderManager();
-    RenderManager(ObjectManager& objectManager);
+    RenderManager(MeshManager& meshManager);
 
     void RenderLoop();
     void RenderMesh();
 
 private:
 
-    ObjectManager& m_objectManager; // Referenz auf den ObjectManager
+    MeshManager& m_meshManager; // Referenz auf den MeshManager
 };
