@@ -9,6 +9,7 @@ public:
 
     void RenderLoop();
     void RenderMesh();
+    void UpdateWorld();
 
 private:
 

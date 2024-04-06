@@ -85,47 +85,87 @@ namespace Engine
         XMMATRIX mScale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
         XMMATRIX mTranslation = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
 
-        XMMATRIX mWorld = mScale * mRotation * mTranslation;
-
-        (*mesh)->cb.viewMatrix = engine->GetCam().GetView()->cb.viewMatrix;
-        (*mesh)->cb.projectionMatrix = engine->GetCam().GetView()->cb.projectionMatrix;
-        (*mesh)->cb.worldMatrix = mScale * mRotation * mTranslation;
+        (*mesh)->cb.viewMatrix = engine->GetCam().GetCurrentCam()->viewMatrix();
+        (*mesh)->cb.projectionMatrix = engine->GetCam().GetCurrentCam()->projectionMatrix();
 
         engine->GetBM().CreateBuffer(&(*mesh)->cb, sizeof(ConstantBuffer), 1, D3D11_BIND_CONSTANT_BUFFER, &(*mesh)->constantBuffer);
     }
 
-    inline void TranslationMatrix(LPMESH mesh, float x, float y, float z)
+    inline void PositionEntity(LPMESH mesh, float x, float y, float z)
     {
-        // Erzeuge den Translationsvektor aus den gegebenen Komponenten
-        XMVECTOR translation = XMVectorSet(x, y, z, 0.0f);
-
         // Aktualisiere die Position des Meshes um den Translationsvektor
-        mesh->position = XMVectorAdd(mesh->position, translation);
+        mesh->position = XMVectorSet(x, y, z, 0.0f);
 
         XMMATRIX mTranslation = XMMatrixTranslationFromVector(mesh->position);
+        
+        mesh->mTranslation = mTranslation;
+        //mesh->mTranslation = XMMatrixTranslationFromVector(mesh->position);
+    }
 
-        mesh->cb.viewMatrix = engine->GetCam().GetView()->cb.viewMatrix;
-        mesh->cb.projectionMatrix = engine->GetCam().GetView()->cb.projectionMatrix;
-        mesh->cb.worldMatrix = mTranslation;
+    inline void MoveEntity(LPMESH mesh, float x, float y, float z)
+    {
+        // Erstellen eines Verschiebungsvektors basierend auf den gegebenen Komponenten
+        XMVECTOR translation = XMVectorSet(x, y, z, 0.0f);
+
+        // Rotation der Verschiebung entsprechend der lokalen Ausrichtung des Objekts
+        translation = XMVector3TransformCoord(translation, mesh->mRotate);
+
+        // Addieren des transformierten Verschiebungsvektors zur aktuellen Position des Meshes
+        mesh->position = XMVectorAdd(mesh->position, translation);
+
+        // Erstellen der Translationsmatrix für die transformierte Verschiebung
+        XMMATRIX mTranslation = XMMatrixTranslationFromVector(translation);
+
+        // Multiplizieren der aktuellen Translationsmatrix des Meshes mit der neuen Translationsmatrix
+        mesh->mTranslation *= mTranslation;
+    }
+
+    inline void RotateEntity(LPMESH lpMesh, float fRotateX, float fRotateY, float fRotateZ)
+    {
+        // Konvertieren der Rotationswinkel von Grad in Radiant
+        fRotateX = XMConvertToRadians(fRotateX);
+        fRotateY = XMConvertToRadians(fRotateY);
+        fRotateZ = XMConvertToRadians(fRotateZ);
+
+        // Erstellen der Rotationsmatrizen für jede Achse
+        XMMATRIX rotationX = XMMatrixRotationX(fRotateX);
+        XMMATRIX rotationY = XMMatrixRotationY(fRotateY);
+        XMMATRIX rotationZ = XMMatrixRotationZ(fRotateZ);
+        // Kombinieren der Rotationsmatrizen
+        XMMATRIX rotationMatrix = rotationX * rotationY * rotationZ;
+
+        // Wenden Sie die Rotation auf die lokale Rotationsmatrix des Objekts an
+        XMMATRIX newRotationMatrix = rotationMatrix;// *lpMesh->cb.worldMatrix;
+
+        lpMesh->mRotate = rotationMatrix;
     }
 
     // Funktion zur Rotation eines Objekts um seine lokalen Achsen
-    inline void RotateObjectLocalAxes(MESH mesh, float angleX_deg, float angleY_deg, float angleZ_deg, XMVECTOR localTranslation)
+    inline void TurnEntity(LPMESH lpMesh, float fRotateX, float fRotateY, float fRotateZ)
     {
-        // Wandle die Eingabewinkel in Radian um
+        // Konstruieren Sie die Rotationsmatrizen um die lokalen Achsen
+        XMMATRIX rotationX = XMMatrixRotationX(XMConvertToRadians(fRotateX));
+        XMMATRIX rotationY = XMMatrixRotationY(XMConvertToRadians(fRotateY));
+        XMMATRIX rotationZ = XMMatrixRotationZ(XMConvertToRadians(fRotateZ));
+
+        // Kombinieren Sie die Rotationsmatrizen in eine Gesamtrotationsmatrix
+        XMMATRIX rotationMatrix = rotationX * rotationY * rotationZ;
+
+        // Wenden Sie die Rotation auf die lokale Rotationsmatrix des Objekts an
+        XMMATRIX newRotationMatrix = rotationMatrix  * lpMesh->mRotate;
+
+        lpMesh->mRotate = newRotationMatrix;
     }
 
-    inline void CreateCamera(LPMESH* camera, bool perspektive = true)
+    inline void CreateCamera(LPMESH* camera)
     {
-        // Kamera erstellen. Das macht der Objectmanager
-        *camera = engine->GetMM().createMesh(); 
- 
         engine->GetCam().SetPerspective(XMConvertToRadians(75.0f),
                                         (static_cast<float>(engine->GetWidth()) / static_cast<float>(engine->GetHeight())),
                                         0.01f,
                                         1000.0f);
 
-        engine->GetCam().CreateCamera(camera);
+        // Kamera erstellen.
+        engine->GetCam().CreateCamera(camera); 
 
         // Engine speichert aktuelle Kamera  
         engine->SetCamera(*camera); 

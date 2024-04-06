@@ -90,14 +90,14 @@ namespace gdx
 			return hr;
 		}
 
-
+		// Objekt zum organisieren des Renders
+		
+		// Camere 
+		m_camera.Init(this);
 		m_camera.SetViewport(0.0f, 0.0f, (float)width, (float)height, 0.0f, 1.0f);
 		m_device.CreateView(1, m_camera.GetViewPort());
-
-		// Objekt zum organisieren des Renders
-		// 
 		// Objektmanager
-		m_meshManager.Init(m_device);
+		m_meshManager.Init(&m_device, this);
 		// Buffer-Manager initialisieren
 		m_bufferManager.Init(m_device.GetDevice());
 		// Shader-Manager initialisieren

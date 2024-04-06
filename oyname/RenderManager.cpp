@@ -1,3 +1,4 @@
+#include "gdxengine.h"
 #include "RenderManager.h"
 
 RenderManager::RenderManager(MeshManager& meshManager) : m_meshManager(meshManager) {
@@ -25,6 +26,10 @@ void RenderManager::RenderMesh()
         {
             for (const auto& mesh : *(brush->meshes))
             {
+                mesh->cb.viewMatrix = m_meshManager.m_engine->GetCam().GetCurrentCam()->cb.viewMatrix;
+                mesh->cb.projectionMatrix = m_meshManager.m_engine->GetCam().GetCurrentCam()->cb.projectionMatrix;
+                mesh->cb.worldMatrix = mesh->mRotate * mesh->mTranslation;
+                
                 // Konstanten in den Constant Buffer schreiben
                 D3D11_MAPPED_SUBRESOURCE mappedResource;
                 m_meshManager.m_device->GetDeviceContext()->Map(mesh->constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -60,6 +65,14 @@ void RenderManager::RenderMesh()
     }
 }
 
-
-
-
+void RenderManager::UpdateWorld()
+{
+    for (const auto& mesh : m_meshManager.m_meshes)
+    {
+        XMMATRIX mTranslation = XMMatrixTranslationFromVector(mesh->position);
+        
+        mesh->cb.viewMatrix = m_meshManager.m_engine->GetCam().GetCurrentCam()->cb.viewMatrix;
+        mesh->cb.projectionMatrix = m_meshManager.m_engine->GetCam().GetCurrentCam()->cb.projectionMatrix;
+        mesh->cb.worldMatrix = mTranslation;
+    }
+}

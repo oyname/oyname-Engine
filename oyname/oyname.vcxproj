@@ -146,6 +146,7 @@
     <ClCompile Include="gidxwin.cpp" />
     <ClCompile Include="InputLayoutManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object3D.cpp" />
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="triangle.cpp" />
     <ClCompile Include="MeshManager.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="InputLayoutManager.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="MeshManager.h" />
+    <ClInclude Include="Object3D.h" />
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="BufferManager.h" />

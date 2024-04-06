@@ -43,14 +43,20 @@
     <Filter Include="04_Shader">
       <UniqueIdentifier>{6310a97e-5fc5-4d73-82f1-45f08c5b0a7b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_Engine\Camera">
-      <UniqueIdentifier>{0074fd9c-dac5-4849-b987-005c955868ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03_Engine\Entity">
-      <UniqueIdentifier>{1b52b435-cf43-4a9c-98b9-aa456e99830b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03_Engine\Manager\MeshManager">
       <UniqueIdentifier>{ac7a7a5e-4fb4-4faa-a6b7-ad53c1639fdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Objects">
+      <UniqueIdentifier>{1b52b435-cf43-4a9c-98b9-aa456e99830b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Objects\Camera">
+      <UniqueIdentifier>{0074fd9c-dac5-4849-b987-005c955868ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Objects\Entity">
+      <UniqueIdentifier>{ad9059de-836e-42c9-b332-18d131e567c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Objects\Object3D">
+      <UniqueIdentifier>{f881cf36-b788-47b1-8333-6f12d375c289}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -97,10 +103,13 @@
       <Filter>03_Engine\Manager\RenderManager</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>03_Engine\Camera</Filter>
+      <Filter>03_Engine\Objects\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Entity.cpp">
-      <Filter>03_Engine\Entity</Filter>
+      <Filter>03_Engine\Objects\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Object3D.cpp">
+      <Filter>03_Engine\Objects\Object3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -141,10 +150,13 @@
       <Filter>03_Engine\Manager\RenderManager</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>03_Engine\Camera</Filter>
+      <Filter>03_Engine\Objects\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
-      <Filter>03_Engine\Entity</Filter>
+      <Filter>03_Engine\Objects\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3D.h">
+      <Filter>03_Engine\Objects\Object3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -72,21 +72,23 @@ int main()
     
     Engine::FillBuffer(surface);
 
+    camera->PositionEntity(0.0f, 0.0f, -10.0f);
 
-    float winkel = 0.0f;
+    Engine::PositionEntity(mesh, 0.0f, 0.0f, 5.0f);
+    //Engine::RotateEntity(mesh, 0.0f, 0.0f, 45.0f);
 
-    Engine::TranslationMatrix(mesh, 0.0f, 0.0f, 5.0f);
+    mesh->RotateEntity(0.0f, 0.0f, 15.0f, true);
+
+    camera->RotateEntity(0.0f, 30.0f, 0.0f);
 
     while (gdx::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000))
     {
-
         Engine::Cls(32, 64, 128);
 
+        camera->TurnEntity(0.0f, 0.0f, 1.0f);
 
-        winkel = winkel + 0.01f;
-
-        //Engine::RotateMesh(mesh, 0, winkel, winkel, 2.0f);
-        //Engine::RotateMesh(mesh2, 0, 45, winkel, -2.0f);
+        //Engine::TurnEntity(mesh, 0.0f, 0.0f, 2.0f);
+        mesh->TurnEntity(0.0f, 0.0f, 5.0f,true);
 
         Engine::RenderWorld();
 
