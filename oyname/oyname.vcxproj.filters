@@ -22,9 +22,6 @@
     <Filter Include="03_Engine\Manager">
       <UniqueIdentifier>{1c8298c1-6b31-4d2c-b6a5-73f031c1a1aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_Engine\Manager\ObjectManager">
-      <UniqueIdentifier>{ac7a7a5e-4fb4-4faa-a6b7-ad53c1639fdc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03_Engine\Engine">
       <UniqueIdentifier>{8d9dcfa2-55fa-492a-b7d0-c7bae370e5d0}</UniqueIdentifier>
     </Filter>
@@ -45,6 +42,12 @@
     </Filter>
     <Filter Include="04_Shader">
       <UniqueIdentifier>{6310a97e-5fc5-4d73-82f1-45f08c5b0a7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Manager\ObjectManager">
+      <UniqueIdentifier>{ac7a7a5e-4fb4-4faa-a6b7-ad53c1639fdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\Manager\ObjectManager\Objects">
+      <UniqueIdentifier>{24ee07c5-294e-4020-9189-de8538ac3f02}</UniqueIdentifier>
     </Filter>
     <Filter Include="03_Engine\Camera">
       <UniqueIdentifier>{0074fd9c-dac5-4849-b987-005c955868ee}</UniqueIdentifier>
@@ -96,6 +99,18 @@
     <ClCompile Include="Camera.cpp">
       <Filter>03_Engine\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="Surface.cpp">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Brush.cpp">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gidx.h">
@@ -136,6 +151,18 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>03_Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Brush.h">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

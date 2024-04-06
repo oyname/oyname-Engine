@@ -31,12 +31,12 @@ namespace gdx {
         int m_monitorIndex;	   // Index des Monitors
 
 		// Manager-Klassen
-		ObjectManager		m_objManager;
+		ObjectManager		m_objectManager;
 		RenderManager		m_renderManager;
 		ShaderManager		m_shaderManager;
 		InputLayoutManager	m_inputLayoutManager;
 		BufferManager		m_bufferManager;
-		Camera				m_camera;
+		Camera		        m_camera;
 
 	public:
 		CDevice m_device;		// Device Manager nicht mit DirectXDevice verwechseln
@@ -63,7 +63,7 @@ namespace gdx {
 		unsigned int GetColorDepth();
 
 		BufferManager& GetBM();
-		ObjectManager& GetOM();
+		ObjectManager&  GetMM();
 		ShaderManager& GetSM();
 		InputLayoutManager& GetILM();
 		Camera& GetCam();

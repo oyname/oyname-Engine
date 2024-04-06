@@ -24,7 +24,7 @@
 std::string GetErrorMessage(DWORD errorCode);
 
 //
-struct ConstantBuffer
+struct MatrixSet
 {
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projectionMatrix;

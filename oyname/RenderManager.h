@@ -7,10 +7,11 @@ public:
     RenderManager();
     RenderManager(ObjectManager& objectManager);
 
+    void SetCamera(LPMESH camera);
     void RenderLoop();
     void RenderMesh();
 
 private:
-
-    ObjectManager& m_objectManager; // Referenz auf den ObjectManager
+    LPMESH m_currentCam;
+    ObjectManager& m_objectManager; // Referenz auf den MeshManager
 };
