@@ -137,8 +137,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Brush.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="gdxdevice.cpp" />
     <ClCompile Include="gdxinterface.cpp" />
     <ClCompile Include="gidx.cpp" />
@@ -146,18 +146,20 @@
     <ClCompile Include="gidxwin.cpp" />
     <ClCompile Include="InputLayoutManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Object3D.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="RenderManager.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Surface.cpp" />
     <ClCompile Include="triangle.cpp" />
-    <ClCompile Include="MeshManager.cpp" />
+    <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="adapter.cpp" />
     <ClCompile Include="simple.cpp" />
     <ClCompile Include="BufferManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Brush.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Entity.h" />
     <ClInclude Include="gdxdevice.h" />
     <ClInclude Include="gdxinterface.h" />
     <ClInclude Include="gidx.h" />
@@ -166,11 +168,13 @@
     <ClInclude Include="gidxwin.h" />
     <ClInclude Include="InputLayoutManager.h" />
     <ClInclude Include="main.h" />
-    <ClInclude Include="MeshManager.h" />
-    <ClInclude Include="Object3D.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="RenderManager.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="BufferManager.h" />
+    <ClInclude Include="Surface.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pixelshader.hlsl">

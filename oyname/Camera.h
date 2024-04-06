@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gdxutil.h"
-#include "MeshManager.h"
+#include "ObjectManager.h"
 
 namespace gdx 
 {
@@ -43,6 +43,7 @@ namespace gdx
 		LPMESH GetCurrentCam();
 
 		void CreateCamera(LPMESH* camera);
+		void Update();
 
 		D3D11_VIEWPORT GetViewPort();
 

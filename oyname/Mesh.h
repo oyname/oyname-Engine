@@ -7,6 +7,12 @@
 
 class Shader;
 
+enum Space 
+{
+    Local,
+    World
+};
+
 class Mesh {
 public:
     Mesh();
@@ -23,23 +29,23 @@ public:
     DirectX::XMMATRIX mTranslation;
     DirectX::XMMATRIX mScaling;
 
-    ConstantBuffer cb;
+    MatrixSet cb;
 
     std::list<Surface*>* surfaces;
 
     ID3D11Buffer* constantBuffer;
 
-    void TurnEntity(float fRotateX, float fRotateY, float fRotateZ);
-    void RotateEntity(float fRotateX, float fRotateY, float fRotateZ);
+    void TurnEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local);
+    void RotateEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local);
     void PositionEntity(float x, float y, float z);
     void MoveEntity(float x, float y, float z);
     void Update();
 
-    DirectX::XMMATRIX projectionMatrix() { return cb.projectionMatrix; }
-    DirectX::XMMATRIX viewMatrix() { return cb.viewMatrix; }
-    DirectX::XMMATRIX worldMatrix() { return cb.worldMatrix; }
-
     Shader* pShader;
+
+private:
+    DirectX::XMVECTOR defaultLookAt = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+    DirectX::XMVECTOR defaultUp = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 };
 
 typedef Mesh* LPMESH;

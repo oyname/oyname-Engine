@@ -4,7 +4,7 @@
 #include <d3dcompiler.h>
 #include <vector>
 #include "gdxutil.h"
-#include "MeshManager.h"
+#include "ObjectManager.h"
 
 class InputLayoutManager {
 public:

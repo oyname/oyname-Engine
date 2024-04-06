@@ -5,7 +5,7 @@
 #include "gdxinterface.h"
 #include "gdxdevice.h"
 #include "InputLayoutManager.h"
-#include "MeshManager.h"
+#include "ObjectManager.h"
 #include "BufferManager.h"
 #include "ShaderManager.h"
 #include "RenderManager.h"
@@ -31,12 +31,12 @@ namespace gdx {
         int m_monitorIndex;	   // Index des Monitors
 
 		// Manager-Klassen
-		MeshManager		    m_meshManager;
+		ObjectManager		m_objectManager;
 		RenderManager		m_renderManager;
 		ShaderManager		m_shaderManager;
 		InputLayoutManager	m_inputLayoutManager;
 		BufferManager		m_bufferManager;
-		gdx::Camera		    m_camera;
+		Camera		        m_camera;
 
 	public:
 		CDevice m_device;		// Device Manager nicht mit DirectXDevice verwechseln
@@ -63,7 +63,7 @@ namespace gdx {
 		unsigned int GetColorDepth();
 
 		BufferManager& GetBM();
-		MeshManager&  GetMM();
+		ObjectManager&  GetMM();
 		ShaderManager& GetSM();
 		InputLayoutManager& GetILM();
 		Camera& GetCam();

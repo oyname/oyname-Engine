@@ -43,20 +43,14 @@
     <Filter Include="04_Shader">
       <UniqueIdentifier>{6310a97e-5fc5-4d73-82f1-45f08c5b0a7b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_Engine\Manager\MeshManager">
+    <Filter Include="03_Engine\Manager\ObjectManager">
       <UniqueIdentifier>{ac7a7a5e-4fb4-4faa-a6b7-ad53c1639fdc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_Engine\Objects">
-      <UniqueIdentifier>{1b52b435-cf43-4a9c-98b9-aa456e99830b}</UniqueIdentifier>
+    <Filter Include="03_Engine\Manager\ObjectManager\Objects">
+      <UniqueIdentifier>{24ee07c5-294e-4020-9189-de8538ac3f02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_Engine\Objects\Camera">
+    <Filter Include="03_Engine\Camera">
       <UniqueIdentifier>{0074fd9c-dac5-4849-b987-005c955868ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03_Engine\Objects\Entity">
-      <UniqueIdentifier>{ad9059de-836e-42c9-b332-18d131e567c1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03_Engine\Objects\Object3D">
-      <UniqueIdentifier>{f881cf36-b788-47b1-8333-6f12d375c289}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -66,8 +60,8 @@
     <ClCompile Include="ShaderManager.cpp">
       <Filter>03_Engine\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="MeshManager.cpp">
-      <Filter>03_Engine\Manager\MeshManager</Filter>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>03_Engine\Manager\ObjectManager</Filter>
     </ClCompile>
     <ClCompile Include="InputLayoutManager.cpp">
       <Filter>03_Engine\InputLayout</Filter>
@@ -103,13 +97,19 @@
       <Filter>03_Engine\Manager\RenderManager</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>03_Engine\Objects\Camera</Filter>
+      <Filter>03_Engine\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>03_Engine\Objects\Entity</Filter>
+    <ClCompile Include="Surface.cpp">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Object3D.cpp">
-      <Filter>03_Engine\Objects\Object3D</Filter>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Brush.cpp">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,8 +122,8 @@
     <ClInclude Include="ShaderManager.h">
       <Filter>03_Engine\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="MeshManager.h">
-      <Filter>03_Engine\Manager\MeshManager</Filter>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>03_Engine\Manager\ObjectManager</Filter>
     </ClInclude>
     <ClInclude Include="InputLayoutManager.h">
       <Filter>03_Engine\InputLayout</Filter>
@@ -150,13 +150,19 @@
       <Filter>03_Engine\Manager\RenderManager</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>03_Engine\Objects\Camera</Filter>
+      <Filter>03_Engine\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>03_Engine\Objects\Entity</Filter>
+    <ClInclude Include="Surface.h">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Object3D.h">
-      <Filter>03_Engine\Objects\Object3D</Filter>
+    <ClInclude Include="Mesh.h">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Brush.h">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

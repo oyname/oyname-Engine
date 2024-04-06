@@ -4,7 +4,7 @@
 #include <d3dcompiler.h>
 #include <string>
 #include <list>
-#include "MeshManager.h"
+#include "ObjectManager.h"
 #include "gdxutil.h"
 
 class ShaderManager {
@@ -19,7 +19,7 @@ public:
 
 private:
     ID3D11Device* m_device;
-    MeshManager* m_objectManager; // Referenz auf den ObjectManager
+    ObjectManager* m_objectManager; // Referenz auf den ObjectManager
     LPSHADER m_standardShader;
     std::wstring m_shaderfolder;
 };

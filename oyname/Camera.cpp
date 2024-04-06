@@ -64,6 +64,11 @@ namespace gdx
         (*camera)->cb.worldMatrix = XMMatrixIdentity();
     }
 
+    void Camera::Update()
+    {
+        this->m_currentCam->Update();
+    }
+
     D3D11_VIEWPORT Camera::GetViewPort()
     {
         return m_viewport;

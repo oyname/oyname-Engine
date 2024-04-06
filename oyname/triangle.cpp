@@ -20,75 +20,89 @@ int main()
     LPMESH mesh2;
     Engine::CreateMesh(&mesh2, brush);
 
-    // Definiere die Anzahl der zu erstellenden Meshes
-    const int numMeshes = 1;
-
-    // Vector zum Speichern der Mesh-Objekte
-    std::vector<LPMESH> meshes(numMeshes);
-
-    // Schleife zum Erstellen der Meshes
-    for (int i = 0; i < numMeshes; i++) {
-        Engine::CreateMesh(&meshes[i], brush);
-    }
+    LPMESH mesh3;
+    Engine::CreateMesh(&mesh3, brush);
 
     // Vertexdaten werden hier gespeichert
-    LPSURFACE surface;
-    Engine::CreateSurface(&surface, mesh);
+    LPSURFACE wuerfel;
+    Engine::CreateSurface(&wuerfel, mesh);
 
-    // Schleife zum Hinzufügen des Surface zu allen Meshes
-    for (int i = 0; i < numMeshes; i++) {
-        Engine::engine->GetMM().addSurfaceToMesh(meshes[i], surface);
-    }
+    LPSURFACE pyramide;
+    Engine::CreateSurface(&pyramide, mesh3);
 
-    Engine::engine->GetMM().addSurfaceToMesh(mesh2, surface);
+    Engine::engine->GetMM().addSurfaceToMesh(mesh2, wuerfel);
 
-    Engine::AddVertex(surface, -1.0f, -1.0f, 1.0f); Engine::VertexColor(surface, 0  , 255, 0);
-    Engine::AddVertex(surface, -1.0f,  1.0f, 1.0f); Engine::VertexColor(surface, 0  ,   0, 255);
-    Engine::AddVertex(surface,  1.0f, -1.0f, 1.0f); Engine::VertexColor(surface, 255,   0, 0);
-    Engine::AddVertex(surface,  1.0f,  1.0f, 1.0f); Engine::VertexColor(surface, 255, 255, 0);
+    Engine::AddVertex(wuerfel, -1.0f, -1.0f, 1.0f); Engine::VertexColor(wuerfel, 0  , 255, 0);
+    Engine::AddVertex(wuerfel, -1.0f,  1.0f, 1.0f); Engine::VertexColor(wuerfel, 0  ,   0, 255);
+    Engine::AddVertex(wuerfel,  1.0f, -1.0f, 1.0f); Engine::VertexColor(wuerfel, 255,   0, 0);
+    Engine::AddVertex(wuerfel,  1.0f,  1.0f, 1.0f); Engine::VertexColor(wuerfel, 255, 255, 0);
 
-    Engine::AddVertex(surface, -1.0f, -1.0f, -1.0f); Engine::VertexColor(surface, 0, 255, 0);
-    Engine::AddVertex(surface, -1.0f, 1.0f,  -1.0f); Engine::VertexColor(surface, 0, 0, 255);
-    Engine::AddVertex(surface,  1.0f, -1.0f, -1.0f); Engine::VertexColor(surface, 255, 0, 0);
-    Engine::AddVertex(surface,  1.0f, 1.0f,  -1.0f); Engine::VertexColor(surface, 255, 255, 0);
+    Engine::AddVertex(wuerfel, -1.0f, -1.0f, -1.0f); Engine::VertexColor(wuerfel, 0, 255, 0);
+    Engine::AddVertex(wuerfel, -1.0f, 1.0f,  -1.0f); Engine::VertexColor(wuerfel, 0, 0, 255);
+    Engine::AddVertex(wuerfel,  1.0f, -1.0f, -1.0f); Engine::VertexColor(wuerfel, 255, 0, 0);
+    Engine::AddVertex(wuerfel,  1.0f, 1.0f,  -1.0f); Engine::VertexColor(wuerfel, 255, 255, 0);
 
-    Engine::AddTriangle(surface, 2, 1, 0);// Seite A
-    Engine::AddTriangle(surface, 2, 3, 1);
+    Engine::AddTriangle(wuerfel, 2, 1, 0);// Seite A
+    Engine::AddTriangle(wuerfel, 2, 3, 1);
 
-    Engine::AddTriangle(surface, 4, 5, 6);// Seite B 
-    Engine::AddTriangle(surface, 6, 5, 7);
+    Engine::AddTriangle(wuerfel, 4, 5, 6);// Seite B 
+    Engine::AddTriangle(wuerfel, 6, 5, 7);
 
-    Engine::AddTriangle(surface, 6, 7, 2);// Seite C 
-    Engine::AddTriangle(surface, 2, 7, 3);
+    Engine::AddTriangle(wuerfel, 6, 7, 2);// Seite C 
+    Engine::AddTriangle(wuerfel, 2, 7, 3);
 
-    Engine::AddTriangle(surface, 0, 1, 5);// Seite D 
-    Engine::AddTriangle(surface, 5, 4, 0);
+    Engine::AddTriangle(wuerfel, 0, 1, 5);// Seite D 
+    Engine::AddTriangle(wuerfel, 5, 4, 0);
 
-    Engine::AddTriangle(surface, 5, 1, 7);// Seite E 
-    Engine::AddTriangle(surface, 7, 1, 3);
+    Engine::AddTriangle(wuerfel, 5, 1, 7);// Seite E 
+    Engine::AddTriangle(wuerfel, 7, 1, 3);
 
-    Engine::AddTriangle(surface, 6, 0, 4);// Seite F 
-    Engine::AddTriangle(surface, 6, 2, 0);
+    Engine::AddTriangle(wuerfel, 6, 0, 4);// Seite F 
+    Engine::AddTriangle(wuerfel, 6, 2, 0);
     
-    Engine::FillBuffer(surface);
+    Engine::FillBuffer(wuerfel);
 
-    camera->PositionEntity(0.0f, 0.0f, -10.0f);
+    Engine::AddVertex(pyramide, -1.0f, -1.0f, -1.0f); Engine::VertexColor(pyramide, 0, 255, 0);
+    Engine::AddVertex(pyramide, -1.0f, 1.0f, -1.0f); Engine::VertexColor(pyramide, 0, 0, 255);
+    Engine::AddVertex(pyramide, 1.0f, -1.0f, -1.0f); Engine::VertexColor(pyramide, 255, 0, 0);
+    Engine::AddVertex(pyramide, 1.0f, 1.0f, -1.0f); Engine::VertexColor(pyramide, 255, 255, 0);
+    Engine::AddVertex(pyramide, 0.0f, 0.0f, 1.0f); Engine::VertexColor(pyramide, 255, 255, 0);
 
-    Engine::PositionEntity(mesh, 0.0f, 0.0f, 5.0f);
-    //Engine::RotateEntity(mesh, 0.0f, 0.0f, 45.0f);
+    Engine::AddTriangle(pyramide, 0, 1, 3);
+    Engine::AddTriangle(pyramide, 3, 2, 0);
+    Engine::AddTriangle(pyramide, 2, 3, 4);
+    Engine::AddTriangle(pyramide, 3, 1, 4);
+    Engine::AddTriangle(pyramide, 0, 4, 1);
+    Engine::AddTriangle(pyramide, 0, 2, 4);
 
-    mesh->RotateEntity(0.0f, 0.0f, 15.0f, true);
+    Engine::FillBuffer(pyramide);
 
-    camera->RotateEntity(0.0f, 30.0f, 0.0f);
+    camera->PositionEntity(0.0f, 10.0f, -15.0f);
+    camera->RotateEntity(15.0f, 0.0f, 0.0f);
 
+    mesh->RotateEntity(0.0f, 30.0f, 0.0f);
+    mesh->PositionEntity(-5.0f, 0.0f, 0.0f);
+
+    mesh2->RotateEntity(0.0f, 0.0f, 0.0f);
+    mesh2->PositionEntity(0.0f, 0.0f, 5.0f);
+
+    mesh3->RotateEntity(-90.0f, 0.0f, 0.0f);
+    mesh3->PositionEntity(5.0f, 0.0f, 0.0f);
+
+    mesh3->RotateEntity(0, -90, 0);
+
+    //Engine::engine->SetCamera(mesh3);
+    
     while (gdx::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000))
     {
         Engine::Cls(32, 64, 128);
 
-        camera->TurnEntity(0.0f, 0.0f, 1.0f);
+        mesh->TurnEntity(0.0f, 0.0f, 1.0f);
 
-        //Engine::TurnEntity(mesh, 0.0f, 0.0f, 2.0f);
-        mesh->TurnEntity(0.0f, 0.0f, 5.0f,true);
+        mesh2->TurnEntity(1.0f, 0.0f, 0.0f);
+        //mesh3->TurnEntity(1.1f, 0.0f, 0.0f);
+        mesh3->MoveEntity(0, 0, 0.1);
+        mesh3->TurnEntity(0.0f, 0.0f, 0.5f, Space::World);
 
         Engine::RenderWorld();
 
