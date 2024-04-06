@@ -30,7 +30,7 @@ int main()
     LPSURFACE pyramide;
     Engine::CreateSurface(&pyramide, mesh3);
 
-    Engine::engine->GetMM().addSurfaceToMesh(mesh2, wuerfel);
+    Engine::engine->GetOM().addSurfaceToMesh(mesh2, wuerfel);
 
     Engine::AddVertex(wuerfel, -1.0f, -1.0f, 1.0f); Engine::VertexColor(wuerfel, 0  , 255, 0);
     Engine::AddVertex(wuerfel, -1.0f,  1.0f, 1.0f); Engine::VertexColor(wuerfel, 0  ,   0, 255);
@@ -78,7 +78,7 @@ int main()
     Engine::FillBuffer(pyramide);
 
     camera->PositionEntity(0.0f, 10.0f, -15.0f);
-    camera->RotateEntity(15.0f, 0.0f, 0.0f);
+    camera->RotateEntity(35.0f, 0.0f, 0.0f);
 
     mesh->RotateEntity(0.0f, 30.0f, 0.0f);
     mesh->PositionEntity(-5.0f, 0.0f, 0.0f);
@@ -100,8 +100,8 @@ int main()
         mesh->TurnEntity(0.0f, 0.0f, 1.0f);
 
         mesh2->TurnEntity(1.0f, 0.0f, 0.0f);
-        //mesh3->TurnEntity(1.1f, 0.0f, 0.0f);
-        mesh3->MoveEntity(0, 0, 0.1);
+        mesh3->TurnEntity(0.0f, 0.0f, 1.0f);
+        mesh3->MoveEntity(0.0f, 0.0f, 0.1f);
         mesh3->TurnEntity(0.0f, 0.0f, 0.5f, Space::World);
 
         Engine::RenderWorld();

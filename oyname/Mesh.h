@@ -13,10 +13,23 @@ enum Space
     World
 };
 
+struct MatrixSet
+{
+    DirectX::XMMATRIX viewMatrix;
+    DirectX::XMMATRIX projectionMatrix;
+    DirectX::XMMATRIX worldMatrix;
+};
+
 class Mesh {
 public:
     Mesh();
     ~Mesh();
+
+    void TurnEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local);
+    void RotateEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local);
+    void PositionEntity(float x, float y, float z);
+    void MoveEntity(float x, float y, float z);
+    void Update();
 
     bool isActive;
 
@@ -34,12 +47,6 @@ public:
     std::list<Surface*>* surfaces;
 
     ID3D11Buffer* constantBuffer;
-
-    void TurnEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local);
-    void RotateEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local);
-    void PositionEntity(float x, float y, float z);
-    void MoveEntity(float x, float y, float z);
-    void Update();
 
     Shader* pShader;
 

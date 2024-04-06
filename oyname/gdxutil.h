@@ -24,14 +24,6 @@
 std::string GetErrorMessage(DWORD errorCode);
 
 //
-struct MatrixSet
-{
-	DirectX::XMMATRIX viewMatrix;
-	DirectX::XMMATRIX projectionMatrix;
-	DirectX::XMMATRIX worldMatrix;
-};
-
-// 
 enum D3DVERTEX_FLAGS
 {
 	D3DVERTEX_POSITION = (1 << 0),

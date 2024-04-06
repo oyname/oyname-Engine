@@ -58,7 +58,7 @@ namespace Engine
     {   
          HRESULT result = S_OK;
 
-        *shader = engine->GetMM().createShader();
+        *shader = engine->GetOM().createShader();
         
         // Shader erstellen und laden
         engine->GetSM().CreateShader(*shader, vertexShaderFile, pixelShaderFile);
@@ -73,21 +73,18 @@ namespace Engine
     }
 
     inline void CreateBrush(LPBRUSH* brush, SHADER* shader = nullptr) {
-        *brush = engine->GetMM().createBrush();
-        shader = shader == nullptr ? engine->GetSM().GetStandardShader() : shader;
-        engine->GetMM().addBrushToShader(shader, *brush);
+        *brush = engine->GetOM().createBrush();
+        // Wenn Shader == nullptr, dann Standardshader
+        shader = shader == nullptr ? engine->GetSM().GetShader() : shader;
+        engine->GetOM().addBrushToShader(shader, *brush);
     }
 
     inline void CreateMesh(LPMESH *mesh, BRUSH* lpBrush) 
     {
-        *mesh = engine->GetMM().createMesh();
-        engine->GetMM().addMeshToBrush(lpBrush, *mesh);
+        *mesh = engine->GetOM().createMesh();
+        engine->GetOM().addMeshToBrush(lpBrush, *mesh);
 
-        XMMATRIX mRotation = XMMatrixIdentity();
-        XMMATRIX mScale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
-        XMMATRIX mTranslation = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
         (*mesh)->mTranslation = XMMatrixTranslationFromVector((*mesh)->position);
-
         (*mesh)->cb.viewMatrix = engine->GetCam().GetCurrentCam()->cb.viewMatrix;
         (*mesh)->cb.projectionMatrix = engine->GetCam().GetCurrentCam()->cb.projectionMatrix;
 
@@ -129,8 +126,8 @@ namespace Engine
     }
 
     inline void CreateSurface(LPSURFACE* surface, MESH* lpMesh){
-        *surface = engine->GetMM().createSurface();
-        engine->GetMM().addSurfaceToMesh(lpMesh, *surface);
+        *surface = engine->GetOM().createSurface();
+        engine->GetOM().addSurfaceToMesh(lpMesh, *surface);
     }
 
     inline void FillBuffer(LPSURFACE surface) {
@@ -146,21 +143,21 @@ namespace Engine
         engine->GetBM().CreateBuffer(surface->indices.data(), sizeof(UINT), surface->size_listIndex, D3D11_BIND_INDEX_BUFFER, &surface->indexBuffer);
     }
     
-    inline void AddVertex(LPSURFACE lpSurface, float x, float y, float z)
+    inline void AddVertex(LPSURFACE surface, float x, float y, float z)
     {
-        Engine::engine->GetBM().AddVertex(lpSurface, x, y, z);
+        surface->AddVertex(x, y, z);
     }
 
-    inline void VertexColor(LPSURFACE lpSurface, unsigned int r, unsigned int g, unsigned int b)
+    inline void VertexColor(LPSURFACE surface, unsigned int r, unsigned int g, unsigned int b)
     {
-        Engine::engine->GetBM().AddColor(lpSurface, float(r / 255.0f), float(g / 255.0f), float(b / 255.0f));
+        surface->VertexColor(float(r / 255.0f), float(g / 255.0f), float(b / 255.0f));
     }
 
-    inline void AddTriangle(LPSURFACE lpSurface, unsigned int a, unsigned int b, unsigned int c)
+    inline void AddTriangle(LPSURFACE surface, unsigned int a, unsigned int b, unsigned int c)
     {
-        Engine::engine->GetBM().AddIndex(lpSurface, a);
-        Engine::engine->GetBM().AddIndex(lpSurface, b);
-        Engine::engine->GetBM().AddIndex(lpSurface, c);
+        surface->AddIndex(a);
+        surface->AddIndex(b);
+        surface->AddIndex(c);
     }
 
     inline int Cls(int r, int g, int b, int a = 255) { return static_cast<int>(engine->Cls(float(r / 255.0f), float(g / 255.0f), float(b / 255.0f), float(a / 255.0f))); }

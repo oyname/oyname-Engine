@@ -44,11 +44,11 @@ HRESULT ShaderManager::CreateShader(SHADER* shader, const std::wstring& vertexSh
     return S_OK;
 }
 
-SHADER* ShaderManager::GetStandardShader() {
+SHADER* ShaderManager::GetShader() {
     return m_standardShader;
 }
 
-void ShaderManager::SetStandardShader(LPSHADER shader)
+void ShaderManager::SetShader(LPSHADER shader)
 {
     m_standardShader = shader;
 }

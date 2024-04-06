@@ -27,6 +27,5 @@ public:
 
     Shader* pShader;
 };
-
 typedef Brush* LPBRUSH;
 typedef Brush BRUSH;

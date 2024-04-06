@@ -63,7 +63,7 @@ namespace gdx {
 		unsigned int GetColorDepth();
 
 		BufferManager& GetBM();
-		ObjectManager&  GetMM();
+		ObjectManager&  GetOM();
 		ShaderManager& GetSM();
 		InputLayoutManager& GetILM();
 		Camera& GetCam();

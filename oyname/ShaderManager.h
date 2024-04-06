@@ -13,8 +13,8 @@ public:
 
     void Init(ID3D11Device* device);
     HRESULT  CreateShader(SHADER* shader, const std::wstring& vertexShaderFile, const std::wstring& pixelShaderFile);
-    LPSHADER GetStandardShader();
-    void SetStandardShader(LPSHADER shader);
+    LPSHADER GetShader();
+    void SetShader(LPSHADER shader);
     void SetShaderFolder(const std::wstring& shaderFolder);
 
 private:

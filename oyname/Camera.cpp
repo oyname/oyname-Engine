@@ -48,7 +48,7 @@ namespace gdx
     void Camera::CreateCamera(LPMESH* camera)
     {
         // Kamera erstellen. Das macht der Objectmanager
-        *camera = m_engine->GetMM().createMesh();
+        *camera = m_engine->GetOM().createMesh();
 
         // Perspektive
         if (m_projMode == PERSPECTIVE_LH)

@@ -105,15 +105,15 @@ namespace gdx
 		// Input-Layout Managers initialisieren
 		m_inputLayoutManager.Init(m_device.GetDevice());
 		// Standardshader erstellen.
-		GetSM().SetStandardShader(m_objectManager.createShader());
+		GetSM().SetShader(m_objectManager.createShader());
 
 		// Standarshader erstellen...
-		hr = GetSM().CreateShader(GetSM().GetStandardShader(), L"vertexshader.cso", L"pixelshader.cso");
+		hr = GetSM().CreateShader(GetSM().GetShader(), L"vertexshader.cso", L"pixelshader.cso");
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
 		// LAYOUT ERSTELLEN
-		hr = GetILM().CreateInputLayout(GetSM().GetStandardShader(), D3DVERTEX_POSITION | D3DVERTEX_COLOR);
+		hr = GetILM().CreateInputLayout(GetSM().GetShader(), D3DVERTEX_POSITION | D3DVERTEX_COLOR);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
@@ -187,7 +187,7 @@ namespace gdx
 		return m_bufferManager;
 	}
 
-	ObjectManager& CGIDX::GetMM() {
+	ObjectManager& CGIDX::GetOM() {
 		return m_objectManager;
 	}
 

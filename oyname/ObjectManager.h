@@ -10,9 +10,7 @@
 #include "Brush.h"
 #include "Shader.h"
 
-
 using namespace DirectX;
-
 
 class RenderManager; // Vorwärtsdeklaration
 
