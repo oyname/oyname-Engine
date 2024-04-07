@@ -9,6 +9,7 @@
 #include "BufferManager.h"
 #include "ShaderManager.h"
 #include "RenderManager.h"
+#include "LightManager.h"
 #include "Camera.h"
 
 namespace gdx {
@@ -36,6 +37,7 @@ namespace gdx {
 		ShaderManager		m_shaderManager;
 		InputLayoutManager	m_inputLayoutManager;
 		BufferManager		m_bufferManager;
+		LightManager		m_lightManager;
 		Camera		        m_camera;
 
 	public:
@@ -65,6 +67,7 @@ namespace gdx {
 		BufferManager& GetBM();
 		ObjectManager&  GetOM();
 		ShaderManager& GetSM();
+		LightManager& GetLM();
 		InputLayoutManager& GetILM();
 		Camera& GetCam();
 		

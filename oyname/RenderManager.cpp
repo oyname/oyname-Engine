@@ -69,6 +69,11 @@ void RenderManager::RenderMesh()
                         m_objectManager.m_device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &surface->colorBuffer, &surface->size_color, &offset);
                         cnt++;
                     }
+                    if (shader->flags & D3DVERTEX_NORMAL)
+                    {
+                        m_objectManager.m_device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &surface->normalBuffer, &surface->size_normal, &offset);
+                        cnt++;
+                    }
                     m_objectManager.m_device->GetDeviceContext()->IASetIndexBuffer(surface->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
                     m_objectManager.m_device->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

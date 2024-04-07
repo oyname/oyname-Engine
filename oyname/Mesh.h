@@ -18,9 +18,11 @@ struct MatrixSet
     DirectX::XMMATRIX viewMatrix;
     DirectX::XMMATRIX projectionMatrix;
     DirectX::XMMATRIX worldMatrix;
+    DirectX::XMFLOAT3 lightDirection;
 };
 
-class Mesh {
+class Mesh 
+{
 public:
     Mesh();
     ~Mesh();
@@ -56,6 +58,9 @@ private:
 };
 
 typedef Mesh* LPMESH;
+typedef Mesh* LPCAMERA;
 typedef Mesh MESH;
+typedef Mesh CAMERA;
+
 
 

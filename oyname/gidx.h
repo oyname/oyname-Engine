@@ -93,22 +93,22 @@ namespace Engine
 
     inline void PositionEntity(LPMESH mesh, float x, float y, float z)
     {
-
+        mesh->PositionEntity(x, y, z);
     }
 
     inline void MoveEntity(LPMESH mesh, float x, float y, float z)
     {
-
+        mesh->MoveEntity(x, y, z);
     }
 
     inline void RotateEntity(LPMESH mesh, float fRotateX, float fRotateY, float fRotateZ)
     {
-
+        mesh->RotateEntity(fRotateX, fRotateY, fRotateZ);
     }
 
     inline void TurnEntity(LPMESH mesh, float fRotateX, float fRotateY, float fRotateZ)
     {
-
+        mesh->TurnEntity(fRotateX, fRotateY, fRotateZ);
     }
 
     inline void CreateCamera(LPMESH* camera)
@@ -135,6 +135,9 @@ namespace Engine
         if (surface->pShader->flags & D3DVERTEX_POSITION) {
             engine->GetBM().CreateBuffer(surface->position.data(), surface->size_vertex, surface->size_listVertices, D3D11_BIND_VERTEX_BUFFER, &surface->positionBuffer);
         }
+        if (surface->pShader->flags & D3DVERTEX_NORMAL) {
+            engine->GetBM().CreateBuffer(surface->normal.data(), surface->size_normal, surface->size_listNormal, D3D11_BIND_VERTEX_BUFFER, &surface->normalBuffer);
+        }
         if (surface->pShader->flags & D3DVERTEX_COLOR) {
             engine->GetBM().CreateBuffer(surface->color.data(), surface->size_color, surface->size_listColor, D3D11_BIND_VERTEX_BUFFER, &surface->colorBuffer);
         }
@@ -146,6 +149,11 @@ namespace Engine
     inline void AddVertex(LPSURFACE surface, float x, float y, float z)
     {
         surface->AddVertex(x, y, z);
+    }
+
+    inline void VertexNormal(LPSURFACE surface, float x, float y, float z)
+    {
+        surface->VertexNormal(x, y, z);
     }
 
     inline void VertexColor(LPSURFACE surface, unsigned int r, unsigned int g, unsigned int b)
@@ -167,5 +175,15 @@ namespace Engine
     inline unsigned int Graphics(unsigned int width, unsigned int height, bool windowed = true) { return static_cast<int>(engine->Graphic(width, height, windowed)); }
 
     inline void RenderWorld() { engine->RenderWorld(); }
+
+    inline void CreateLight(LPLIGHT *light)
+    {
+        *light = engine->GetLM().createLight();
+    }
+
+    inline void PositionEntity(LPLIGHT light, float x, float y, float z)
+    {
+        light->PositionEntity(x, y, z);
+    }
 
 } // End of namespace Engine

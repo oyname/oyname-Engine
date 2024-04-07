@@ -13,6 +13,7 @@ public:
 
 public:
     void AddVertex(float x, float y, float z);
+    void VertexNormal(float x, float y, float z);
     void VertexColor(float r, float g, float b);
     void AddIndex(UINT index);
 
@@ -26,10 +27,15 @@ public:
     unsigned int size_color;
     unsigned int size_listColor;
 
+    std::vector<DirectX::XMFLOAT3> normal;
+    unsigned int size_normal;
+    unsigned int size_listNormal;
+
     std::vector<unsigned int> indices;
     unsigned int size_listIndex;
 
     ID3D11Buffer* positionBuffer;
+    ID3D11Buffer* normalBuffer;
     ID3D11Buffer* colorBuffer;
     ID3D11Buffer* indexBuffer;
 

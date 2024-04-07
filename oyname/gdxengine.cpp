@@ -113,7 +113,7 @@ namespace gdx
 			return hr;
 		}
 		// LAYOUT ERSTELLEN
-		hr = GetILM().CreateInputLayout(GetSM().GetShader(), D3DVERTEX_POSITION | D3DVERTEX_COLOR);
+		hr = GetILM().CreateInputLayout(GetSM().GetShader(), D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
@@ -193,6 +193,10 @@ namespace gdx
 
 	ShaderManager& CGIDX::GetSM() {
 		return m_shaderManager;
+	}
+
+	LightManager& CGIDX::GetLM() {
+		return m_lightManager;
 	}
 
 	InputLayoutManager& CGIDX::GetILM() {

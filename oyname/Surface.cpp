@@ -33,6 +33,13 @@ void Surface::VertexColor(float r, float g, float b)
     size_color = sizeof(DirectX::XMFLOAT4);
 }
 
+void Surface::VertexNormal(float x, float y, float z)
+{
+    normal.push_back(DirectX::XMFLOAT3(x, y, z));
+    size_listNormal = (unsigned int)normal.size();
+    size_normal = sizeof(DirectX::XMFLOAT3);
+}
+
 void Surface::AddIndex(UINT index)
 {
     indices.push_back(index);

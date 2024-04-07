@@ -52,6 +52,9 @@
     <Filter Include="03_Engine\Camera">
       <UniqueIdentifier>{0074fd9c-dac5-4849-b987-005c955868ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03_Engine\Light">
+      <UniqueIdentifier>{b4d0e63a-c1ca-4614-80c3-7e0b0d20ed5b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BufferManager.cpp">
@@ -111,6 +114,12 @@
     <ClCompile Include="Shader.cpp">
       <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="LightManager.cpp">
+      <Filter>03_Engine\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gidx.h">
@@ -162,6 +171,12 @@
       <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="LightManager.h">
+      <Filter>03_Engine\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
       <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
     </ClInclude>
   </ItemGroup>
