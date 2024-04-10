@@ -45,3 +45,35 @@ void Surface::AddIndex(UINT index)
     indices.push_back(index);
     size_listIndex = (unsigned int)indices.size();
 }
+
+void Surface::Draw(const gdx::CDevice* device,const DWORD flagsVertex)
+{
+    unsigned int offset = 0;
+    unsigned int cnt = 0;
+
+    if (flagsVertex & D3DVERTEX_POSITION) {
+        device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &positionBuffer,&size_vertex, &offset);
+        cnt++;
+    }
+    if (flagsVertex & D3DVERTEX_COLOR) {
+        device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &colorBuffer,   &size_color, &offset);
+        cnt++;
+    }
+    if (flagsVertex & D3DVERTEX_NORMAL) {
+        device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &normalBuffer,  &size_normal, &offset);
+        cnt++;
+    }
+    if (flagsVertex & D3DVERTEX_TEX1) {
+        device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &normalBuffer,  &size_normal, &offset);
+        cnt++;
+    }
+    if (flagsVertex & D3DVERTEX_TEX2) {
+        device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &normalBuffer,  &size_normal, &offset);
+        cnt++;
+    }
+
+    device->GetDeviceContext()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+    device->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    device->GetDeviceContext()->DrawIndexed(size_listIndex, 0, 0);
+}

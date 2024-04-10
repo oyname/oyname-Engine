@@ -1,9 +1,10 @@
 #include "gdxengine.h"
 #include "RenderManager.h"
 
-RenderManager::RenderManager(ObjectManager& objectManager) : m_objectManager(objectManager), m_currentCam(nullptr)
+RenderManager::RenderManager(ObjectManager& objectManager, LightManager& lightManager ) : m_objectManager(objectManager), m_lightManager(lightManager)
 {
-
+    m_currentCam = nullptr;
+    m_directionLight = nullptr;
 }
 
 void RenderManager::RenderLoop()
@@ -16,70 +17,70 @@ void RenderManager::SetCamera(LPMESH camera)
     m_currentCam = camera;
 }
 
+void RenderManager::SetDirectionalLight(LPLIGHT dirLight)
+{
+    m_directionLight = dirLight;
+}
+
 void RenderManager::RenderMesh()
 {
     HRESULT hr = S_OK;
-    
+
     m_objectManager.m_device->ClearRenderTargetDepthStencil();
+
+    m_directionLight->UpdateDirectionalLight(m_objectManager.m_device);
 
     // Geht alle Shader durch und rendert mit jedem Shader alle Objekte
     for (const auto& shader : m_objectManager.m_shaders)
     {
-        shader->isActive = true;
-        m_objectManager.m_device->GetDeviceContext()->VSSetShader(shader->vertexShader, nullptr, 0);
-        m_objectManager.m_device->GetDeviceContext()->PSSetShader(shader->pixelShader, nullptr, 0);
-        m_objectManager.m_device->GetDeviceContext()->IASetInputLayout(shader->inputlayout);
+        Debug::Log("SHADER: ", shader);
+
+        shader->UpdateShader(m_objectManager.m_device);
 
         for (const auto& brush : *(shader->brushes))
         {
+            Debug::Log("   BRUSH: ", brush);
+            // Textur und Material
             for (const auto& mesh : *(brush->meshes))
             {
-                mesh->cb.viewMatrix = m_currentCam->cb.viewMatrix;
-                mesh->cb.projectionMatrix = m_currentCam->cb.projectionMatrix;
-                mesh->cb.worldMatrix = mesh->mRotate * mesh->mTranslation;
-                
-                // Konstanten in den Constant Buffer schreiben
-                D3D11_MAPPED_SUBRESOURCE mappedResource;
-                hr = m_objectManager.m_device->GetDeviceContext()->Map(mesh->constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-                
-                if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
-                    return;
-                }
-                else
-                {
-                    memcpy(mappedResource.pData, &mesh->cb, sizeof(MatrixSet));
-                    m_objectManager.m_device->GetDeviceContext()->Unmap(mesh->constantBuffer, 0);
-                }
+                Debug::Log("      MESH: ", mesh);
 
-                m_objectManager.m_device->GetDeviceContext()->VSSetConstantBuffers(0, 1, &mesh->constantBuffer);
-                m_objectManager.m_device->GetDeviceContext()->PSSetConstantBuffers(0, 1, &mesh->constantBuffer);
+                // Konstanten in den Constant Buffer schreiben und setzen
+                mesh->UpdateConstantBuffer(m_objectManager.m_device, 
+                                           m_currentCam->cb.viewMatrix, 
+                                           m_currentCam->cb.projectionMatrix);
 
                 for (const auto& surface : *(mesh->surfaces))
                 {
-                    unsigned int offset = 0;
-                    unsigned int cnt = 0;
+                    Debug::Log("         SURFACE: ", surface);
 
-                    if (shader->flags & D3DVERTEX_POSITION)
-                    {
-                        m_objectManager.m_device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &surface->positionBuffer, &surface->size_vertex, &offset);
-                        cnt++;
-                    }
-                    if (shader->flags & D3DVERTEX_COLOR)
-                    {
-                        m_objectManager.m_device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &surface->colorBuffer, &surface->size_color, &offset);
-                        cnt++;
-                    }
-                    if (shader->flags & D3DVERTEX_NORMAL)
-                    {
-                        m_objectManager.m_device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &surface->normalBuffer, &surface->size_normal, &offset);
-                        cnt++;
-                    }
-                    m_objectManager.m_device->GetDeviceContext()->IASetIndexBuffer(surface->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-                    m_objectManager.m_device->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-                    m_objectManager.m_device->GetDeviceContext()->DrawIndexed(surface->size_listIndex, 0, 0);
+                    // Vertices rendern
+                    surface->Draw(m_objectManager.m_device, shader->flagsVertex);
                 }
             }
         }
     }
+}
+
+// Funktion zum Aktualisieren des Richtungslichts und Kopieren der Daten in den Shader-Buffer
+void RenderManager::UpdateDirectionalLight() 
+{
+    HRESULT hr = S_OK;
+
+    // Aktualisieren der Position des Richtungslichts
+    m_directionLight->SetPosition(m_directionLight->position);
+
+    // Kopieren der Daten in den lightBuffer
+    D3D11_MAPPED_SUBRESOURCE mappedResource;
+    hr = m_objectManager.m_device->GetDeviceContext()->Map(m_directionLight->lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+        return;
+    }
+
+    memcpy(mappedResource.pData, &m_directionLight->cbLight, sizeof(LightSet));
+    m_objectManager.m_device->GetDeviceContext()->Unmap(m_directionLight->lightBuffer, 0);
+
+    // Setzen des lightBuffers im Shader
+    m_objectManager.m_device->GetDeviceContext()->VSSetConstantBuffers(1, 1, &m_lightManager.m_lights[0]->lightBuffer);
+    m_objectManager.m_device->GetDeviceContext()->PSSetConstantBuffers(1, 1, &m_lightManager.m_lights[0]->lightBuffer);
 }

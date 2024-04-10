@@ -54,22 +54,26 @@ namespace Engine
 
     //
     //
-    inline HRESULT CreateShader(LPSHADER* shader, const std::wstring& vertexShaderFile, const std::wstring& pixelShaderFile)
+    inline HRESULT CreateShader(LPSHADER* shader, const std::wstring& vertexShaderFile, const std::wstring& pixelShaderFile, const std::string& entryPoint,DWORD flags)
     {   
-         HRESULT result = S_OK;
+        // Diese Funktion wurde nicht getestet!
+        HRESULT result = S_OK;
+       
+       *shader = engine->GetOM().createShader();
+       
+       // Shader erstellen und laden
+       engine->GetSM().CreateShader(*shader, vertexShaderFile, pixelShaderFile, entryPoint);
+       if (FAILED(result)) {
+           return result;
+       }       
+       
+       // LAYOUT ERSTELLEN
+       result = Engine::engine->GetILM().CreateInputLayoutVertex(&(*shader)->inputlayoutVertex, *shader, (*shader)->flagsVertex, flags);
+       if (FAILED(result)) {
+           return result;
+       }      
 
-        *shader = engine->GetOM().createShader();
-        
-        // Shader erstellen und laden
-        engine->GetSM().CreateShader(*shader, vertexShaderFile, pixelShaderFile);
-        if (FAILED(result)) {
-            return result;
-        }
-        // LAYOUT ERSTELLEN
-        result = Engine::engine->GetILM().CreateInputLayout(*shader, D3DVERTEX_POSITION);
-        if (FAILED(result)) {
-            return result;
-        }
+
     }
 
     inline void CreateBrush(LPBRUSH* brush, SHADER* shader = nullptr) {
@@ -88,7 +92,23 @@ namespace Engine
         (*mesh)->cb.viewMatrix = engine->GetCam().GetCurrentCam()->cb.viewMatrix;
         (*mesh)->cb.projectionMatrix = engine->GetCam().GetCurrentCam()->cb.projectionMatrix;
 
-        engine->GetBM().CreateBuffer(&(*mesh)->cb, sizeof(MatrixSet), 1, D3D11_BIND_CONSTANT_BUFFER, &(*mesh)->constantBuffer);
+        HRESULT hr = engine->GetBM().CreateBuffer(&((*mesh)->cb), sizeof(MatrixSet), 1, D3D11_BIND_CONSTANT_BUFFER, &((*mesh)->constantBuffer));
+        if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+
+            return;
+        }
+    }
+
+    inline void CreateLight(LPLIGHT* light)
+    {
+        *light = engine->GetLM().createLight();
+        engine->SetDirectionalLight(*light);
+
+        HRESULT hr = engine->GetBM().CreateBuffer(&((*light)->cbLight), sizeof(LightSet), 1, D3D11_BIND_CONSTANT_BUFFER, &((*light)->lightBuffer));
+        if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+        
+            return;
+        }
     }
 
     inline void PositionEntity(LPMESH mesh, float x, float y, float z)
@@ -130,22 +150,27 @@ namespace Engine
         engine->GetOM().addSurfaceToMesh(lpMesh, *surface);
     }
 
+    inline void FillLightBuffer()
+    {
+
+    }
+
     inline void FillBuffer(LPSURFACE surface) {
         // Mit Vertexdaten befüllen
-        if (surface->pShader->flags & D3DVERTEX_POSITION) {
+        if (surface->pShader->flagsVertex & D3DVERTEX_POSITION) {
             engine->GetBM().CreateBuffer(surface->position.data(), surface->size_vertex, surface->size_listVertices, D3D11_BIND_VERTEX_BUFFER, &surface->positionBuffer);
         }
-        if (surface->pShader->flags & D3DVERTEX_NORMAL) {
+        if (surface->pShader->flagsVertex & D3DVERTEX_NORMAL) {
             engine->GetBM().CreateBuffer(surface->normal.data(), surface->size_normal, surface->size_listNormal, D3D11_BIND_VERTEX_BUFFER, &surface->normalBuffer);
         }
-        if (surface->pShader->flags & D3DVERTEX_COLOR) {
+        if (surface->pShader->flagsVertex & D3DVERTEX_COLOR) {
             engine->GetBM().CreateBuffer(surface->color.data(), surface->size_color, surface->size_listColor, D3D11_BIND_VERTEX_BUFFER, &surface->colorBuffer);
         }
 
         // Indexbuffer befüllen
         engine->GetBM().CreateBuffer(surface->indices.data(), sizeof(UINT), surface->size_listIndex, D3D11_BIND_INDEX_BUFFER, &surface->indexBuffer);
     }
-    
+
     inline void AddVertex(LPSURFACE surface, float x, float y, float z)
     {
         surface->AddVertex(x, y, z);
@@ -175,11 +200,6 @@ namespace Engine
     inline unsigned int Graphics(unsigned int width, unsigned int height, bool windowed = true) { return static_cast<int>(engine->Graphic(width, height, windowed)); }
 
     inline void RenderWorld() { engine->RenderWorld(); }
-
-    inline void CreateLight(LPLIGHT *light)
-    {
-        *light = engine->GetLM().createLight();
-    }
 
     inline void PositionEntity(LPLIGHT light, float x, float y, float z)
     {

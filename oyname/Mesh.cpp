@@ -15,6 +15,10 @@ Mesh::Mesh() :
     cb.projectionMatrix = DirectX::XMMatrixIdentity();
     cb.viewMatrix = DirectX::XMMatrixIdentity();
     cb.worldMatrix = DirectX::XMMatrixIdentity();
+
+    mRotate = DirectX::XMMatrixRotationAxis(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMConvertToRadians(0.0f));
+    mTranslation = DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+    mScaling = DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f);
 }
 
 Mesh::~Mesh() {
@@ -85,6 +89,32 @@ void Mesh::MoveEntity(float x, float y, float z) {
     mTranslation = DirectX::XMMatrixTranslationFromVector(translation) * mTranslation;
 }
 
+void Mesh::ScaleEntity(float x, float y, float z)
+{
+    mScaling = DirectX::XMMatrixScaling(x, y, z); 
+}
+
 void Mesh::Update() {
     cb.viewMatrix = DirectX::XMMatrixLookToLH(position, lookAt, up);
+}
+
+void Mesh::UpdateConstantBuffer(const gdx::CDevice* device, const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj)
+{
+    HRESULT hr = S_OK;
+    D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+    cb.viewMatrix = view;
+    cb.projectionMatrix = proj;
+    cb.worldMatrix = mScaling * mRotate * mTranslation;
+
+    hr = device->GetDeviceContext()->Map(constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+        return;
+    }
+
+    memcpy(mappedResource.pData, &cb, sizeof(MatrixSet));
+    device->GetDeviceContext()->Unmap(constantBuffer, 0);
+
+    device->GetDeviceContext()->VSSetConstantBuffers(0, 1, &constantBuffer);
+    device->GetDeviceContext()->PSSetConstantBuffers(0, 1, &constantBuffer);
 }

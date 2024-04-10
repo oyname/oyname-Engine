@@ -9,6 +9,7 @@
 #include "Mesh.h"
 #include "Brush.h"
 #include "Shader.h"
+#include "Light.h"
 
 using namespace DirectX;
 
@@ -24,7 +25,7 @@ public:
 
     void Init(gdx::CDevice* device);
 
-    SURFACE* createSurface();
+    SURFACE* createSurface(); 
     MESH* createMesh();
     BRUSH* createBrush();
     SHADER* createShader();

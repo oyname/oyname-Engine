@@ -76,5 +76,6 @@ namespace gdx {
 		void SetOutput(unsigned int index);
 		void SetFormat(DXGI_FORMAT format);
 		void SetCamera(LPMESH mesh);
+		void SetDirectionalLight(LPLIGHT dirLight);
 	};
 }

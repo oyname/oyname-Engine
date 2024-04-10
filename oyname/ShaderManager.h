@@ -12,7 +12,8 @@ public:
     ShaderManager();
 
     void Init(ID3D11Device* device);
-    HRESULT  CreateShader(SHADER* shader, const std::wstring& vertexShaderFile, const std::wstring& pixelShaderFile);
+    HRESULT CreateShader(SHADER* shader, const std::wstring& vertexShaderFile, const std::wstring& pixelShaderFile, const std::string& entryPoint);
+    HRESULT CompileShaderFromFile(const std::wstring& filename, const std::string& entryPoint, const std::string& shaderModel, ID3DBlob** blob);
     LPSHADER GetShader();
     void SetShader(LPSHADER shader);
     void SetShaderFolder(const std::wstring& shaderFolder);

@@ -11,7 +11,7 @@ private:
     ID3D11Device* m_device;
 
 public:
-    BufferManager();
+    BufferManager(); 
         
     void Init(ID3D11Device* device);
 

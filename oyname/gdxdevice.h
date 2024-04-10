@@ -102,7 +102,7 @@ namespace gdx
         ID3D11Device* GetDevice(){
             return m_pd3dDevice;}
 
-        ID3D11DeviceContext* GetDeviceContext(){
+        ID3D11DeviceContext* GetDeviceContext() const {
             return m_pContext;}
 
         IDXGISwapChain* GetSwapChain(){

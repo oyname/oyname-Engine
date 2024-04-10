@@ -2,8 +2,8 @@
 #include <list>
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include "Surface.h"   
 #include "gdxutil.h"
+#include "Surface.h"   
 
 class Shader;
 
@@ -13,12 +13,12 @@ enum Space
     World
 };
 
+__declspec(align(16))
 struct MatrixSet
 {
     DirectX::XMMATRIX viewMatrix;
     DirectX::XMMATRIX projectionMatrix;
     DirectX::XMMATRIX worldMatrix;
-    DirectX::XMFLOAT3 lightDirection;
 };
 
 class Mesh 
@@ -31,6 +31,9 @@ public:
     void RotateEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local);
     void PositionEntity(float x, float y, float z);
     void MoveEntity(float x, float y, float z);
+    void ScaleEntity(float x, float y, float z);
+    
+    void UpdateConstantBuffer(const gdx::CDevice* device, const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj);
     void Update();
 
     bool isActive;
@@ -51,6 +54,16 @@ public:
     ID3D11Buffer* constantBuffer;
 
     Shader* pShader;
+
+    void* operator new(size_t size) {
+        // Ausrichtung auf 16 Bytes 
+        return _aligned_malloc(size, 16);
+    }
+
+    void operator delete(void* p) noexcept {
+        // richtigen Speicherdeallokator
+        _aligned_free(p);
+    }
 
 private:
     DirectX::XMVECTOR defaultLookAt = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);

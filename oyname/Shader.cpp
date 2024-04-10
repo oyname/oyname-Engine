@@ -2,10 +2,10 @@
 
 Shader::Shader() :
     isActive(false),
-    flags(0),
+    flagsVertex(0),
     bytecodeVS(nullptr),
     sizeVS(0),
-    inputlayout(nullptr),
+    inputlayoutVertex(nullptr),
     vertexShader(nullptr),
     pixelShader(nullptr),
     blobVS(nullptr),
@@ -16,9 +16,19 @@ Shader::Shader() :
 }
 
 Shader::~Shader() {
-    Memory::SafeRelease(inputlayout);
+    Memory::SafeRelease(inputlayoutVertex);
     Memory::SafeRelease(vertexShader);
     Memory::SafeRelease(pixelShader);
     Memory::SafeRelease(blobVS);
     Memory::SafeRelease(blobPS);
+}
+
+void Shader::UpdateShader(const gdx::CDevice* device)
+{
+    // InputLayout für Vertices setzen
+    device->GetDeviceContext()->IASetInputLayout(inputlayoutVertex);
+
+    // Vertex und Pixelshader setzen
+    device->GetDeviceContext()->VSSetShader(vertexShader, nullptr, 0);
+    device->GetDeviceContext()->PSSetShader(pixelShader, nullptr, 0);
 }

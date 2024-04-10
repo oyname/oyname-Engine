@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include "gdxutil.h" 
+#include "gdxdevice.h"
 
 class Shader;
 
@@ -16,6 +17,8 @@ public:
     void VertexNormal(float x, float y, float z);
     void VertexColor(float r, float g, float b);
     void AddIndex(UINT index);
+
+    void Draw(const gdx::CDevice* m_device, const DWORD flags);
 
     bool isActive;
 
@@ -40,6 +43,16 @@ public:
     ID3D11Buffer* indexBuffer;
 
     Shader* pShader;
+
+    void* operator new(size_t size) {
+        // Ausrichtung auf 16 Bytes 
+        return _aligned_malloc(size, 16); 
+    }
+
+    void operator delete(void* p) noexcept {
+        // richtigen Speicherdeallokator
+        _aligned_free(p);
+    }
 };
 
 typedef Surface* LPSURFACE;

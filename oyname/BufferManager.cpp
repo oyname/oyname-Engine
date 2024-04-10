@@ -15,7 +15,7 @@ void BufferManager::Init(ID3D11Device* device)
 HRESULT BufferManager::CreateBuffer(const void* data, UINT size, UINT count, D3D11_BIND_FLAG bindFlags, ID3D11Buffer** buffer)
 {
     // Buffer Beschreibung
-    D3D11_BUFFER_DESC bufferDesc = {};
+    D3D11_BUFFER_DESC bufferDesc;
     ZeroMemory(&bufferDesc, sizeof(bufferDesc));
     bufferDesc.Usage = (bindFlags & D3D11_BIND_CONSTANT_BUFFER) ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT;
     bufferDesc.ByteWidth = size * count;
@@ -24,9 +24,11 @@ HRESULT BufferManager::CreateBuffer(const void* data, UINT size, UINT count, D3D
     bufferDesc.MiscFlags = 0;
 
     // Initialisierungsdaten
-    D3D11_SUBRESOURCE_DATA initData = {};
+    D3D11_SUBRESOURCE_DATA initData;
     ZeroMemory(&initData, sizeof(initData));
     initData.pSysMem = data;
+    initData.SysMemPitch = 0;
+    initData.SysMemSlicePitch = 0;
 
     // Buffer erstellen
     return m_device->CreateBuffer(&bufferDesc, &initData, buffer);
