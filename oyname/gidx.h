@@ -66,7 +66,9 @@ namespace Engine
        result = Engine::engine->GetILM().CreateInputLayoutVertex(&(*shader)->inputlayoutVertex, *shader, (*shader)->flagsVertex, flags);
        if (FAILED(result)) {
            return result;
-       }      
+       } 
+
+       return result;
     }
 
     inline void CreateBrush(LPBRUSH* brush, SHADER* shader = nullptr) {
