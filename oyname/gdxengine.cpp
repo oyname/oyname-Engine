@@ -4,7 +4,8 @@ namespace gdx
 {
 	CGIDX::CGIDX(HWND hwnd, HINSTANCE hinst, unsigned int bpp, unsigned int screenX, unsigned int screenY, int* result) :
 	m_objectManager(),
-	m_renderManager(m_objectManager)
+	m_lightManager(),
+	m_renderManager(m_objectManager, m_lightManager)
 	{
 		m_colorDepth = bpp;
 		m_screenWidth = screenX;
@@ -92,28 +93,40 @@ namespace gdx
 
 		// Objekt zum organisieren des Renders
 		
-		// Camere 
+		// 1. Objekte initialisieren
+		
+		// Camera 
 		m_camera.Init(this);
 		m_camera.SetViewport(0.0f, 0.0f, (float)width, (float)height, 0.0f, 1.0f);
 		m_device.CreateView(1, m_camera.GetViewPort());
+		
 		// Objektmanager
 		m_objectManager.Init(&m_device);
+		
 		// Buffer-Manager initialisieren
 		m_bufferManager.Init(m_device.GetDevice());
+		
 		// Shader-Manager initialisieren
 		m_shaderManager.Init(m_device.GetDevice());
+		
 		// Input-Layout Managers initialisieren
 		m_inputLayoutManager.Init(m_device.GetDevice());
+		
+		// 2. Standardzeug erstellen
+		
 		// Standardshader erstellen.
-		GetSM().SetStandardShader(m_objectManager.createShader());
-
-		// Standarshader erstellen...
-		hr = GetSM().CreateShader(GetSM().GetStandardShader(), L"vertexshader.cso", L"pixelshader.cso");
+		GetSM().SetShader(m_objectManager.createShader());
+		// ...und laden
+		hr = GetSM().CreateShader(GetSM().GetShader(), L"vertexshader.hlsl", L"pixelshader.hlsl","main");
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
-		// LAYOUT ERSTELLEN
-		hr = GetILM().CreateInputLayout(GetSM().GetStandardShader(), D3DVERTEX_POSITION | D3DVERTEX_COLOR);
+
+		// Layout für die Vertices erstellen
+		hr = GetILM().CreateInputLayoutVertex(&GetSM().GetShader()->inputlayoutVertex, // Speichert das Layout
+											   GetSM().GetShader(),                    // Das Shader-Objekt
+			                                   GetSM().GetShader()->flagsVertex,       // Speichert das Flag
+			                                   D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
@@ -187,12 +200,16 @@ namespace gdx
 		return m_bufferManager;
 	}
 
-	ObjectManager& CGIDX::GetMM() {
+	ObjectManager& CGIDX::GetOM() {
 		return m_objectManager;
 	}
 
 	ShaderManager& CGIDX::GetSM() {
 		return m_shaderManager;
+	}
+
+	LightManager& CGIDX::GetLM() {
+		return m_lightManager;
 	}
 
 	InputLayoutManager& CGIDX::GetILM() {
@@ -217,6 +234,11 @@ namespace gdx
 	{
 		GetCam().SetCamera(mesh);
 		m_renderManager.SetCamera(mesh);
+	}
+
+	void CGIDX::SetDirectionalLight(LPLIGHT dirLight)
+	{
+		m_renderManager.SetDirectionalLight(dirLight);
 	}
 
 	void CGIDX::SetFormat(DXGI_FORMAT bufferFormat)

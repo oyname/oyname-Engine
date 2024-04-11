@@ -9,7 +9,7 @@ void InputLayoutManager::Init(ID3D11Device* device)
     m_device = device;
 }
 
-HRESULT InputLayoutManager::CreateInputLayout(SHADER* shader, DWORD flags) 
+HRESULT InputLayoutManager::CreateInputLayoutVertex(ID3D11InputLayout** layout, SHADER* shader, DWORD & saveFlags, DWORD flags)
 {
     std::vector<D3D11_INPUT_ELEMENT_DESC> layoutElements;
 
@@ -19,7 +19,7 @@ HRESULT InputLayoutManager::CreateInputLayout(SHADER* shader, DWORD flags)
     unsigned int cnt = 0;
 
     // Einstellung speichern für spätere Verwendung
-    shader->flags = flags;
+    saveFlags = flags;
 
     if (flags & D3DVERTEX_POSITION) {
         layoutElements.push_back({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, currentOffset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
@@ -40,7 +40,7 @@ HRESULT InputLayoutManager::CreateInputLayout(SHADER* shader, DWORD flags)
     }
     
     if (flags & D3DVERTEX_TEX1) {
-        layoutElements.push_back({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, cnt, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+        layoutElements.push_back({ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, cnt, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 });
         currentOffset += sizeof(DirectX::XMFLOAT2); 
         cnt++;
     }
@@ -54,7 +54,7 @@ HRESULT InputLayoutManager::CreateInputLayout(SHADER* shader, DWORD flags)
     void* bytecode = shader->blobVS->GetBufferPointer();
     unsigned int size = (unsigned int)shader->blobVS->GetBufferSize();
 
-    HRESULT hr = m_device->CreateInputLayout(layoutElements.data(), (unsigned int)layoutElements.size(), bytecode, size, &shader->inputlayout);
+    HRESULT hr = m_device->CreateInputLayout(layoutElements.data(), (unsigned int)layoutElements.size(), bytecode, size, layout);
     if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 
         return hr;

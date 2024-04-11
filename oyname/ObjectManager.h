@@ -9,10 +9,9 @@
 #include "Mesh.h"
 #include "Brush.h"
 #include "Shader.h"
-
+#include "Light.h"
 
 using namespace DirectX;
-
 
 class RenderManager; // Vorwärtsdeklaration
 
@@ -26,7 +25,7 @@ public:
 
     void Init(gdx::CDevice* device);
 
-    SURFACE* createSurface();
+    SURFACE* createSurface(); 
     MESH* createMesh();
     BRUSH* createBrush();
     SHADER* createShader();

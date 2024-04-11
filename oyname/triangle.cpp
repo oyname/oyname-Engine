@@ -2,107 +2,146 @@
 
 using namespace DirectX;
 
+LPMESH mesh3;
+
+// Funktion, um das Objekt um einen Punkt im Kreis zu bewegen
+void MoveObjectInCircle(float centerX, float centerZ, float radius, float angle);
+
 int main()
 {
     Engine::Graphics(1024, 768);
 
-    LPMESH camera;
+    LPCAMERA camera;
     Engine::CreateCamera(&camera);
+
+    LPSHADER shader2;
+    Engine::CreateShader(&shader2, L"vertexshader.hlsl", L"pixelshader.hlsl", "main2", D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL);
 
     // Brush erstellen / Jedes Brush ist nach dem erstellen ein Child vom Standard-Shader
     LPBRUSH brush;
     Engine::CreateBrush(&brush);
 
+    LPBRUSH brush2;
+    Engine::CreateBrush(&brush2, shader2);
+
     // Vertexdaten werden hier gespeichert
     LPMESH mesh;
-    Engine::CreateMesh(&mesh, brush);
+    Engine::CreateMesh(&mesh, brush2);
 
     LPMESH mesh2;
     Engine::CreateMesh(&mesh2, brush);
 
-    LPMESH mesh3;
+    //LPMESH mesh3;
     Engine::CreateMesh(&mesh3, brush);
+
+    LPMESH lightMesh;
+    Engine::CreateMesh(&lightMesh, brush);
 
     // Vertexdaten werden hier gespeichert
     LPSURFACE wuerfel;
     Engine::CreateSurface(&wuerfel, mesh);
+    Engine::engine->GetOM().addSurfaceToMesh(mesh2, wuerfel);
+    Engine::engine->GetOM().addSurfaceToMesh(mesh3, wuerfel);
+    Engine::engine->GetOM().addSurfaceToMesh(lightMesh, wuerfel);
 
-    LPSURFACE pyramide;
-    Engine::CreateSurface(&pyramide, mesh3);
+    LPLIGHT light;
+    Engine::CreateLight(&light);
 
-    Engine::engine->GetMM().addSurfaceToMesh(mesh2, wuerfel);
+    // Definition der Eckpunkte für jede Seite des Würfels
+    Engine::AddVertex(wuerfel, -1.0f, -1.0f, -1.0f); Engine::VertexNormal(wuerfel, 0.0f, 0.0f, -1.0f);  Engine::VertexColor(wuerfel, 255, 128, 64);
+    Engine::AddVertex(wuerfel, -1.0f, 1.0f, -1.0f);  Engine::VertexNormal(wuerfel, 0.0f, 0.0f, -1.0f);  Engine::VertexColor(wuerfel, 255, 128, 64);
+    Engine::AddVertex(wuerfel, 1.0f, -1.0f, -1.0f);  Engine::VertexNormal(wuerfel, 0.0f, 0.0f, -1.0f);  Engine::VertexColor(wuerfel, 255, 128, 64);
+    Engine::AddVertex(wuerfel, 1.0f, 1.0f, -1.0f);   Engine::VertexNormal(wuerfel, 0.0f, 0.0f, -1.0f);  Engine::VertexColor(wuerfel, 255, 128, 64);
 
-    Engine::AddVertex(wuerfel, -1.0f, -1.0f, 1.0f); Engine::VertexColor(wuerfel, 0  , 255, 0);
-    Engine::AddVertex(wuerfel, -1.0f,  1.0f, 1.0f); Engine::VertexColor(wuerfel, 0  ,   0, 255);
-    Engine::AddVertex(wuerfel,  1.0f, -1.0f, 1.0f); Engine::VertexColor(wuerfel, 255,   0, 0);
-    Engine::AddVertex(wuerfel,  1.0f,  1.0f, 1.0f); Engine::VertexColor(wuerfel, 255, 255, 0);
+    Engine::AddVertex(wuerfel, -1.0f, -1.0f, 1.0f);  Engine::VertexNormal(wuerfel, 0.0f, 0.0f, 1.0f); Engine::VertexColor(wuerfel, 0, 255, 0);
+    Engine::AddVertex(wuerfel, -1.0f, 1.0f, 1.0f);   Engine::VertexNormal(wuerfel, 0.0f, 0.0f, 1.0f); Engine::VertexColor(wuerfel, 0, 255, 0);
+    Engine::AddVertex(wuerfel, 1.0f, -1.0f, 1.0f);   Engine::VertexNormal(wuerfel, 0.0f, 0.0f, 1.0f); Engine::VertexColor(wuerfel, 0, 255, 0);
+    Engine::AddVertex(wuerfel, 1.0f, 1.0f, 1.0f);    Engine::VertexNormal(wuerfel, 0.0f, 0.0f, 1.0f); Engine::VertexColor(wuerfel, 0, 255, 0);
 
-    Engine::AddVertex(wuerfel, -1.0f, -1.0f, -1.0f); Engine::VertexColor(wuerfel, 0, 255, 0);
-    Engine::AddVertex(wuerfel, -1.0f, 1.0f,  -1.0f); Engine::VertexColor(wuerfel, 0, 0, 255);
-    Engine::AddVertex(wuerfel,  1.0f, -1.0f, -1.0f); Engine::VertexColor(wuerfel, 255, 0, 0);
-    Engine::AddVertex(wuerfel,  1.0f, 1.0f,  -1.0f); Engine::VertexColor(wuerfel, 255, 255, 0);
+    Engine::AddVertex(wuerfel, -1.0f, -1.0f, -1.0f); Engine::VertexNormal(wuerfel, -1.0f, 0.0f, 0.0f); Engine::VertexColor(wuerfel, 32, 255, 128);
+    Engine::AddVertex(wuerfel, -1.0f, -1.0f, 1.0f);  Engine::VertexNormal(wuerfel, -1.0f, 0.0f, 0.0f); Engine::VertexColor(wuerfel, 32, 255, 128);
+    Engine::AddVertex(wuerfel, -1.0f, 1.0f, -1.0f);  Engine::VertexNormal(wuerfel, -1.0f, 0.0f, 0.0f); Engine::VertexColor(wuerfel, 32, 255, 128);
+    Engine::AddVertex(wuerfel, -1.0f, 1.0f, 1.0f);   Engine::VertexNormal(wuerfel, -1.0f, 0.0f, 0.0f); Engine::VertexColor(wuerfel, 32, 255, 128);
 
-    Engine::AddTriangle(wuerfel, 2, 1, 0);// Seite A
-    Engine::AddTriangle(wuerfel, 2, 3, 1);
+    Engine::AddVertex(wuerfel, 1.0f, -1.0f, -1.0f);  Engine::VertexNormal(wuerfel, 1.0f, 0.0f, 0.0f);  Engine::VertexColor(wuerfel, 255, 0, 64);
+    Engine::AddVertex(wuerfel, 1.0f, -1.0f, 1.0f);   Engine::VertexNormal(wuerfel, 1.0f, 0.0f, 0.0f);  Engine::VertexColor(wuerfel, 255, 0, 64);
+    Engine::AddVertex(wuerfel, 1.0f, 1.0f, -1.0f);   Engine::VertexNormal(wuerfel, 1.0f, 0.0f, 0.0f);  Engine::VertexColor(wuerfel, 255, 0, 64);
+    Engine::AddVertex(wuerfel, 1.0f, 1.0f, 1.0f);    Engine::VertexNormal(wuerfel, 1.0f, 0.0f, 0.0f);  Engine::VertexColor(wuerfel, 255, 0, 64);
 
-    Engine::AddTriangle(wuerfel, 4, 5, 6);// Seite B 
-    Engine::AddTriangle(wuerfel, 6, 5, 7);
+    Engine::AddVertex(wuerfel, -1.0f, -1.0f, -1.0f); Engine::VertexNormal(wuerfel, 0.0f, -1.0f, 0.0f); Engine::VertexColor(wuerfel, 255, 200, 0);
+    Engine::AddVertex(wuerfel, 1.0f, -1.0f, -1.0f);  Engine::VertexNormal(wuerfel, 0.0f, -1.0f, 0.0f); Engine::VertexColor(wuerfel, 255, 200, 0);
+    Engine::AddVertex(wuerfel, -1.0f, -1.0f, 1.0f);  Engine::VertexNormal(wuerfel, 0.0f, -1.0f, 0.0f); Engine::VertexColor(wuerfel, 255, 200, 0);
+    Engine::AddVertex(wuerfel, 1.0f, -1.0f, 1.0f);   Engine::VertexNormal(wuerfel, 0.0f, -1.0f, 0.0f); Engine::VertexColor(wuerfel, 255, 200, 0);
 
-    Engine::AddTriangle(wuerfel, 6, 7, 2);// Seite C 
-    Engine::AddTriangle(wuerfel, 2, 7, 3);
+    Engine::AddVertex(wuerfel, -1.0f, 1.0f, -1.0f);  Engine::VertexNormal(wuerfel, 0.0f, 1.0f, 0.0f);  Engine::VertexColor(wuerfel, 255, 0, 0);
+    Engine::AddVertex(wuerfel, 1.0f, 1.0f, -1.0f);   Engine::VertexNormal(wuerfel, 0.0f, 1.0f, 0.0f);  Engine::VertexColor(wuerfel, 0, 0, 255);
+    Engine::AddVertex(wuerfel, -1.0f, 1.0f, 1.0f);   Engine::VertexNormal(wuerfel, 0.0f, 1.0f, 0.0f);  Engine::VertexColor(wuerfel, 0, 255, 0);
+    Engine::AddVertex(wuerfel, 1.0f, 1.0f, 1.0f);    Engine::VertexNormal(wuerfel, 0.0f, 1.0f, 0.0f);  Engine::VertexColor(wuerfel, 0, 255, 255);
 
-    Engine::AddTriangle(wuerfel, 0, 1, 5);// Seite D 
-    Engine::AddTriangle(wuerfel, 5, 4, 0);
+    // Definition der Dreiecke für jede Seite des Würfels
+    Engine::AddTriangle(wuerfel, 0, 1, 2);  // Seite A
+    Engine::AddTriangle(wuerfel, 2, 1, 3);
 
-    Engine::AddTriangle(wuerfel, 5, 1, 7);// Seite E 
-    Engine::AddTriangle(wuerfel, 7, 1, 3);
+    Engine::AddTriangle(wuerfel, 6, 7, 4);  // Seite B
+    Engine::AddTriangle(wuerfel, 4, 7, 5);
 
-    Engine::AddTriangle(wuerfel, 6, 0, 4);// Seite F 
-    Engine::AddTriangle(wuerfel, 6, 2, 0);
-    
+    Engine::AddTriangle(wuerfel, 8, 9, 10);  // Seite C
+    Engine::AddTriangle(wuerfel, 10, 9, 11);
+
+    Engine::AddTriangle(wuerfel, 12, 14, 13); // Seite D
+    Engine::AddTriangle(wuerfel, 13, 14, 15);
+
+    Engine::AddTriangle(wuerfel, 16, 17, 18);  // Seite E
+    Engine::AddTriangle(wuerfel, 18, 17, 19);
+
+    Engine::AddTriangle(wuerfel, 20, 22, 21);  // Seite F
+    Engine::AddTriangle(wuerfel, 22, 23, 21);
+
     Engine::FillBuffer(wuerfel);
 
-    Engine::AddVertex(pyramide, -1.0f, -1.0f, -1.0f); Engine::VertexColor(pyramide, 0, 255, 0);
-    Engine::AddVertex(pyramide, -1.0f, 1.0f, -1.0f); Engine::VertexColor(pyramide, 0, 0, 255);
-    Engine::AddVertex(pyramide, 1.0f, -1.0f, -1.0f); Engine::VertexColor(pyramide, 255, 0, 0);
-    Engine::AddVertex(pyramide, 1.0f, 1.0f, -1.0f); Engine::VertexColor(pyramide, 255, 255, 0);
-    Engine::AddVertex(pyramide, 0.0f, 0.0f, 1.0f); Engine::VertexColor(pyramide, 255, 255, 0);
+    camera->PositionEntity(15.0f, 0.0f, -5.0f);
+    camera->RotateEntity(-10.0f, -60.0f, 0.0f);
 
-    Engine::AddTriangle(pyramide, 0, 1, 3);
-    Engine::AddTriangle(pyramide, 3, 2, 0);
-    Engine::AddTriangle(pyramide, 2, 3, 4);
-    Engine::AddTriangle(pyramide, 3, 1, 4);
-    Engine::AddTriangle(pyramide, 0, 4, 1);
-    Engine::AddTriangle(pyramide, 0, 2, 4);
+    //mesh->RotateEntity(0.0f, 30.0f, 0.0f);
+    mesh->PositionEntity(-5.0f, 5.0f, 0.0f);
 
-    Engine::FillBuffer(pyramide);
+    //mesh2->RotateEntity(0.0f, 0.0f, 0.0f);
+    mesh2->PositionEntity(5.0f, 0.0f, 5.0f);
 
-    camera->PositionEntity(0.0f, 10.0f, -15.0f);
-    camera->RotateEntity(15.0f, 0.0f, 0.0f);
+    Engine::PositionEntity(light, -15.0f, 10.0f, 0.0f);
+    Engine::PositionEntity(lightMesh, -15.0f, 10.0f, 0.0f);
 
-    mesh->RotateEntity(0.0f, 30.0f, 0.0f);
-    mesh->PositionEntity(-5.0f, 0.0f, 0.0f);
-
-    mesh2->RotateEntity(0.0f, 0.0f, 0.0f);
-    mesh2->PositionEntity(0.0f, 0.0f, 5.0f);
-
-    mesh3->RotateEntity(-90.0f, 0.0f, 0.0f);
-    mesh3->PositionEntity(5.0f, 0.0f, 0.0f);
-
-    mesh3->RotateEntity(0, -90, 0);
+    lightMesh->ScaleEntity(0.5f, 0.1f, 0.5f);
+    mesh3->ScaleEntity(1.0f, 1.0f, 1.0f);
+    mesh3->PositionEntity(0.0f, 0.0f, -5.0f);
+    Engine::RotateEntity(mesh3, 0.0f, 315.0f, 0.0f);
 
     //Engine::engine->SetCamera(mesh3);
     
+    // Definieren des Mittelpunkts und des Radius des Kreises
+    float centerX = 0.0f;
+    float centerZ = 0.0f;
+    float radius = 12.0f; // Beispielradius von 5 Einheiten
+
+    // Winkel inkrementieren, um das Objekt im Kreis zu bewegen
+    float angle = 0.0f; // Startwinkel
+
     while (gdx::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000))
     {
-        Engine::Cls(32, 64, 128);
+        Engine::Cls(16, 16, 64);
 
-        mesh->TurnEntity(0.0f, 0.0f, 1.0f);
+        MoveObjectInCircle(centerX, centerZ, radius, angle);
 
-        mesh2->TurnEntity(1.0f, 0.0f, 0.0f);
-        //mesh3->TurnEntity(1.1f, 0.0f, 0.0f);
-        mesh3->MoveEntity(0, 0, 0.1);
-        mesh3->TurnEntity(0.0f, 0.0f, 0.5f, Space::World);
+        // Inkrementiere den Winkel für die nächste Position im Kreis
+        angle += 0.01f; // Beispielinkrement
+
+        light->MoveEntity(0.01f, -0.00f, 0.0f);
+        lightMesh->MoveEntity(0.01f, -0.00f, 0.0f);
+
+        mesh->TurnEntity(1.0f, 0.0f, 1.0f);
+        mesh2->TurnEntity(0.0f, 0.0f, 0.5f);
+
+        Engine::TurnEntity(mesh3, 0.5f, 0.5f, 0.0f);
 
         Engine::RenderWorld();
 
@@ -111,4 +150,20 @@ int main()
 
     // Shutdown the engine
     return(gdx::ShutDown());
+}
+
+
+// Funktion, um das Objekt um einen Punkt im Kreis zu bewegen
+void MoveObjectInCircle(float centerX, float centerZ, float radius, float angle) {
+    // Berechnen der neuen Position basierend auf dem Winkel
+    float newX = centerX + radius * cos(angle);
+    float newZ = centerZ + radius * sin(angle);
+
+    // Setzen der neuen Position des Objekts
+    mesh3->PositionEntity(newX, 0.0f, newZ);
+}
+
+void CreateCube()
+{
+
 }

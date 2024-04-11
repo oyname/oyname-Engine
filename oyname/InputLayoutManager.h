@@ -12,7 +12,7 @@ public:
     ~InputLayoutManager();
 
     void Init(ID3D11Device* device);
-    HRESULT CreateInputLayout(SHADER* shader, DWORD flags);
+    HRESULT CreateInputLayoutVertex(ID3D11InputLayout** layout, SHADER* shader, DWORD& saveFlags, DWORD flags);
 
 private:
     ID3D11Device* m_device;

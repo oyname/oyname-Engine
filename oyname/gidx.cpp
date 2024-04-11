@@ -31,18 +31,14 @@ HRESULT Debug::GetErrorMessage(const char* file, int line, DWORD errorCode) {
 }
 
 
-namespace Engine
-{
-	gdx::CGIDX *engine;
-}
+namespace Engine{gdx::CGIDX *engine;}
 
 //-----------------------------------------------------------------------------
 // Name: gdx::CreateGidx() und gdx::Release()
 // Desc: gidxLib functions are automatically called when the window is created. 
 // Their use by end-users is not intended.
 //-----------------------------------------------------------------------------
-namespace gdx
-{
+namespace gdx{
 	bool _running;
 
 	int CreateGidx(int hwnd, int hinst, int bpp, int screenX, int screenY)
