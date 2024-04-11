@@ -12,7 +12,8 @@ public:
 
     LIGHT* createLight();
 
+    void Update(const gdx::CDevice* device);
+
     std::vector<Light*> m_lights;
 private:
-
 };
