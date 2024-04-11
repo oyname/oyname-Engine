@@ -1,5 +1,9 @@
 #include "gidx.h"
 
+// OYNAME Engine
+// 
+// This example demonstrates how the graphics properties of a system can be queried.
+// The queried data will be output in the debug window.
 
 int monitors()
 {
@@ -113,7 +117,7 @@ int grafikformats()
 
 using namespace gdx;
 
-int main1()
+int main_off1()
 {
     grafikformats();
     directxversion();

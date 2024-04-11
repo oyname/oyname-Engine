@@ -13,25 +13,25 @@
 #include "Camera.h"
 
 namespace gdx {
-	// MainLoop wird verwendet in gidx.cpp
+	// MainLoop is used in gidx.cpp
 	void MainLoop(bool running);
 
 	bool MainLoop();
 
-	// Zurück Main-Thread beeenden
+	// Shut down the main thread
 	int ShutDown();
 
 	class CGIDX {
 	private:
 		bool m_bInitialized;
-		HWND m_hwnd;		   // Fensterhandle
-		int m_colorDepth;	   // Farbtiefe (z.B. 32-Bit-Farben) 
-		int m_screenWidth;	   // Bildschirmweite
-		int m_screenHeight;	   // Bildschirmhöhe	
-		int m_adapterIndex;	   // Aktueller Adapter
-        int m_monitorIndex;	   // Index des Monitors
+		HWND m_hwnd;		   // Window handle
+		int m_colorDepth;	   // Color depth (e.g., 32-bit colors)
+		int m_screenWidth;	   // Screen width
+		int m_screenHeight;	   // Screen height	
+		int m_adapterIndex;	   // Current adapter index
+		int m_monitorIndex;	   // Index of the monitor
 
-		// Manager-Klassen
+		// Manager classes
 		ObjectManager		m_objectManager;
 		RenderManager		m_renderManager;
 		ShaderManager		m_shaderManager;
@@ -41,7 +41,7 @@ namespace gdx {
 		Camera		        m_camera;
 
 	public:
-		CDevice m_device;		// Device Manager nicht mit DirectXDevice verwechseln
+		CDevice m_device;		// Device Manager, not to be confused with DirectXDevice
 		CInterface m_interface;	// Interface Manager
 		
 	public:

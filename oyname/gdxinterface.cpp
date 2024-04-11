@@ -2,14 +2,14 @@
 
 using namespace gdx;
 
-CInterface::CInterface(): m_bInitialized(true), m_factory(nullptr)
+CInterface::CInterface() : m_bInitialized(true), m_factory(nullptr)
 {
 
 }
 
 CInterface::~CInterface()
 {
-	Release();
+    Release();
 }
 
 HRESULT CInterface::Init(unsigned int bpp)
@@ -19,22 +19,22 @@ HRESULT CInterface::Init(unsigned int bpp)
     interfaceManager.CleanupResources();
     interfaceManager.SetDXGI_Format(DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	// Create Factory
+    // Create Factory
     hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&m_factory);
     if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
     {
         return hr;
     }
 
-    // Strukturen befüllen
+    // Fill structures
     return GetSystemInfo();
 }
 
 void CInterface::Release()
 {
-    if(m_bInitialized)
+    if (m_bInitialized)
         Memory::SafeRelease(m_factory);
-    
+
     m_bInitialized = false;
 }
 
@@ -42,45 +42,45 @@ HRESULT CInterface::GetSystemInfo()
 {
     HRESULT hr = S_OK;
 
-    // Enumeriere die Adapter
+    // Enumerate adapters
     IDXGIAdapter* adapter = nullptr;
     for (UINT i = 0; m_factory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND; ++i)
     {
-        hr = S_OK; // HRESULT für jede Iteration zurücksetzen
+        hr = S_OK; // Reset HRESULT for each iteration
 
-        // Keinen Windows Renderer
-        if (Common::isWindowsRenderer(adapter))
+        // Exclude Windows renderer
+        if (GXUTIL::isWindowsRenderer(adapter))
             continue;
 
-        // Prüfen ob Eingestellter Adapter Hardwareunterstützung hat
-        interfaceManager.SetHardwareGPU(Common::isHardwareSupported(adapter));
+        // Check if selected adapter has hardware support
+        interfaceManager.SetHardwareGPU(GXUTIL::isHardwareSupported(adapter));
 
         GXADAPTER gxAdapter;
-        // Informationen über den Adapter abrufen
+        // Get information about the adapter
         hr = adapter->GetDesc(&gxAdapter.Desc);
         if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
         {
-            Memory::SafeRelease(adapter); // Adapter freigeben, bevor die Funktion verlassen wird
+            Memory::SafeRelease(adapter); // Release adapter before exiting function
             return hr;
         }
 
-        // Enumeriere die Ausgänge des Adapters
+        // Enumerate adapter's outputs
         IDXGIOutput* output = nullptr;
         for (UINT j = 0; adapter->EnumOutputs(j, &output) != DXGI_ERROR_NOT_FOUND; ++j)
         {
-            hr = S_OK; // HRESULT für jeden Ausgang zurücksetzen
+            hr = S_OK; // Reset HRESULT for each output
 
             GXOUTPUT gxOutput;
-            // Informationen über den Ausgang abrufen
+            // Get information about the output
             hr = output->GetDesc(&gxOutput.OutputDesc);
             if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
             {
-                Memory::SafeRelease(output); // Ausgabe freigeben, bevor die Funktion verlassen wird
-                Memory::SafeRelease(adapter); // Adapter freigeben, bevor die Funktion verlassen wird
+                Memory::SafeRelease(output); // Release output before exiting function
+                Memory::SafeRelease(adapter); // Release adapter before exiting function
                 return hr;
             }
 
-            // Anzeigemodi des Ausgangs abrufen
+            // Get display modes of the output
             std::vector<DXGI_MODE_DESC> displayModes;
             UINT numModes = 0;
             hr = output->GetDisplayModeList(interfaceManager.GetDXGI_Format(), 0, &numModes, nullptr);
@@ -89,13 +89,13 @@ HRESULT CInterface::GetSystemInfo()
                 hr = output->GetDisplayModeList(interfaceManager.GetDXGI_Format(), 0, &numModes, displayModes.data());
                 if (SUCCEEDED(hr))
                 {
-                    // Durchlaufe die Anzeigemodi
+                    // Iterate through display modes
                     for (const auto& mode : displayModes) {
                         GXDISPLAYMODE gxMode;
                         gxMode.Width = mode.Width;
                         gxMode.Height = mode.Height;
 
-                        // Überprüfe, ob die Auflösung und Frequenz bereits vorhanden sind
+                        // Check if resolution and frequency already exist
                         bool found = false;
                         for (auto& displayMode : gxOutput.DisplayModes) {
                             if (displayMode.Width == gxMode.Width && displayMode.Height == gxMode.Height) {
@@ -128,23 +128,23 @@ HRESULT CInterface::GetSystemInfo()
                 }
                 else
                 {
-                    Memory::SafeRelease(output); // Ausgabe freigeben, bevor die Funktion verlassen wird
-                    Memory::SafeRelease(adapter); // Adapter freigeben, bevor die Funktion verlassen wird
+                    Memory::SafeRelease(output); // Release output before exiting function
+                    Memory::SafeRelease(adapter); // Release adapter before exiting function
                     return hr;
                 }
             }
 
-            // gxOutput zu gxAdapter.Outputs hinzufügen
+            // Add gxOutput to gxAdapter.Outputs
             gxAdapter.Outputs.push_back(gxOutput);
 
-            // Ausgabe freigeben
+            // Release output
             Memory::SafeRelease(output);
         }
 
-        // gxAdapter zu systemInfo.Adapters hinzufügen
+        // Add gxAdapter to systemInfo.Adapters
         interfaceManager.AddAdapter(gxAdapter);
 
-        // Adapter freigeben
+        // Release adapter
         Memory::SafeRelease(adapter);
     }
 
@@ -152,6 +152,7 @@ HRESULT CInterface::GetSystemInfo()
 
     return hr;
 }
+
 
 
 

@@ -3,8 +3,12 @@
 
 namespace gdx
 {
-    Camera::Camera()
+    Camera::Camera() : m_currentCam(nullptr), m_engine(nullptr)
     {
+        m_projMode = PERSPECTIVE_LH;
+        m_ortho = { 0 };
+        m_viewport = { 0 };
+        m_perspective = { 0 };
     }
 
     Camera::~Camera()
@@ -47,10 +51,8 @@ namespace gdx
 
     void Camera::CreateCamera(LPMESH* camera)
     {
-        // Kamera erstellen. Das macht der Objectmanager
         *camera = m_engine->GetOM().createMesh();
 
-        // Perspektive
         if (m_projMode == PERSPECTIVE_LH)
         {
             (*camera)->cb.projectionMatrix = XMMatrixPerspectiveFovLH(m_perspective.fieldOfView, m_perspective.aspectRatio, m_perspective.nearPlane, m_perspective.farPlane);
@@ -66,7 +68,8 @@ namespace gdx
 
     void Camera::Update()
     {
-        this->m_currentCam->Update();
+        if(m_currentCam)
+            this->m_currentCam->Update();
     }
 
     D3D11_VIEWPORT Camera::GetViewPort()

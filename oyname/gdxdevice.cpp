@@ -3,21 +3,21 @@
 
 using namespace gdx;
 
-CDevice::CDevice() : m_bInitialized(false), 
-                     m_pd3dDevice(nullptr), 
-                     m_pContext(nullptr), 
-                     m_pSwapChain(nullptr), 
-                     m_depthStencilBuffer(nullptr), 
-                     m_depthStencilView(nullptr),
-                     m_pBackBuffer(nullptr),
-                     m_pRenderTargetView(nullptr)
-{                                                                                                              
+CDevice::CDevice() : m_bInitialized(false),
+m_pd3dDevice(nullptr),
+m_pContext(nullptr),
+m_pSwapChain(nullptr),
+m_depthStencilBuffer(nullptr),
+m_depthStencilView(nullptr),
+m_pBackBuffer(nullptr),
+m_pRenderTargetView(nullptr)
+{
 
 }
 
 CDevice::~CDevice()
 {
-	Release();
+    Release();
 }
 
 void CDevice::Release()
@@ -78,15 +78,15 @@ HRESULT CDevice::GetSystemInfo()
         HRESULT hr = D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, 0, featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &d3ddevice, &featureLevel, nullptr);
         if (SUCCEEDED(hr))
         {
-            if (!Common::isWindowsRenderer(adapter))
+            if (!GXUTIL::isWindowsRenderer(adapter))
             {
-                // Nur wenn kein Windows Renderer 
+                // Only if not using Windows Renderer
                 GXDEVICE gxDevice = {};
                 gxDevice.featureLevel = featureLevel;
-                gxDevice.supportedFormat = Common::GetSupportedFormats(featureLevel);
-                gxDevice.directxVersion = Common::GetDirectXVersion(gxDevice.featureLevel);
-                
-                // neues Device hinzufügen
+                gxDevice.supportedFormat = GXUTIL::GetSupportedFormats(featureLevel);
+                gxDevice.directxVersion = GXUTIL::GetDirectXVersion(gxDevice.featureLevel);
+
+                // Add new device
                 this->deviceManager.GetDevices().push_back(gxDevice);
             }
         }
@@ -120,16 +120,16 @@ HRESULT CDevice::InitializeDirectX(IDXGIAdapter* adapter, D3D_FEATURE_LEVEL* fea
 }
 
 HRESULT CDevice::CreateSwapChain(IDXGIFactory* pDXGIFactory, HWND hWnd,
-                                         unsigned int width, unsigned int height, DXGI_FORMAT format,
-                                         unsigned int numerator, unsigned int denominator,
-                                         bool windowed)
+    unsigned int width, unsigned int height, DXGI_FORMAT format,
+    unsigned int numerator, unsigned int denominator,
+    bool windowed)
 {
     HRESULT hr;
 
-    // Fenstergröße anpassen
+    // Adjust window size
     ResizeWindow(hWnd, width, height, windowed);
 
-    // Beschreibung des Swap Chain
+    // Swap Chain description
     DXGI_SWAP_CHAIN_DESC swapChainDesc = { 0 };
     swapChainDesc.BufferCount = 1;
     swapChainDesc.BufferDesc.Width = width;
@@ -142,16 +142,16 @@ HRESULT CDevice::CreateSwapChain(IDXGIFactory* pDXGIFactory, HWND hWnd,
     swapChainDesc.SampleDesc.Count = 1;
     swapChainDesc.SampleDesc.Quality = 0;
     swapChainDesc.Windowed = true; //windowed; 
-    swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // Vollbildumschaltung zulassen
+    swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // Allow fullscreen switch
 
-    // Swap Chain erstellen
+    // Create Swap Chain
     hr = pDXGIFactory->CreateSwapChain(m_pd3dDevice, &swapChainDesc, &m_pSwapChain);
     if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
     {
-        // Freigabe des Speichers
+        // Release memory
         Memory::SafeRelease(m_pSwapChain);
 
-        // Fehler zurückgeben
+        // Return error
         return hr;
     }
 
@@ -162,13 +162,13 @@ HRESULT CDevice::CreateRenderTarget(unsigned int width, unsigned int height)
 {
     HRESULT hr = S_OK;
 
-    // Back-Buffer aus dem Swap-Chain abrufen
+    // Get back-buffer from the Swap Chain
     hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&m_pBackBuffer);
     if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
     {
         return hr;
     }
-    else if(m_pBackBuffer)
+    else if (m_pBackBuffer)
     {
         hr = m_pd3dDevice->CreateRenderTargetView(m_pBackBuffer, NULL, &m_pRenderTargetView);
         if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
@@ -179,7 +179,7 @@ HRESULT CDevice::CreateRenderTarget(unsigned int width, unsigned int height)
         Memory::SafeRelease(m_pBackBuffer);
     }
 
-    // Erfolgreich erstellten Render Target zurückgeben
+    // Return successfully created Render Target
     return hr;
 }
 
@@ -190,10 +190,10 @@ void CDevice::CreateView(UINT NumViewport, D3D11_VIEWPORT viewport)
 
 void CDevice::ClearRenderTargetDepthStencil()
 {
-    // Setze die Render-Zielansicht und den Tiefen-Stencil-Buffer
+    // Set the Render Target View and Depth-Stencil Buffer
     m_pContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_depthStencilView);
 
-    // Lösche den Tiefen-Stencil-Buffer
+    // Clear the Depth-Stencil Buffer
     m_pContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
@@ -214,11 +214,10 @@ void CDevice::SetPixelShader(ID3D11PixelShader* ps)
 
 HRESULT CDevice::Flip(int syncInterval)
 {
-    // SyncInterval: Dieser Parameter legt fest, wie die Aktualisierungsrate des Monitors(die vertikale Synchronisation) 
-    // verwendet wird.Ein Wert von 0 bedeutet, dass das Zurücksetzen auf die VSYNC nicht berücksichtigt wird, und das Bild 
-    // wird sofort angezeigt, wenn es verfügbar ist.Ein Wert größer als 0 bedeutet, dass das Zurücksetzen auf die VSYNC alle 
-    // SyncInterval - Frames erfolgt.Zum Beispiel bedeutet ein Wert von 1, dass das Zurücksetzen auf die VSYNC einmal alle 
-    // zwei Frames erfolgt, was einer Aktualisierungsrate von 30 Hz auf einem 60 Hz Monitor entspricht.
+    // SyncInterval: This parameter determines how the monitor's refresh rate (vertical synchronization) is used. 
+    // A value of 0 means that the VSYNC reset is not considered, and the image is displayed immediately when available. 
+    // A value greater than 0 means that the VSYNC reset occurs every SyncInterval - frames. For example, a value of 1 
+    // means that the VSYNC reset occurs once every two frames, which corresponds to a refresh rate of 30 Hz on a 60 Hz monitor.
     // //
     // Present the backbuffer to the screen
     return m_pSwapChain->Present(syncInterval, 0);
@@ -289,36 +288,36 @@ HRESULT CDevice::CreateDeepBuffer(unsigned int width, unsigned int height)
         return hr;
     }
 
-    // Setze die Tiefen-Stencil-Ansicht
+    // Set the Depth-Stencil View
     GetDeviceContext()->OMSetRenderTargets(1, &m_pRenderTargetView, m_depthStencilView);
     if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
     {
         return hr;
     }
-    
-    // Definiere den Tiefen-Stencil-Status
+
+    // Define the Depth-Stencil State
     D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
-    depthStencilDesc.DepthEnable = true; // Tiefentest aktivieren
-    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL; // Schreiben in den Tiefenpuffer erlauben
-    depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // Vergleichsoperation für den Tiefentest
-    // Weitere Einstellungen hier definieren
-    
-    // Erstelle den Tiefen-Stencil-Status
+    depthStencilDesc.DepthEnable = true; // Enable depth test
+    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL; // Allow writing to the depth buffer
+    depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // Comparison operation for depth test
+    // Define more settings here
+
+    // Create the Depth-Stencil State
     ID3D11DepthStencilState* depthStencilState;
     hr = GetDevice()->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
     if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
     {
         return hr;
     }
-    
-    // Setze den Tiefen-Stencil-Status
+
+    // Set the Depth-Stencil State
     GetDeviceContext()->OMSetDepthStencilState(depthStencilState, 1);
     if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
     {
         return hr;
     }
-    
-    // Freigabe des Depth-Stencil-State
+
+    // Release the Depth-Stencil State
     Memory::SafeRelease(depthStencilState);
 
     return hr;

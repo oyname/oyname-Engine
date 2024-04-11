@@ -1,27 +1,25 @@
-#ifndef GXUTIL_H
-#define GXUTIL_H
-
-#include <d3d11.h>
-#include <dxgi.h>
+#ifndef GXUTIL_H_INCLUDED
+#define GXUTIL_H_INCLUDED
 
 #include <sstream>
 #include <vector>
-#include <memory>
 #include <array>
 #include <iostream>
 #include <string>
-#include <math.h>
 #include <limits>
 #include <list>
 #include <functional>
 #include <codecvt>
+#include <cmath> 
+#include <memory> 
+
+#include <d3d11.h>
+#include <dxgi.h>
 #include <DirectXMath.h>
 
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "dxgi.lib")
 #pragma comment (lib, "d3dcompiler.lib")
-
-std::string GetErrorMessage(DWORD errorCode);
 
 //
 enum D3DVERTEX_FLAGS
@@ -34,22 +32,6 @@ enum D3DVERTEX_FLAGS
 	D3DVERTEX_TEX3 = (1 << 5),
 	D3DVERTEX_DIFFUSE = (1 << 6),
 	D3DVERTEX_SPECULAR = (1 << 7),
-	// Weitere Flags können hier hinzugefügt werden...
-};
-
-//
-typedef enum 
-{
-	AUTOMATIC_WINDOW_MODE = 0,
-	FULLSCREEN_MODE = 1,
-	WINDOW_MODE = 2,
-	SCALABLE_WINDOW_MODE = 3,
-} GXDISPLAYMODE;
-
-enum Options {
-	WindowsRenderer = 1 << 0,
-	HardwareSupport = 1 << 1,
-	OPTION_3 = 1 << 2,
 	// Add more options here ...
 };
 
@@ -63,6 +45,21 @@ enum GXFORMAT
 	R16G16B16A16_FLOAT = 1 << 4,
 	R10G10B10A2_UNORM = 1 << 5,
 	R10G10B10_XR_BIAS_A2_UNORM = 1 << 6,
+};
+
+typedef enum
+{
+	AUTOMATIC_WINDOW_MODE = 0,
+	FULLSCREEN_MODE = 1,
+	WINDOW_MODE = 2,
+	SCALABLE_WINDOW_MODE = 3,
+} GXDISPLAYMODE;
+
+enum Options {
+	WindowsRenderer = 1 << 0,
+	HardwareSupport = 1 << 1,
+	OPTION_3 = 1 << 2,
+	// Add more options here ...
 };
 
 struct TextureFormat
@@ -81,7 +78,7 @@ const TextureFormat textureFormats[] = {
 	{ GXFORMAT::R10G10B10_XR_BIAS_A2_UNORM, L"R10G10B10_XR_BIAS_A2_UNORM" },
 };
 
-enum class Error
+enum Error
 {
 	None,
 	Success,
@@ -99,10 +96,10 @@ enum class Error
 	EnumAdapterFailed,
 	MemoryRequestDevice,
 	WindowosRenderer,
-	InvalidParameter 
+	InvalidParameter
 };
 
-namespace Common
+namespace GXUTIL
 {
 	DXGI_FORMAT GetDXGIFormat(GXFORMAT format);
 	std::wstring ErrorToString(Error err);
@@ -112,36 +109,6 @@ namespace Common
 	int GetDirectXVersion(D3D_FEATURE_LEVEL featureLevel);
 	D3D_FEATURE_LEVEL GetFeatureLevelFromDirectXVersion(int version);
 	GXFORMAT GetSupportedFormats(D3D_FEATURE_LEVEL featureLevel);
-
-	struct SwapchainConfig
-	{
-		UINT bufferCount;
-		UINT width;
-		UINT height;
-		DXGI_FORMAT bufferFormat;
-		DXGI_RATIONAL refreshRate;
-		DXGI_USAGE bufferUsage;
-		HWND outputWindow;
-		UINT sampleCount;
-		UINT sampleQuality;
-		BOOL windowed;
-		UINT flags;
-
-		// Konstruktor, um Standardwerte zu setzen
-		SwapchainConfig() :
-			bufferCount(2),                               // Anzahl der Back-Buffer
-			width(800),                                   // Breite des Anzeigefensters oder der Bildschirmfläche
-			height(600),                                  // Höhe des Anzeigefensters oder der Bildschirmfläche
-			bufferFormat(DXGI_FORMAT_R8G8B8A8_UNORM),     // Format des Back-Buffer
-			refreshRate({ 0, 0 }),                        // Verwende die vom System vorgeschlagene Bildwiederholfrequenz
-			bufferUsage(DXGI_USAGE_RENDER_TARGET_OUTPUT), // Verwendung des Back-Buffer
-			outputWindow(NULL),                           // Handle des Ausgabefensters
-			sampleCount(1),                               // Anzahl der Samples im Multisampling
-			sampleQuality(0),                             // Qualität des Multisampling
-			windowed(TRUE),                               // Fenstermodus (TRUE) oder Vollbildmodus (FALSE)
-			flags(0)                                      // Optionen für die Swapchain
-		{}
-	};
 }
 
 class Debug
@@ -244,4 +211,4 @@ namespace Memory
 	}
 };
 
-#endif // GXUTIL_H
+#endif // GXUTIL_H_INCLUDED

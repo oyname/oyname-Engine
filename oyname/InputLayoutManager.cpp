@@ -9,16 +9,16 @@ void InputLayoutManager::Init(ID3D11Device* device)
     m_device = device;
 }
 
-HRESULT InputLayoutManager::CreateInputLayoutVertex(ID3D11InputLayout** layout, SHADER* shader, DWORD & saveFlags, DWORD flags)
+HRESULT InputLayoutManager::CreateInputLayoutVertex(ID3D11InputLayout** layout, SHADER* shader, DWORD& saveFlags, DWORD flags)
 {
     std::vector<D3D11_INPUT_ELEMENT_DESC> layoutElements;
 
-    // Kann die größe des Vertex speichern
+    // Can store the size of the vertex
     unsigned int currentOffset = 0;
-    // Zählt die Elemente
+    // Counts the elements
     unsigned int cnt = 0;
 
-    // Einstellung speichern für spätere Verwendung
+    // Save setting for later use
     saveFlags = flags;
 
     if (flags & D3DVERTEX_POSITION) {

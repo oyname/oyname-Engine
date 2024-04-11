@@ -1,10 +1,9 @@
 #include "ShaderManager.h"
 #include <fstream>
 
-ShaderManager::ShaderManager() : m_device(nullptr), m_objectManager(nullptr) 
+ShaderManager::ShaderManager() : m_device(nullptr), m_objectManager(nullptr)
 {
-    // Speicherort der vorkomplilierten Dateien von $(OutDir)%(Filename).cso
-    // in $(ProjectDir)%(Filename).cso geändert
+    // Changed the location of precompiled files from $(OutDir)%(Filename).cso to $(ProjectDir)%(Filename).cso
     //
     SetShaderFolder(L"..\\oyname\\");
 }
@@ -48,31 +47,31 @@ HRESULT ShaderManager::CreateShader(SHADER* shader, const std::wstring& vertexSh
 {
     HRESULT hr;
 
-    // Laden und Kompilieren des Vertex-Shaders
+    // Load and compile the vertex shader
     hr = CompileShaderFromFile(m_shaderfolder + vertexShaderFile, "main", "vs_5_0", &shader->blobVS);
     if (FAILED(hr)) {
         return hr;
     }
 
-    // Erstellen des Vertex-Shaders
+    // Create the vertex shader
     hr = m_device->CreateVertexShader(shader->blobVS->GetBufferPointer(), shader->blobVS->GetBufferSize(), nullptr, &shader->vertexShader);
     if (FAILED(hr)) {
         return hr;
     }
 
-    // Laden und Kompilieren des Pixel-Shaders
+    // Load and compile the pixel shader
     hr = CompileShaderFromFile(m_shaderfolder + pixelShaderFile, entryPoint, "ps_5_0", &shader->blobPS);
     if (FAILED(hr)) {
         return hr;
     }
 
-    // Erstellen des Pixel-Shaders
+    // Create the pixel shader
     hr = m_device->CreatePixelShader(shader->blobPS->GetBufferPointer(), shader->blobPS->GetBufferSize(), nullptr, &shader->pixelShader);
     if (FAILED(hr)) {
         return hr;
     }
 
-    // Speichern der Dateinamen
+    // Save the filenames
     shader->vertexShaderFile = vertexShaderFile;
     shader->pixelShaderFile = pixelShaderFile;
 
@@ -83,7 +82,7 @@ HRESULT ShaderManager::CompileShaderFromFile(const std::wstring& filename, const
 {
     HRESULT hr;
 
-    // Kompilieren des Shaders aus der Datei
+    // Compile the shader from file
     hr = D3DCompileFromFile(filename.c_str(), nullptr, nullptr, entryPoint.c_str(), shaderModel.c_str(), 0, 0, blob, nullptr);
     if (FAILED(hr)) {
         return Debug::GetErrorMessage(__FILE__, __LINE__, hr);
@@ -91,6 +90,7 @@ HRESULT ShaderManager::CompileShaderFromFile(const std::wstring& filename, const
 
     return hr;
 }
+
 
 SHADER* ShaderManager::GetShader() {
     return m_standardShader;

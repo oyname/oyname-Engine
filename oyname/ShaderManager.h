@@ -20,7 +20,7 @@ public:
 
 private:
     ID3D11Device* m_device;
-    ObjectManager* m_objectManager; // Referenz auf den ObjectManager
+    ObjectManager* m_objectManager; // Reference to the ObjectManager
     LPSHADER m_standardShader;
     std::wstring m_shaderfolder;
 };

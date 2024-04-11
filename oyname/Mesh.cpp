@@ -1,5 +1,5 @@
+#include "Memory.h"
 #include "Mesh.h"
-#include "Memory.h" // Assuming Memory::SafeRelease is defined here
 
 Mesh::Mesh() :
     isActive(false),
@@ -25,27 +25,27 @@ Mesh::~Mesh() {
     Memory::SafeRelease(constantBuffer);
 }
 
-void Mesh::TurnEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode) 
+void Mesh::TurnEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode)
 {
-    // Berechnung der Rotationsmatrizen
+    // Calculation of rotation matrices
     DirectX::XMMATRIX rotationX = DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(fRotateX));
     DirectX::XMMATRIX rotationY = DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(fRotateY));
     DirectX::XMMATRIX rotationZ = DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(fRotateZ));
 
-    // Erstellen einer Matrix, die die Rotationen kombiniert
+    // Create a matrix combining the rotations
     DirectX::XMMATRIX rotationMatrix = rotationX * rotationY * rotationZ;
 
-    // Je nach Modus die Rotation auf die entsprechende Matrix anwenden
+    // Apply rotation to the corresponding matrix depending on the mode
     if (mode == Space::Local) {
-        // Lokale Rotation
+        // Local rotation
         mRotate = rotationMatrix * mRotate;
     }
     else if (mode == Space::World) {
-        // Globale Rotation
+        // Global rotation
         mRotate *= rotationMatrix;
     }
 
-    // Transformieren der lokalen Achsen entsprechend der globalen Rotation
+    // Transform local axes according to global rotation
     lookAt = DirectX::XMVector3Normalize(DirectX::XMVector3TransformNormal(defaultLookAt, mRotate));
     up = DirectX::XMVector3Normalize(DirectX::XMVector3TransformNormal(defaultUp, mRotate));
     right = DirectX::XMVector3Cross(lookAt, up);
@@ -53,25 +53,25 @@ void Mesh::TurnEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode
 
 void Mesh::RotateEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode)
 {
-    // Berechnung der Rotationsmatrizen
+    // Calculation of rotation matrices
     DirectX::XMMATRIX rotationX = DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(fRotateX));
     DirectX::XMMATRIX rotationY = DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(fRotateY));
     DirectX::XMMATRIX rotationZ = DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(fRotateZ));
 
-    // Erstellen einer Matrix, die die Rotationen kombiniert
+    // Create a matrix combining the rotations
     DirectX::XMMATRIX rotationMatrix = rotationX * rotationY * rotationZ;
 
-    // Je nach Modus die Rotation auf die entsprechende Matrix anwenden
+    // Apply rotation to the corresponding matrix depending on the mode
     if (mode == Space::Local) {
-        // Lokale Rotation
+        // Local rotation
         mRotate = rotationMatrix;
     }
     else if (mode == Space::World) {
-        // Globale Rotation
+        // Global rotation
         mRotate = rotationMatrix * mRotate;
     }
 
-    // Transformieren der lokalen Achsen entsprechend der globalen Rotation
+    // Transform local axes according to global rotation
     lookAt = DirectX::XMVector3Normalize(DirectX::XMVector3TransformNormal(defaultLookAt, mRotate));
     up = DirectX::XMVector3Normalize(DirectX::XMVector3TransformNormal(defaultUp, mRotate));
     right = DirectX::XMVector3Cross(lookAt, up);

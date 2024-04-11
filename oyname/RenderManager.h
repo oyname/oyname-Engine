@@ -8,8 +8,6 @@ public:
     RenderManager();
     RenderManager(ObjectManager& objectManager, LightManager& lightManager);
 
-    void UpdateDirectionalLight();
-
     void SetCamera(LPMESH camera);
     void SetDirectionalLight(LPLIGHT dirLight);
     void RenderLoop();

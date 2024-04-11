@@ -36,7 +36,7 @@ namespace gdx {
         unsigned int m_maxFrequency;
         unsigned int m_maxNumerator;
         unsigned int m_maxDenominator;
-        bool hardwareGPU;                   // Gibt an, ob Hardwareunterstützung für GPU vorhanden ist
+        bool hardwareGPU;                   
 
         void GetNumeratorDenominator(unsigned int adapterIndex, unsigned int monitorIndex, unsigned int width, unsigned int height)
         {
@@ -61,11 +61,10 @@ namespace gdx {
         }
 
     public:
-        // Benutzerdefinierter Konstruktor, der alle Member-Variablen initialisiert
         GXINTERFACE()
-            : Adapters(),                // Leerer Konstruktoraufruf für den Vektor
-            format(DXGI_FORMAT_UNKNOWN), // Standardinitialisierung von DXGI_FORMAT (0)
-            hardwareGPU(false),          // Initialisierung auf false
+            : Adapters(),                // Empty constructor call for the vector
+            format(DXGI_FORMAT_UNKNOWN), // Default initialization of DXGI_FORMAT (0)
+            hardwareGPU(false),          // Initialization to false
             m_maxFrequency(0),
             m_maxNumerator(0),
             m_maxDenominator(0)
@@ -93,7 +92,6 @@ namespace gdx {
             }
             this->Adapters.clear();
 
-            // Variablen zurücksetzen
             format = DXGI_FORMAT_UNKNOWN;
             hardwareGPU = false;
         }
@@ -162,10 +160,9 @@ namespace gdx {
         
         std::string GetGfxDriverName(int adapterindex)
         {
-            // Annahme: Engine::engine->Interface.systemManager.Adapters[Engine::engine->Setting.adapter].Desc.Description ist vom Typ wchar_t*
             wchar_t* descriptionWChar = this->Adapters[adapterindex].Desc.Description;
 
-            // Konvertierung von wchar_t* nach std::string
+            /// Conversion from wchar_t* to std::string
             std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
             return converter.to_bytes(descriptionWChar);
         }
@@ -193,7 +190,6 @@ namespace gdx {
             return format;
         }
 
-        // Setter-Funktionen für private Variablen
         void SetHardwareGPU(bool support)
         {
             hardwareGPU = support;
@@ -241,7 +237,6 @@ namespace gdx {
         HRESULT Init(unsigned int bpp);
         void Release();
 
-        // Getter-Funktionen für private Variablen
         IDXGIFactory* GetFactory() { return m_factory; }
     };
 }

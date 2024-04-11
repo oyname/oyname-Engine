@@ -25,10 +25,8 @@ Shader::~Shader() {
 
 void Shader::UpdateShader(const gdx::CDevice* device)
 {
-    // InputLayout für Vertices setzen
     device->GetDeviceContext()->IASetInputLayout(inputlayoutVertex);
 
-    // Vertex und Pixelshader setzen
     device->GetDeviceContext()->VSSetShader(vertexShader, nullptr, 0);
     device->GetDeviceContext()->PSSetShader(pixelShader, nullptr, 0);
 }

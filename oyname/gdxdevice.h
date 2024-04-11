@@ -25,7 +25,6 @@ namespace gdx
 
         bool IsFormatSupported(unsigned int adapterIndex, GXFORMAT format)
         {
-            // Überprüfen, ob das Bit für das angegebene Format in der unterstützten Formatmaske gesetzt ist
             return (devices[adapterIndex].supportedFormat & format) == format;
         }
 
@@ -98,7 +97,6 @@ namespace gdx
         void ClearRenderTargetDepthStencil();
         HRESULT Flip(int syncInterval);
 
-        // Getter-Funktionen für private Variablen
         ID3D11Device* GetDevice(){
             return m_pd3dDevice;}
 
