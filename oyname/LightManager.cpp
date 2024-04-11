@@ -18,3 +18,13 @@ LIGHT* LightManager::createLight() {
     m_lights.push_back(light);
     return light;
 }
+
+void LightManager::Update(const gdx::CDevice* device)
+{
+    for (const auto& light : m_lights)
+    {
+        Debug::Log(" LICHT UPDATEN..");
+
+        light->UpdateDirectionalLight(device);
+    }
+}
