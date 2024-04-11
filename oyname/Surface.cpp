@@ -7,9 +7,13 @@ Surface::Surface() :
     size_color(0),
     size_listColor(0),
     size_listIndex(0),
+    size_normal(0),
+    size_listNormal(0),
     positionBuffer(nullptr),
     colorBuffer(nullptr),
-    indexBuffer(nullptr)
+    indexBuffer(nullptr),
+    normalBuffer(nullptr),
+    pShader(nullptr)
 {
 }
 

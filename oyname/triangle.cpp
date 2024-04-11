@@ -2,7 +2,7 @@
 
 using namespace DirectX;
 
-LPMESH mesh3;
+LPMESH g_mesh3;
 
 // Funktion, um das Objekt um einen Punkt im Kreis zu bewegen
 void MoveObjectInCircle(float centerX, float centerZ, float radius, float angle);
@@ -32,7 +32,7 @@ int main()
     Engine::CreateMesh(&mesh2, brush);
 
     //LPMESH mesh3;
-    Engine::CreateMesh(&mesh3, brush);
+    Engine::CreateMesh(&g_mesh3, brush);
 
     LPMESH lightMesh;
     Engine::CreateMesh(&lightMesh, brush);
@@ -41,7 +41,7 @@ int main()
     LPSURFACE wuerfel;
     Engine::CreateSurface(&wuerfel, mesh);
     Engine::engine->GetOM().addSurfaceToMesh(mesh2, wuerfel);
-    Engine::engine->GetOM().addSurfaceToMesh(mesh3, wuerfel);
+    Engine::engine->GetOM().addSurfaceToMesh(g_mesh3, wuerfel);
     Engine::engine->GetOM().addSurfaceToMesh(lightMesh, wuerfel);
 
     LPLIGHT light;
@@ -112,9 +112,9 @@ int main()
     Engine::PositionEntity(lightMesh, -15.0f, 10.0f, 0.0f);
 
     lightMesh->ScaleEntity(0.5f, 0.1f, 0.5f);
-    mesh3->ScaleEntity(1.0f, 1.0f, 1.0f);
-    mesh3->PositionEntity(0.0f, 0.0f, -5.0f);
-    Engine::RotateEntity(mesh3, 0.0f, 315.0f, 0.0f);
+    g_mesh3->ScaleEntity(1.0f, 1.0f, 1.0f);
+    g_mesh3->PositionEntity(0.0f, 0.0f, -5.0f);
+    Engine::RotateEntity(g_mesh3, 0.0f, 315.0f, 0.0f);
 
     //Engine::engine->SetCamera(mesh3);
     
@@ -141,7 +141,7 @@ int main()
         mesh->TurnEntity(1.0f, 0.0f, 1.0f);
         mesh2->TurnEntity(0.0f, 0.0f, 0.5f);
 
-        Engine::TurnEntity(mesh3, 0.5f, 0.5f, 0.0f);
+        Engine::TurnEntity(g_mesh3, 0.5f, 0.5f, 0.0f);
 
         Engine::RenderWorld();
 
@@ -159,8 +159,10 @@ void MoveObjectInCircle(float centerX, float centerZ, float radius, float angle)
     float newX = centerX + radius * cos(angle);
     float newZ = centerZ + radius * sin(angle);
 
+    g_mesh3->TurnEntity(0.0f, -0.68f, 0.0f);
+
     // Setzen der neuen Position des Objekts
-    mesh3->PositionEntity(newX, 0.0f, newZ);
+    g_mesh3->PositionEntity(newX, 0.0f, newZ);
 }
 
 void CreateCube()

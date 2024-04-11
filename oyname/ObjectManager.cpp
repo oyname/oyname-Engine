@@ -1,13 +1,12 @@
 #include "ObjectManager.h"
 
-ObjectManager::ObjectManager() : m_device(nullptr)
-{
+ObjectManager::ObjectManager() : m_device(nullptr){ 
 
 }
 
-ObjectManager::~ObjectManager() 
+ObjectManager::~ObjectManager()
 {
-    // Durchlaufen aller Surfaces
+    // Iterate through all surfaces
     for (auto& surface : m_surfaces) {
         Memory::SafeDelete(surface);
     }
@@ -78,20 +77,20 @@ void ObjectManager::addBrushToShader(SHADER* shader, BRUSH* brush) {
 
 void ObjectManager::deleteSurface(SURFACE* surface) {
 
-    // Durchlaufen aller Surfaces
+    // Iterate through all meshes
     for (auto& mesh : m_meshes) {
-        // Durchlaufen aller Surfaces im aktuellen Mesh
+        // Iterate through all surfaces in the current mesh
         auto& surfaces = *(mesh->surfaces);
         for (auto it = surfaces.begin(); it != surfaces.end(); ++it) {
             if (*it == surface) {
-                // Surface gefunden, aus der Liste entfernen
+                // Surface found, remove from the list
                 surfaces.erase(it);
-                break; // da das Surface nur einmal in einem Mesh vorkomm
+                break; // since the surface only occurs once in a mesh
             }
         }
     }
 
-    // Speicher freigeben
+    // Free memory
     auto it = std::find(m_surfaces.begin(), m_surfaces.end(), surface);
     if (it != m_surfaces.end()) {
         m_surfaces.erase(it);
@@ -100,20 +99,20 @@ void ObjectManager::deleteSurface(SURFACE* surface) {
 }
 
 void ObjectManager::deleteMesh(MESH* mesh) {
-    // Durchlaufen aller Brushes
+    // Iterate through all brushes
     for (auto& brush : m_brushes) {
-        // Durchlaufen aller Meshes im aktuellen Brush
+        // Iterate through all meshes in the current brush
         auto& meshes = *(brush->meshes);
         for (auto it = meshes.begin(); it != meshes.end(); ++it) {
             if (*it == mesh) {
-                // Mesh gefunden, aus der Liste entfernen
+                // Mesh found, remove from the list
                 meshes.erase(it);
                 break;
             }
         }
     }
 
-    // Speicher freigeben
+    // Free memory
     auto it = std::find(m_meshes.begin(), m_meshes.end(), mesh);
     if (it != m_meshes.end()) {
         m_meshes.erase(it);
@@ -122,20 +121,20 @@ void ObjectManager::deleteMesh(MESH* mesh) {
 }
 
 void ObjectManager::deleteBrush(BRUSH* brush) {
-    // Durchlaufen aller Brushes
+    // Iterate through all brushes
     for (auto& shader : m_shaders) {
-        // Durchlaufen aller Brush im selben Shader
+        // Iterate through all brushes in the same shader
         auto& brushes = *(shader->brushes);
         for (auto it = brushes.begin(); it != brushes.end(); ++it) {
             if (*it == brush) {
-                // Mesh gefunden, aus der Liste entfernen
+                // Brush found, remove from the list
                 brushes.erase(it);
                 break;
             }
         }
     }
 
-    // Speicher freigeben
+    // Free memory
     auto it = std::find(m_brushes.begin(), m_brushes.end(), brush);
     if (it != m_brushes.end()) {
         m_brushes.erase(it);
@@ -144,12 +143,12 @@ void ObjectManager::deleteBrush(BRUSH* brush) {
 }
 
 void ObjectManager::removeSurfacefromMesh(MESH* mesh, SURFACE* surface) {
-    // Durchlaufen aller Brushes
+    // Iterate through all brushes
 
     auto& surfaces = *(mesh->surfaces);
     for (auto it = surfaces.begin(); it != surfaces.end(); ++it) {
         if (*it == surface) {
-            // Surface gefunden, aus der Liste entfernen
+            // Surface found, remove from the list
             surfaces.erase(it);
             break;
         }
@@ -157,12 +156,12 @@ void ObjectManager::removeSurfacefromMesh(MESH* mesh, SURFACE* surface) {
 }
 
 void ObjectManager::removeMeshfromBrush(BRUSH* brush, MESH* mesh) {
-    // Durchlaufen aller Brushes
+    // Iterate through all brushes
 
     auto& meshes = *(brush->meshes);
     for (auto it = meshes.begin(); it != meshes.end(); ++it) {
         if (*it == mesh) {
-            // Mesh gefunden, aus der Liste entfernen
+            // Mesh found, remove from the list
             meshes.erase(it);
             break;
         }
@@ -170,12 +169,12 @@ void ObjectManager::removeMeshfromBrush(BRUSH* brush, MESH* mesh) {
 }
 
 void ObjectManager::removeBrushfromShader(SHADER* shader, BRUSH* brush) {
-    // Durchlaufen aller Brushes
+    // Iterate through all brushes
 
     auto& brushes = *(shader->brushes);
     for (auto it = brushes.begin(); it != brushes.end(); ++it) {
         if (*it == brush) {
-            // Brush gefunden, aus der Liste entfernen
+            // Brush found, remove from the list
             brushes.erase(it);
             break;
         }
@@ -227,7 +226,7 @@ BRUSH* ObjectManager::getPreviousBrush(BRUSH* currentBrush) {
     return nullptr;
 }
 
-// Funktion zum Zugriff auf das vorangegangene Element in m_shaders
+// Function to access the previous element in m_shaders
 SHADER* ObjectManager::getPreviousShader(SHADER* currentShader)
 {
     for (auto it = m_shaders.begin(); it != m_shaders.end(); ++it) {
@@ -241,7 +240,7 @@ SHADER* ObjectManager::getPreviousShader(SHADER* currentShader)
             }
         }
     }
-    return nullptr; // Fall, wenn das übergebene Shader-Objekt nicht in der Liste gefunden wurde
+    return nullptr; // Case when the passed shader object is not found in the list
 }
 
 

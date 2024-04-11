@@ -26,11 +26,9 @@ void RenderManager::RenderMesh()
 {
     HRESULT hr = S_OK;
 
-    m_objectManager.m_device->ClearRenderTargetDepthStencil();
+    m_lightManager.Update(m_objectManager.m_device);
 
-    m_directionLight->UpdateDirectionalLight(m_objectManager.m_device);
-
-    // Geht alle Shader durch und rendert mit jedem Shader alle Objekte
+    // Iterate through all shaders and render all objects with each shader
     for (const auto& shader : m_objectManager.m_shaders)
     {
         Debug::Log("SHADER: ", shader);
@@ -40,21 +38,21 @@ void RenderManager::RenderMesh()
         for (const auto& brush : *(shader->brushes))
         {
             Debug::Log("   BRUSH: ", brush);
-            // Textur und Material
+            // Texture and material
             for (const auto& mesh : *(brush->meshes))
             {
                 Debug::Log("      MESH: ", mesh);
 
-                // Konstanten in den Constant Buffer schreiben und setzen
-                mesh->UpdateConstantBuffer(m_objectManager.m_device, 
-                                           m_currentCam->cb.viewMatrix, 
-                                           m_currentCam->cb.projectionMatrix);
+                // Write and set constants in the constant buffer
+                mesh->UpdateConstantBuffer(m_objectManager.m_device,
+                    m_currentCam->cb.viewMatrix,
+                    m_currentCam->cb.projectionMatrix);
 
                 for (const auto& surface : *(mesh->surfaces))
                 {
                     Debug::Log("         SURFACE: ", surface);
 
-                    // Vertices rendern
+                    // Render vertices
                     surface->Draw(m_objectManager.m_device, shader->flagsVertex);
                 }
             }
@@ -62,25 +60,3 @@ void RenderManager::RenderMesh()
     }
 }
 
-// Funktion zum Aktualisieren des Richtungslichts und Kopieren der Daten in den Shader-Buffer
-void RenderManager::UpdateDirectionalLight() 
-{
-    HRESULT hr = S_OK;
-
-    // Aktualisieren der Position des Richtungslichts
-    m_directionLight->SetPosition(m_directionLight->position);
-
-    // Kopieren der Daten in den lightBuffer
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
-    hr = m_objectManager.m_device->GetDeviceContext()->Map(m_directionLight->lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
-        return;
-    }
-
-    memcpy(mappedResource.pData, &m_directionLight->cbLight, sizeof(LightSet));
-    m_objectManager.m_device->GetDeviceContext()->Unmap(m_directionLight->lightBuffer, 0);
-
-    // Setzen des lightBuffers im Shader
-    m_objectManager.m_device->GetDeviceContext()->VSSetConstantBuffers(1, 1, &m_lightManager.m_lights[0]->lightBuffer);
-    m_objectManager.m_device->GetDeviceContext()->PSSetConstantBuffers(1, 1, &m_lightManager.m_lights[0]->lightBuffer);
-}

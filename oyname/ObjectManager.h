@@ -13,7 +13,8 @@
 
 using namespace DirectX;
 
-class RenderManager; // Vorwärtsdeklaration
+// Forward declaration
+class RenderManager;
 
 class ObjectManager 
 {

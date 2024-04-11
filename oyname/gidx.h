@@ -52,33 +52,26 @@ namespace Engine
         return engine->m_interface.interfaceManager.GetMaxFrequnecy(engine->GetAdapterIndex(), engine->GetOutputIndex(), width, height);
     }
 
-    //
-    //
     inline HRESULT CreateShader(LPSHADER* shader, const std::wstring& vertexShaderFile, const std::wstring& pixelShaderFile, const std::string& entryPoint,DWORD flags)
     {   
-        // Diese Funktion wurde nicht getestet!
         HRESULT result = S_OK;
        
        *shader = engine->GetOM().createShader();
        
-       // Shader erstellen und laden
        engine->GetSM().CreateShader(*shader, vertexShaderFile, pixelShaderFile, entryPoint);
        if (FAILED(result)) {
            return result;
        }       
-       
-       // LAYOUT ERSTELLEN
+
        result = Engine::engine->GetILM().CreateInputLayoutVertex(&(*shader)->inputlayoutVertex, *shader, (*shader)->flagsVertex, flags);
        if (FAILED(result)) {
            return result;
        }      
-
-
     }
 
     inline void CreateBrush(LPBRUSH* brush, SHADER* shader = nullptr) {
         *brush = engine->GetOM().createBrush();
-        // Wenn Shader == nullptr, dann Standardshader
+        // If Shader == nullptr, then default shader."
         shader = shader == nullptr ? engine->GetSM().GetShader() : shader;
         engine->GetOM().addBrushToShader(shader, *brush);
     }
@@ -138,10 +131,9 @@ namespace Engine
                                         0.01f,
                                         1000.0f);
 
-        // Kamera erstellen.
         engine->GetCam().CreateCamera(camera); 
 
-        // Engine speichert aktuelle Kamera  
+        // Current Camera  
         engine->SetCamera(*camera); 
     }
 
@@ -156,7 +148,7 @@ namespace Engine
     }
 
     inline void FillBuffer(LPSURFACE surface) {
-        // Mit Vertexdaten befüllen
+        // Vertexbuffer
         if (surface->pShader->flagsVertex & D3DVERTEX_POSITION) {
             engine->GetBM().CreateBuffer(surface->position.data(), surface->size_vertex, surface->size_listVertices, D3D11_BIND_VERTEX_BUFFER, &surface->positionBuffer);
         }

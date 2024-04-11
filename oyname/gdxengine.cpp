@@ -3,9 +3,9 @@
 namespace gdx
 {
 	CGIDX::CGIDX(HWND hwnd, HINSTANCE hinst, unsigned int bpp, unsigned int screenX, unsigned int screenY, int* result) :
-	m_objectManager(),
-	m_lightManager(),
-	m_renderManager(m_objectManager, m_lightManager)
+		m_objectManager(),
+		m_lightManager(),
+		m_renderManager(m_objectManager, m_lightManager)
 	{
 		m_colorDepth = bpp;
 		m_screenWidth = screenX;
@@ -16,7 +16,7 @@ namespace gdx
 
 		m_interface.Init(bpp);
 
-		// Primäradapter = 0
+		// Primary adapter = 0
 		this->SetAdapter(0);
 
 		m_bInitialized = true;
@@ -24,7 +24,7 @@ namespace gdx
 
 	CGIDX::~CGIDX()
 	{
-		if(m_bInitialized)
+		if (m_bInitialized)
 			this->Cleanup();
 	}
 
@@ -32,7 +32,7 @@ namespace gdx
 	{
 		if (m_bInitialized)
 		{
-			// Aufräumarbeiten
+			// Clean-up operations
 		}
 
 		m_bInitialized = false;
@@ -42,23 +42,23 @@ namespace gdx
 	{
 		HRESULT hr = S_OK;
 
-		// Index aktueller Adapter (0 = Primär)
+		// Index of current adapter (0 = Primary)
 		int index = GetAdapterIndex();
 
 		// Adapter
 		IDXGIAdapter* adapter = nullptr;
 
-		// Aktueller Adapter mit der unterstützten DiretcX Version
+		// Current adapter with supported DirectX version
 		D3D_FEATURE_LEVEL featureLevel;
-		featureLevel = Common::GetFeatureLevelFromDirectXVersion(m_device.deviceManager.GetDirectXVersion(index));
+		featureLevel = GXUTIL::GetFeatureLevelFromDirectXVersion(m_device.deviceManager.GetDirectXVersion(index));
 
-		// Adapter erstellen mit aktuellem Index
+		// Create adapter with current index
 		hr = m_interface.GetFactory()->EnumAdapters(index, &adapter);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
 
-		// Device erstellen
+		// Create device
 		hr = m_device.InitializeDirectX(adapter, &featureLevel);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
@@ -66,67 +66,67 @@ namespace gdx
 
 		Memory::SafeRelease(adapter);
 
-		// Frequenz
+		// Frequency
 		unsigned int numerator = m_interface.interfaceManager.GetNumerator(this->GetAdapterIndex(), this->GetOutputIndex(), width, height);
-		unsigned int denomiator = m_interface.interfaceManager.GetDenominator(this->GetAdapterIndex(), this->GetOutputIndex(), width, height);
+		unsigned int denominator = m_interface.interfaceManager.GetDenominator(this->GetAdapterIndex(), this->GetOutputIndex(), width, height);
 
-		// Erstelle die SwapChain
-		hr = m_device.CreateSwapChain(m_interface.GetFactory(), GetHWND(), width, height, m_interface.interfaceManager.GetDXGI_Format(), numerator, denomiator, windowed);
+		// Create the SwapChain
+		hr = m_device.CreateSwapChain(m_interface.GetFactory(), GetHWND(), width, height, m_interface.interfaceManager.GetDXGI_Format(), numerator, denominator, windowed);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
 
-		// Backbuffer erstellen
+		// Create Backbuffer
 		hr = m_device.CreateRenderTarget(width, height);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
 
-		// Setze Rendertarget
+		// Set Render Target
 		m_device.SetRenderTargets();
 
-		// Initialisierung des Depth-Stencil-Buffers und -Views
+		// Initialization of the Depth-Stencil buffer and views
 		hr = m_device.CreateDeepBuffer(width, height);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
 
-		// Objekt zum organisieren des Renders
-		
-		// 1. Objekte initialisieren
-		
+		// Object for organizing rendering
+
+		// 1. Initialize objects
+
 		// Camera 
 		m_camera.Init(this);
 		m_camera.SetViewport(0.0f, 0.0f, (float)width, (float)height, 0.0f, 1.0f);
 		m_device.CreateView(1, m_camera.GetViewPort());
-		
-		// Objektmanager
+
+		// Object manager
 		m_objectManager.Init(&m_device);
-		
-		// Buffer-Manager initialisieren
+
+		// Initialize Buffer Manager
 		m_bufferManager.Init(m_device.GetDevice());
-		
-		// Shader-Manager initialisieren
+
+		// Initialize Shader Manager
 		m_shaderManager.Init(m_device.GetDevice());
-		
-		// Input-Layout Managers initialisieren
+
+		// Initialize Input-Layout Managers
 		m_inputLayoutManager.Init(m_device.GetDevice());
-		
-		// 2. Standardzeug erstellen
-		
-		// Standardshader erstellen.
+
+		// 2. Create standard stuff
+
+		// Create standard shader.
 		GetSM().SetShader(m_objectManager.createShader());
-		// ...und laden
-		hr = GetSM().CreateShader(GetSM().GetShader(), L"vertexshader.hlsl", L"pixelshader.hlsl","main");
+		// ...and load
+		hr = GetSM().CreateShader(GetSM().GetShader(), L"vertexshader.hlsl", L"pixelshader.hlsl", "main");
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
 
-		// Layout für die Vertices erstellen
-		hr = GetILM().CreateInputLayoutVertex(&GetSM().GetShader()->inputlayoutVertex, // Speichert das Layout
-											   GetSM().GetShader(),                    // Das Shader-Objekt
-			                                   GetSM().GetShader()->flagsVertex,       // Speichert das Flag
-			                                   D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL);
+		// Create layout for the vertices
+		hr = GetILM().CreateInputLayoutVertex(&GetSM().GetShader()->inputlayoutVertex, // Store the layout
+			GetSM().GetShader(),                    // The shader object
+			GetSM().GetShader()->flagsVertex,       // Store the flag
+			D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
@@ -139,13 +139,19 @@ namespace gdx
 
 	void CGIDX::RenderWorld()
 	{
+		// Clear Render Target
+		this->m_device.ClearRenderTargetDepthStencil();
+
+		// Update Camera position
 		m_camera.Update();
+
+		// Render objects
 		m_renderManager.RenderLoop();
 	}
 
 	void CGIDX::UpdateWorld()
 	{
-		
+
 	}
 
 	HRESULT CGIDX::Cls(float r, float g, float b, float a)
@@ -157,7 +163,7 @@ namespace gdx
 
 		m_device.GetDeviceContext()->ClearRenderTargetView(m_device.GetTargetView(), color);
 
-		hr = m_device.GetDevice()->GetDeviceRemovedReason(); // Überprüfe auf Gerätefehler
+		hr = m_device.GetDevice()->GetDeviceRemovedReason(); // Check for device error
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
 		{
 			return hr;
