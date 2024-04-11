@@ -1,8 +1,12 @@
 # Ignoriere alle Ordner im Stammverzeichnis
 /*/
+.vscode/*
 
 # Aber verfolge .cpp- und .h-Dateien im Stammverzeichnis
 !/*.cpp
 !/*.h
 !/*.hlsl
-!/*.co
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
