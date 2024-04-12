@@ -78,10 +78,10 @@ namespace Engine
         engine->GetOM().addBrushToShader(shader, *brush);
     }
 
-    inline void CreateMesh(LPMESH *mesh, BRUSH* lpBrush) 
-    {
+    inline void CreateMesh(LPMESH *mesh, BRUSH* brush = nullptr) {
         *mesh = engine->GetOM().createMesh();
-        engine->GetOM().addMeshToBrush(lpBrush, *mesh);
+        brush = brush == nullptr ? engine->GetOM().getStandardBrush() : brush;
+        engine->GetOM().addMeshToBrush(brush, *mesh);
 
         (*mesh)->mTranslation = XMMatrixTranslationFromVector((*mesh)->position);
         (*mesh)->cb.viewMatrix = engine->GetCam().GetCurrentCam()->cb.viewMatrix;
@@ -144,9 +144,8 @@ namespace Engine
         engine->GetOM().addSurfaceToMesh(lpMesh, *surface);
     }
 
-    inline void FillLightBuffer()
-    {
-
+    inline LPSURFACE GetSurface(LPMESH mesh) {
+        return engine->GetOM().getSurface(mesh);
     }
 
     inline void FillBuffer(LPSURFACE surface) {

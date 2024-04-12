@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClCompile Include="Brush.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="createCube.cpp" />
     <ClCompile Include="gdxdevice.cpp" />
     <ClCompile Include="gdxinterface.cpp" />
     <ClCompile Include="gidx.cpp" />

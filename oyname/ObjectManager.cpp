@@ -243,6 +243,26 @@ SHADER* ObjectManager::getPreviousShader(SHADER* currentShader)
     return nullptr; // Case when the passed shader object is not found in the list
 }
 
+SURFACE* ObjectManager::getSurface(MESH* mesh)
+{
+    if (!mesh->surfaces->empty())
+    {
+        return mesh->surfaces->front();
+    }
+    else
+        return nullptr;
+}
+
+
+BRUSH* ObjectManager::getStandardBrush()
+{
+    if (!m_brushes.empty())
+    {
+        return m_brushes.front();
+    }
+    else
+        return nullptr;
+}
 
 SHADER* ObjectManager::getShader(SURFACE surface)
 {

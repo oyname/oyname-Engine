@@ -43,17 +43,15 @@ public:
     void removeMeshfromBrush(BRUSH* brush, MESH* mesh);
     void removeBrushfromShader(SHADER* shader, BRUSH* brush);
 
-    // Funktion zum Zugriff auf das vorangegangene Element in m_surfaces
     SURFACE* getPreviousSurface(SURFACE* currentSurface);
-
-    // Funktion zum Zugriff auf das vorangegangene Element in m_meshes
     MESH* getPreviousMesh(MESH* currentMesh);
-
-    // Funktion zum Zugriff auf das vorangegangene Element in m_brushes
     BRUSH* getPreviousBrush(BRUSH* currentBrush);
-
-    // Funktion zum Zugriff auf das vorangegangene Element in m_shaders
     SHADER* getPreviousShader(SHADER* currentShader);
+
+    SURFACE* getSurface(MESH* mesh);
+
+    // Standardbrush
+    BRUSH* getStandardBrush();
 
     SHADER* getShader(SURFACE surface);
     SHADER* getShader(MESH mesh);

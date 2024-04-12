@@ -23,7 +23,7 @@ void LightManager::Update(const gdx::CDevice* device)
 {
     for (const auto& light : m_lights)
     {
-        Debug::Log(" LICHT UPDATEN..");
+        Debug::Log("UPDATEN LIGHT :", light);
 
         light->UpdateDirectionalLight(device);
     }

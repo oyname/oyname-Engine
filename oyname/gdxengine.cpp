@@ -122,6 +122,9 @@ namespace gdx
 			return hr;
 		}
 
+		// Create standard brush and add to standard shader
+		GetOM().addBrushToShader(GetSM().GetShader(),GetOM().createBrush());
+
 		// Create layout for the vertices
 		hr = GetILM().CreateInputLayoutVertex(&GetSM().GetShader()->inputlayoutVertex, // Store the layout
 			GetSM().GetShader(),                    // The shader object

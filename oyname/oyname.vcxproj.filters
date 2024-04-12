@@ -120,6 +120,9 @@
     <ClCompile Include="LightManager.cpp">
       <Filter>03_Engine\Manager\LightManager</Filter>
     </ClCompile>
+    <ClCompile Include="createCube.cpp">
+      <Filter>05_Beispiele</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gidx.h">
