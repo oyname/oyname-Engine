@@ -159,6 +159,7 @@
     <ClCompile Include="adapter.cpp" />
     <ClCompile Include="simple.cpp" />
     <ClCompile Include="BufferManager.cpp" />
+    <ClCompile Include="turnlight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Brush.h" />

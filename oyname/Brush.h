@@ -13,7 +13,7 @@ class Brush
 public:
     Brush();
     ~Brush();
-
+    
     bool isActive;
     float shininess;
     float transparency;

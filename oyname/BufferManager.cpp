@@ -4,11 +4,12 @@
 // InputLayoutManager creates an input layout based on the specified flags and the shader object
 // and returns the HRESULT value to indicate the success or failure of the operation.
 
-BufferManager::BufferManager() : m_device(nullptr) {}
+BufferManager::BufferManager() : m_device(nullptr), m_context(nullptr) {}
 
-void BufferManager::Init(ID3D11Device* device)
+void BufferManager::Init(ID3D11Device* device, ID3D11DeviceContext* context)
 {
     m_device = device;
+    m_context = context;
 }
 
 HRESULT BufferManager::CreateBuffer(const void* data, UINT size, UINT count, D3D11_BIND_FLAG bindFlags, ID3D11Buffer** buffer)
@@ -31,6 +32,26 @@ HRESULT BufferManager::CreateBuffer(const void* data, UINT size, UINT count, D3D
 
     // Create Buffer
     return m_device->CreateBuffer(&bufferDesc, &initData, buffer);
+}
+
+void BufferManager::UpdateBuffer(ID3D11Buffer* buffer, const void* data, UINT dataSize)
+{
+    m_context->UpdateSubresource(buffer, 0, nullptr, data, dataSize, 0);
+
+}
+
+HRESULT BufferManager::UpdateConstantBuffer(ID3D11Buffer* buffer, const void* data, UINT dataSize)
+{
+    D3D11_MAPPED_SUBRESOURCE mappedResource;
+    HRESULT hr = m_context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+        return hr;
+    }
+    
+    memcpy(mappedResource.pData, data, dataSize);
+    m_context->Unmap(buffer, 0);
+
+    return hr;
 }
 
 

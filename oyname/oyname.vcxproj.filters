@@ -123,6 +123,9 @@
     <ClCompile Include="createCube.cpp">
       <Filter>05_Beispiele</Filter>
     </ClCompile>
+    <ClCompile Include="turnlight.cpp">
+      <Filter>05_Beispiele</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gidx.h">

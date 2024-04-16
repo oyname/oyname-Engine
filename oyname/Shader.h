@@ -18,7 +18,7 @@ public:
     unsigned int sizeVS;
     std::wstring vertexShaderFile;
     std::wstring pixelShaderFile;
-
+    
     ID3D11InputLayout* inputlayoutVertex;
 
     ID3D11VertexShader* vertexShader;

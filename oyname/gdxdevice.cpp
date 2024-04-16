@@ -199,6 +199,7 @@ void CDevice::ClearRenderTargetDepthStencil()
 
 void gdx::CDevice::SetRenderTargets(unsigned int numViews)
 {
+    // numViews = 1 is default setting
     m_pContext->OMSetRenderTargets(numViews, &m_pRenderTargetView, NULL);
 }
 
@@ -218,7 +219,7 @@ HRESULT CDevice::Flip(int syncInterval)
     // A value of 0 means that the VSYNC reset is not considered, and the image is displayed immediately when available. 
     // A value greater than 0 means that the VSYNC reset occurs every SyncInterval - frames. For example, a value of 1 
     // means that the VSYNC reset occurs once every two frames, which corresponds to a refresh rate of 30 Hz on a 60 Hz monitor.
-    // //
+    // 
     // Present the backbuffer to the screen
     return m_pSwapChain->Present(syncInterval, 0);
 }
@@ -312,13 +313,37 @@ HRESULT CDevice::CreateDeepBuffer(unsigned int width, unsigned int height)
 
     // Set the Depth-Stencil State
     GetDeviceContext()->OMSetDepthStencilState(depthStencilState, 1);
+
+    // Release the Depth-Stencil State
+    Memory::SafeRelease(depthStencilState);
+
+    return hr;
+}
+
+HRESULT CDevice::SetRasterizerState()
+{
+    HRESULT hr = S_OK;
+    
+    D3D11_RASTERIZER_DESC rasterizerDesc;
+    ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
+    rasterizerDesc.FillMode = D3D11_FILL_SOLID;      // Setze den Fill-Modus auf Wireframe
+    rasterizerDesc.CullMode = D3D11_CULL_BACK;       // Optional: Rückseiten-Culling aktivieren
+    rasterizerDesc.FrontCounterClockwise = FALSE;    // Optional: Reihenfolge der Dreiecks-Vertizes im Uhrzeigersinn
+    rasterizerDesc.DepthClipEnable = TRUE;           // Optional: Tiefen-Clipping aktivieren
+
+    // Erstelle den Rasterizerzustand
+    ID3D11RasterizerState* pRasterizerState = nullptr;
+    hr = GetDevice()->CreateRasterizerState(&rasterizerDesc, &pRasterizerState);
     if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
     {
         return hr;
     }
 
-    // Release the Depth-Stencil State
-    Memory::SafeRelease(depthStencilState);
+    // Setze den Rasterizerzustand im Gerätekontext
+    GetDeviceContext()->RSSetState(pRasterizerState);
+
+    // Freigabe des Rasterizerzustands (optional, wenn er nicht mehr benötigt wird)
+    Memory::SafeRelease(pRasterizerState);
 
     return hr;
 }

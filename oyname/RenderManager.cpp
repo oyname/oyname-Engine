@@ -45,8 +45,8 @@ void RenderManager::RenderMesh()
 
                 // Write and set constants in the constant buffer
                 mesh->UpdateConstantBuffer(m_objectManager.m_device,
-                    m_currentCam->cb.viewMatrix,
-                    m_currentCam->cb.projectionMatrix);
+                                           m_currentCam->cb.viewMatrix,
+                                           m_currentCam->cb.projectionMatrix);
 
                 for (const auto& surface : *(mesh->surfaces))
                 {

@@ -10,8 +10,6 @@ namespace Engine
 {
     extern gdx::CGIDX* engine;
 
-    //
-    // 
     inline unsigned int CountGfxDrivers() { return (unsigned int)engine->m_interface.interfaceManager.GetNumAdapters(); }
 
     inline std::string GfxDriverName() { return engine->m_interface.interfaceManager.GetGfxDriverName(engine->GetAdapterIndex()); }
@@ -77,7 +75,7 @@ namespace Engine
         shader = shader == nullptr ? engine->GetSM().GetShader() : shader;
         engine->GetOM().addBrushToShader(shader, *brush);
     }
-
+    
     inline void CreateMesh(LPMESH *mesh, BRUSH* brush = nullptr) {
         *mesh = engine->GetOM().createMesh();
         brush = brush == nullptr ? engine->GetOM().getStandardBrush() : brush;
@@ -94,10 +92,12 @@ namespace Engine
         }
     }
 
-    inline void CreateLight(LPLIGHT* light)
+    inline void CreateLight(LPLIGHT* light, D3DLIGHTTYPE type)
     {
-        *light = engine->GetLM().createLight();
-        engine->SetDirectionalLight(*light);
+        *light = engine->GetLM().createLight(type);
+        
+        if(type == D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL)
+            engine->SetDirectionalLight(*light);
 
         HRESULT hr = engine->GetBM().CreateBuffer(&((*light)->cbLight), sizeof(LightSet), 1, D3D11_BIND_CONSTANT_BUFFER, &((*light)->lightBuffer));
         if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
@@ -121,16 +121,16 @@ namespace Engine
         mesh->RotateEntity(fRotateX, fRotateY, fRotateZ);
     }
 
-    inline void TurnEntity(LPMESH mesh, float fRotateX, float fRotateY, float fRotateZ)
+    inline void TurnEntity(LPMESH mesh, float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local)
     {
-        mesh->TurnEntity(fRotateX, fRotateY, fRotateZ);
+        mesh->TurnEntity(fRotateX, fRotateY, fRotateZ, mode);
     }
 
     inline void CreateCamera(LPMESH* camera)
     {
         engine->GetCam().SetPerspective(XMConvertToRadians(75.0f),
                                         (static_cast<float>(engine->GetWidth()) / static_cast<float>(engine->GetHeight())),
-                                        0.01f,
+                                        1.0f,
                                         1000.0f);
 
         engine->GetCam().CreateCamera(camera); 
@@ -164,6 +164,10 @@ namespace Engine
         engine->GetBM().CreateBuffer(surface->indices.data(), sizeof(UINT), surface->size_listIndex, D3D11_BIND_INDEX_BUFFER, &surface->indexBuffer);
     }
 
+    inline void UpdateBuffer(LPSURFACE surface) {
+        engine->GetBM().UpdateBuffer(surface->colorBuffer, surface->color.data(), surface->size_color);
+    }
+
     inline void AddVertex(LPSURFACE surface, float x, float y, float z)
     {
         surface->AddVertex(x, y, z);
@@ -171,12 +175,22 @@ namespace Engine
 
     inline void VertexNormal(LPSURFACE surface, float x, float y, float z)
     {
-        surface->VertexNormal(x, y, z);
+        surface->VertexNormal(-1, x, y, z);
+    }
+
+    inline void VertexNormal(LPSURFACE surface, unsigned int index, float x, float y, float z)
+    {
+        surface->VertexNormal(index, x, y, z);
     }
 
     inline void VertexColor(LPSURFACE surface, unsigned int r, unsigned int g, unsigned int b)
     {
-        surface->VertexColor(float(r / 255.0f), float(g / 255.0f), float(b / 255.0f));
+        surface->VertexColor(-1 , float(r / 255.0f), float(g / 255.0f), float(b / 255.0f));
+    }
+
+    inline void VertexColor(LPSURFACE surface, unsigned int index, unsigned int r, unsigned int g, unsigned int b)
+    {
+        surface->VertexColor(index, float(r / 255.0f), float(g / 255.0f), float(b / 255.0f));
     }
 
     inline void AddTriangle(LPSURFACE surface, unsigned int a, unsigned int b, unsigned int c)

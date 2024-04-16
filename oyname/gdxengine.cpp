@@ -91,6 +91,9 @@ namespace gdx
 			return hr;
 		}
 
+		// RenderMode still needs to be reprogrammed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		m_device.SetRasterizerState();
+
 		// Object for organizing rendering
 
 		// 1. Initialize objects
@@ -104,7 +107,7 @@ namespace gdx
 		m_objectManager.Init(&m_device);
 
 		// Initialize Buffer Manager
-		m_bufferManager.Init(m_device.GetDevice());
+		m_bufferManager.Init(m_device.GetDevice(), m_device.GetDeviceContext());
 
 		// Initialize Shader Manager
 		m_shaderManager.Init(m_device.GetDevice());
@@ -121,7 +124,7 @@ namespace gdx
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
-
+		
 		// Create standard brush and add to standard shader
 		GetOM().addBrushToShader(GetSM().GetShader(),GetOM().createBrush());
 

@@ -14,10 +14,10 @@ public:
 
 public:
     void AddVertex(float x, float y, float z);
-    void VertexNormal(float x, float y, float z);
-    void VertexColor(float r, float g, float b);
+    void VertexNormal(unsigned int index, float x, float y, float z);
+    void VertexColor(unsigned int index, float r, float g, float b);
     void AddIndex(UINT index);
-
+    
     void Draw(const gdx::CDevice* m_device, const DWORD flags);
 
     bool isActive;

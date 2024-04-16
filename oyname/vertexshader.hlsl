@@ -8,14 +8,15 @@ cbuffer ConstantBuffer : register(b0)
 cbuffer LightBuffer : register(b1)
 {
     float4 lightPosition;
+    float4 lightDirection;   
     float4 lightColor;
 };
 
 struct VS_INPUT
 {
     float4 position : POSITION;
+    float3 normal : NORMAL;   
     float4 color : COLOR;
-    float3 normal : NORMAL;
 };
 
 struct VS_OUTPUT
@@ -25,6 +26,7 @@ struct VS_OUTPUT
     float3 normal : TEXCOORD0;
     float4 lightPosition : TEXCOORD1;
     float3 lightColor : TEXCOORD2;
+    float3 lightDirection : TEXCOORD3;
 };
 
 // Erster Vertex-Shader (main)
@@ -38,13 +40,14 @@ VS_OUTPUT main(VS_INPUT input)
     o.position = mul(o.position, _projectionMatrix);
 
     o.lightPosition = lightPosition;
+    o.lightDirection = lightDirection;
     o.lightColor = lightColor.rgb;
     
     // Transformiere die Normale in den Welt-Raum
-    o.normal = mul(input.normal, (float3x3) _worldMatrix);
+    o.normal = normalize(mul(input.normal, (float3x3) _worldMatrix));
 
     // Kopiere die Farbe einfach
-    o.color = input.color;
+    o.color = input.color; // Diffuse Lichtfarbe input.color;
 
     return o;
 }

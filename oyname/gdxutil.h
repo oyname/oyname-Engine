@@ -21,7 +21,12 @@
 #pragma comment (lib, "dxgi.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 
-//
+enum D3DLIGHTTYPE {
+	D3DLIGHT_POINT = 1,
+	D3DLIGHT_SPOT = 2,
+	D3DLIGHT_DIRECTIONAL = 3,
+};
+
 enum D3DVERTEX_FLAGS
 {
 	D3DVERTEX_POSITION = (1 << 0),

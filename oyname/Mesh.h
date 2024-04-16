@@ -33,6 +33,8 @@ public:
     void MoveEntity(float x, float y, float z);
     void ScaleEntity(float x, float y, float z);
     
+    DirectX::XMMATRIX MatrixAxes(DirectX::XMMATRIX* mOut, const DirectX::XMVECTOR& vXAxis, const DirectX::XMVECTOR& vYAxis, const DirectX::XMVECTOR& vZAxis);
+
     void UpdateConstantBuffer(const gdx::CDevice* device, const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj);
     void Update();
 
@@ -42,7 +44,7 @@ public:
     DirectX::XMVECTOR lookAt;
     DirectX::XMVECTOR up;
     DirectX::XMVECTOR right;
-
+    
     DirectX::XMMATRIX mRotate;
     DirectX::XMMATRIX mTranslation;
     DirectX::XMMATRIX mScaling;

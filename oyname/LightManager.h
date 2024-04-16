@@ -10,7 +10,7 @@ public:
     LightManager();
     ~LightManager();
 
-    LIGHT* createLight();
+    LIGHT* createLight(D3DLIGHTTYPE type);
 
     void Update(const gdx::CDevice* device);
 

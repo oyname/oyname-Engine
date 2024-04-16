@@ -15,7 +15,7 @@ Mesh::Mesh() :
     cb.projectionMatrix = DirectX::XMMatrixIdentity();
     cb.viewMatrix = DirectX::XMMatrixIdentity();
     cb.worldMatrix = DirectX::XMMatrixIdentity();
-
+    
     mRotate = DirectX::XMMatrixRotationAxis(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMConvertToRadians(0.0f));
     mTranslation = DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f);
     mScaling = DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f);
@@ -29,11 +29,11 @@ void Mesh::TurnEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode
 {
     // Calculation of rotation matrices
     DirectX::XMMATRIX rotationX = DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(fRotateX));
-    DirectX::XMMATRIX rotationY = DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(fRotateY));
+    DirectX::XMMATRIX rotationY = DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(-fRotateY));
     DirectX::XMMATRIX rotationZ = DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(fRotateZ));
 
     // Create a matrix combining the rotations
-    DirectX::XMMATRIX rotationMatrix = rotationX * rotationY * rotationZ;
+    DirectX::XMMATRIX rotationMatrix = rotationZ  * rotationX * rotationY;
 
     // Apply rotation to the corresponding matrix depending on the mode
     if (mode == Space::Local) {
@@ -59,7 +59,7 @@ void Mesh::RotateEntity(float fRotateX, float fRotateY, float fRotateZ, Space mo
     DirectX::XMMATRIX rotationZ = DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(fRotateZ));
 
     // Create a matrix combining the rotations
-    DirectX::XMMATRIX rotationMatrix = rotationX * rotationY * rotationZ;
+    DirectX::XMMATRIX rotationMatrix = rotationZ  * rotationX * rotationY;
 
     // Apply rotation to the corresponding matrix depending on the mode
     if (mode == Space::Local) {
@@ -76,6 +76,19 @@ void Mesh::RotateEntity(float fRotateX, float fRotateY, float fRotateZ, Space mo
     up = DirectX::XMVector3Normalize(DirectX::XMVector3TransformNormal(defaultUp, mRotate));
     right = DirectX::XMVector3Cross(lookAt, up);
 }
+
+DirectX::XMMATRIX Mesh::MatrixAxes(DirectX::XMMATRIX* mOut, const DirectX::XMVECTOR& vXAxis, const DirectX::XMVECTOR& vYAxis, const DirectX::XMVECTOR& vZAxis)
+{
+    *mOut = DirectX::XMMATRIX(
+        vXAxis.m128_f32[0], vXAxis.m128_f32[1], vXAxis.m128_f32[2], 0.0f,
+        vYAxis.m128_f32[0], vYAxis.m128_f32[1], vYAxis.m128_f32[2], 0.0f,
+        vZAxis.m128_f32[0], vZAxis.m128_f32[1], vZAxis.m128_f32[2], 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    );
+
+    return *mOut;
+}
+
 
 void Mesh::PositionEntity(float x, float y, float z) {
     position = DirectX::XMVectorSet(x, y, z, 0.0f);

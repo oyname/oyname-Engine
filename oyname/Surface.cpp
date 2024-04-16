@@ -30,16 +30,26 @@ void Surface::AddVertex(float x, float y, float z)
     size_vertex = sizeof(DirectX::XMFLOAT3);
 }
 
-void Surface::VertexColor(float r, float g, float b)
+void Surface::VertexColor(unsigned int index, float r, float g, float b)
 {
-    color.push_back(DirectX::XMFLOAT4(r, g, b, 1.0f));
-    size_listColor = (unsigned int)color.size();
+    if (index >= 0 && index < color.size()) {
+        color[index] = DirectX::XMFLOAT4(r, g, b, 1.0f);
+    }
+    else {
+        color.push_back(DirectX::XMFLOAT4(r, g, b, 1.0f));
+    }
+    size_listColor = static_cast<unsigned int>(color.size());
     size_color = sizeof(DirectX::XMFLOAT4);
 }
 
-void Surface::VertexNormal(float x, float y, float z)
+void Surface::VertexNormal(unsigned int index, float x, float y, float z)
 {
-    normal.push_back(DirectX::XMFLOAT3(x, y, z));
+    if (index >= 0 && index < normal.size()) {
+        normal[index] = DirectX::XMFLOAT3(x, y, z);
+    }
+    else {
+        normal.push_back(DirectX::XMFLOAT3(x, y, z));
+    }
     size_listNormal = (unsigned int)normal.size();
     size_normal = sizeof(DirectX::XMFLOAT3);
 }

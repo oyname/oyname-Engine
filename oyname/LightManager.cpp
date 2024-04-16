@@ -13,8 +13,9 @@ LightManager::~LightManager()
     m_lights.clear();
 }
 
-LIGHT* LightManager::createLight() {
+LIGHT* LightManager::createLight(D3DLIGHTTYPE type) {
     LIGHT* light = new LIGHT;
+    light->type = type;
     m_lights.push_back(light);
     return light;
 }
@@ -25,6 +26,6 @@ void LightManager::Update(const gdx::CDevice* device)
     {
         Debug::Log("UPDATEN LIGHT :", light);
 
-        light->UpdateDirectionalLight(device);
+        light->UpdateLight(device);
     }
 }

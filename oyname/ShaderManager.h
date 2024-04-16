@@ -17,7 +17,7 @@ public:
     LPSHADER GetShader();
     void SetShader(LPSHADER shader);
     void SetShaderFolder(const std::wstring& shaderFolder);
-
+    
 private:
     ID3D11Device* m_device;
     ObjectManager* m_objectManager; // Reference to the ObjectManager

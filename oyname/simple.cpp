@@ -18,7 +18,7 @@ int main_off2()
 
         Engine::RenderWorld();
     }
-
+    
     // Shutdown the engine
     return gdx::ShutDown();
 }
