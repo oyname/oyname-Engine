@@ -8,22 +8,29 @@ cbuffer ConstantBuffer : register(b0)
 cbuffer LightBuffer : register(b1)
 {
     float4 lightPosition;
-    float4 lightDirection;   
+    float4 lightDirection;
     float4 lightColor;
+};
+
+cbuffer MaterialBuffer : register(b2)
+{
+    float4 materialColor;
 };
 
 struct VS_INPUT
 {
-    float4 position : POSITION;
-    float3 normal : NORMAL;   
+    float3 position : POSITION;
+    float3 normal : NORMAL;
     float4 color : COLOR;
+    float2 texCoord : TEXCOORD0; // Hinzugefügt: Texturkoordinaten
 };
 
 struct VS_OUTPUT
 {
     float4 position : SV_POSITION;
+    float3 normal : NORMAL;
     float4 color : COLOR;
-    float3 normal : TEXCOORD0;
+    float2 texCoord : TEXCOORD0;
     float4 lightPosition : TEXCOORD1;
     float3 lightColor : TEXCOORD2;
     float3 lightDirection : TEXCOORD3;
@@ -35,7 +42,9 @@ VS_OUTPUT main(VS_INPUT input)
     VS_OUTPUT o;
 
     // Transformiere die Position des Vertices mit der Worldmatrix, Viewmatrix und der Projektionsmatrix
-    o.position = mul(input.position, _worldMatrix);
+    float4 tempPosition = float4(input.position, 1.0f);
+    o.position = mul(tempPosition, _worldMatrix);
+
     o.position = mul(o.position, _viewMatrix);
     o.position = mul(o.position, _projectionMatrix);
 
@@ -47,7 +56,11 @@ VS_OUTPUT main(VS_INPUT input)
     o.normal = normalize(mul(input.normal, (float3x3) _worldMatrix));
 
     // Kopiere die Farbe einfach
-    o.color = input.color; // Diffuse Lichtfarbe input.color;
+    //o.color = input.color;
 
+    // Kopiere die Texturkoordinaten
+    o.texCoord = input.texCoord;
+    o.color = input.color;
     return o;
 }
+

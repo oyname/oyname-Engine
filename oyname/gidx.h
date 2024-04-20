@@ -50,13 +50,13 @@ namespace Engine
         return engine->m_interface.interfaceManager.GetMaxFrequnecy(engine->GetAdapterIndex(), engine->GetOutputIndex(), width, height);
     }
 
-    inline HRESULT CreateShader(LPSHADER* shader, const std::wstring& vertexShaderFile, const std::wstring& pixelShaderFile, const std::string& entryPoint,DWORD flags)
+    inline HRESULT CreateShader(LPSHADER* shader, const std::wstring& vertexShaderFile, const std::string& vertexEntryPoint, const std::wstring& pixelShaderFile, const std::string& pixelEntryPoint,DWORD flags)
     {   
         HRESULT result = S_OK;
        
        *shader = engine->GetOM().createShader();
        
-       engine->GetSM().CreateShader(*shader, vertexShaderFile, pixelShaderFile, entryPoint);
+       engine->GetSM().CreateShader(*shader, vertexShaderFile, vertexEntryPoint, pixelShaderFile, pixelEntryPoint);
        if (FAILED(result)) {
            return result;
        }       
@@ -111,6 +111,11 @@ namespace Engine
         mesh->PositionEntity(x, y, z);
     }
 
+    inline void PositionEntity(LPLIGHT light, float x, float y, float z)
+    {
+        light->PositionEntity(x, y, z);
+    }
+
     inline void MoveEntity(LPMESH mesh, float x, float y, float z)
     {
         mesh->MoveEntity(x, y, z);
@@ -149,19 +154,27 @@ namespace Engine
     }
 
     inline void FillBuffer(LPSURFACE surface) {
-        // Vertexbuffer
-        if (surface->pShader->flagsVertex & D3DVERTEX_POSITION) {
-            engine->GetBM().CreateBuffer(surface->position.data(), surface->size_vertex, surface->size_listVertices, D3D11_BIND_VERTEX_BUFFER, &surface->positionBuffer);
-        }
-        if (surface->pShader->flagsVertex & D3DVERTEX_NORMAL) {
-            engine->GetBM().CreateBuffer(surface->normal.data(), surface->size_normal, surface->size_listNormal, D3D11_BIND_VERTEX_BUFFER, &surface->normalBuffer);
-        }
-        if (surface->pShader->flagsVertex & D3DVERTEX_COLOR) {
-            engine->GetBM().CreateBuffer(surface->color.data(), surface->size_color, surface->size_listColor, D3D11_BIND_VERTEX_BUFFER, &surface->colorBuffer);
-        }
+        if (surface != nullptr && surface->pShader != nullptr)
+        {
+            LPSHADER shader = static_cast<LPSHADER>(surface->pShader);
 
-        // Indexbuffer befüllen
-        engine->GetBM().CreateBuffer(surface->indices.data(), sizeof(UINT), surface->size_listIndex, D3D11_BIND_INDEX_BUFFER, &surface->indexBuffer);
+            // Vertexbuffer
+            if (shader->flagsVertex & D3DVERTEX_POSITION) {
+                engine->GetBM().CreateBuffer(surface->position.data(), surface->size_vertex, surface->size_listVertices, D3D11_BIND_VERTEX_BUFFER, &surface->positionBuffer);
+            }
+            if (shader->flagsVertex & D3DVERTEX_NORMAL) {
+                engine->GetBM().CreateBuffer(surface->normal.data(), surface->size_normal, surface->size_listNormal, D3D11_BIND_VERTEX_BUFFER, &surface->normalBuffer);
+            }
+            if (shader->flagsVertex & D3DVERTEX_COLOR) {
+                engine->GetBM().CreateBuffer(surface->color.data(), surface->size_color, surface->size_listColor, D3D11_BIND_VERTEX_BUFFER, &surface->colorBuffer);
+            }
+            if (shader->flagsVertex & D3DVERTEX_TEX1) {
+                engine->GetBM().CreateBuffer(surface->uv1.data(), surface->size_uv1, surface->size_listUV1, D3D11_BIND_VERTEX_BUFFER, &surface->uv1Buffer);
+            }
+
+            // Indexbuffer befüllen
+            engine->GetBM().CreateBuffer(surface->indices.data(), sizeof(UINT), surface->size_listIndex, D3D11_BIND_INDEX_BUFFER, &surface->indexBuffer);
+        }
     }
 
     inline void UpdateBuffer(LPSURFACE surface) {
@@ -193,6 +206,11 @@ namespace Engine
         surface->VertexColor(index, float(r / 255.0f), float(g / 255.0f), float(b / 255.0f));
     }
 
+    inline void VertexTexCoord(LPSURFACE surface, float u, float v)
+    {
+        surface->VertexTexCoords(-1, u, v);
+    }
+
     inline void AddTriangle(LPSURFACE surface, unsigned int a, unsigned int b, unsigned int c)
     {
         surface->AddIndex(a);
@@ -208,9 +226,36 @@ namespace Engine
 
     inline void RenderWorld() { engine->RenderWorld(); }
 
-    inline void PositionEntity(LPLIGHT light, float x, float y, float z)
+    inline void LoadTexture(LPLPTEXTURE texture, const wchar_t* filename)
     {
-        light->PositionEntity(x, y, z);
+        engine->GetTM().LoadTexture(engine->m_device.GetDevice(),
+                                    engine->m_device.GetDeviceContext(),
+                                    filename,
+                                    texture);
+    }
+
+    inline void BrushTexture(LPBRUSH brush, LPTEXTURE texture)
+    {
+        if (brush != nullptr)
+        {
+            LPBRUSH b = static_cast<LPBRUSH>(brush);
+
+            b->texture = texture->m_texture;
+            b->textureView = texture->m_textureView;
+            b->imageSamplerState = texture->m_imageSamplerState;
+        }
+    }
+
+    inline void EntityTexture(LPMESH mesh, LPTEXTURE texture)
+    {
+        if (mesh != nullptr && mesh->pBrush != nullptr)
+        {
+            LPBRUSH brush = static_cast<LPBRUSH>(mesh->pBrush);
+        
+            brush->texture = texture->m_texture;
+            brush->textureView = texture->m_textureView;
+            brush->imageSamplerState = texture->m_imageSamplerState;
+        }
     }
 
 } // End of namespace Engine

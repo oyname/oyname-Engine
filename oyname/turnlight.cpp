@@ -1,6 +1,6 @@
 #include "gidx.h"
 
-// OYNAME Engine
+/* OYNAME Engine
 // 
 // Here's a simple example demonstrating how to create vertices and connect 
 // them to form a cube. Additionally, it shows how to load another shader to 
@@ -13,17 +13,22 @@ void CreateSphere(LPMESH* mesh, BRUSH* brush, int numSegments);
 void CreateCylinder(LPMESH* mesh, BRUSH* brush, int numSegments);
 void MoveObjectInCircle(LPMESH mesh, float centerX, float centerZ, float radius, float angle);
 
-int main()
+    // The engine automatically creates a default shader and a 
+    // default brush upon startup.In this example, I'm not creating 
+    // either of these objects. Consequently, every mesh created 
+    // is automatically attached to the default brush, which 
+    // is linked to the default shader.
+
+int main4()
 {
-    Engine::Graphics(1024, 768);
+    Engine::Graphics(1024, 768, true);
 
     // Creating camera object
     LPCAMERA camera;
     Engine::CreateCamera(&camera);
     // Positioning the camera
     Engine::RotateEntity(camera, 60.0f, 0.0f, 0.0f);
-    Engine::MoveEntity(camera, 0.0f, 0.0f, -5.0f);
-    Engine::MoveEntity(camera, 0.0f, 0.0f, -5.0f);
+    Engine::MoveEntity(camera, 0.0f, 0.0f, -10.0f);
 
     float posLightx = 3.0f;
     float posLighty = 1.0f;
@@ -39,30 +44,11 @@ int main()
     CreateSphere(&sphere, nullptr, 64);
     Engine::PositionEntity(sphere, posLightx, posLighty, posLightz);
 
-    // The engine automatically creates a default shader and a 
-    // default brush upon startup.In this example, I'm not creating 
-    // either of these objects. Consequently, every mesh created 
-    // is automatically attached to the default brush, which 
-    // is linked to the default shader.
-
     // Create cube
     LPMESH cube;
     CreateCube(&cube);
-    // Positioning the cube
-    Engine::PositionEntity(cube, 0.0f, 0.0f, -3.0f);
-    Engine::RotateEntity(cube, 20.0f, 50.0f, 50.0f);
-
-    LPMESH cube2;
-    Engine::CreateMesh(&cube2);
-
-    Engine::engine->GetOM().addSurfaceToMesh(cube2, Engine::GetSurface(cube));
-    Engine::PositionEntity(cube2, 8.0f, 0.0f, 0.0f);
-    Engine::RotateEntity(cube2, 0.0f, 45.0f, 0.0f);
-
-    LPMESH cube3;
-    CreateCube(&cube3);
-    Engine::PositionEntity(cube3, -8.0f, 0.0f, 0.0f);
-    Engine::RotateEntity(cube3, 20.0f, 40.0f, 0.0f);
+    Engine::PositionEntity(cube, -3.0f, 0.0f, 0.0f);
+    Engine::RotateEntity(cube, 20.0f, 20.0f, 20.0f);
 
     LPMESH cylinder;
     CreateCylinder(&cylinder, nullptr, 16);
@@ -74,12 +60,6 @@ int main()
     while (gdx::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000)) // Main loop
     {
         Engine::Cls(0, 0, 0);
-
-        Engine::TurnEntity(light, 0.0f, 0.1f, 0.0f);
-
-        //Engine::TurnEntity(cube, 1.0f, 1.0f, 1.0f, Space::Local);
-
-        //Engine::TurnEntity(cylinder, 0.0f, 0.0f, 1.0f);
 
         angle += 0.005f;
 
@@ -291,7 +271,7 @@ void CreateCylinder(LPMESH* mesh, BRUSH* brush, int numSegments)
     }
 
     Engine::FillBuffer(zylinder);
-}
+}*/
 
 
 

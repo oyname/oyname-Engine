@@ -55,6 +55,9 @@
     <Filter Include="03_Engine\Manager\LightManager">
       <UniqueIdentifier>{1d7578f3-255b-48b5-afb1-00a450c09288}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03_Engine\Manager\TexturManager">
+      <UniqueIdentifier>{c8875f1f-f060-41b1-a484-47b134f89519}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BufferManager.cpp">
@@ -126,6 +129,15 @@
     <ClCompile Include="turnlight.cpp">
       <Filter>05_Beispiele</Filter>
     </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>03_Engine\Manager\TexturManager</Filter>
+    </ClCompile>
+    <ClCompile Include="textureExample.cpp">
+      <Filter>05_Beispiele</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gidx.h">
@@ -184,6 +196,13 @@
     </ClInclude>
     <ClInclude Include="LightManager.h">
       <Filter>03_Engine\Manager\LightManager</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>03_Engine\Manager\TexturManager</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Texture.h">
+      <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

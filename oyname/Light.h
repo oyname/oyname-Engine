@@ -17,26 +17,10 @@ public:
     Light();
     ~Light();
     
-    void SetColor(const DirectX::XMFLOAT4& newColor);
-    
-    void SetPosition(const DirectX::XMFLOAT4& newPosition);
-    
-    void SetPosition(const DirectX::XMVECTOR& Position);
-    
-    void SetDirection(const DirectX::XMFLOAT4& newDirection);
-    
-    void SetDirection(const DirectX::XMVECTOR& Direction);
-    
     void UpdateLight(const gdx::CDevice* device);   
 
-    DirectX::XMFLOAT4 GetPosition() const;
-    DirectX::XMFLOAT4 GetDirection() const;
-    DirectX::XMFLOAT4 GetColor() const;
-
-    float GetIntensity();
-
-    LightSet        cbLight;
     D3DLIGHTTYPE    type;
+    LightSet        cbLight;
     ID3D11Buffer*   lightBuffer;
 
     void* operator new(size_t size) {
@@ -48,6 +32,20 @@ public:
         _aligned_free(p);
     }
 private:
+
+    void SetColor(const DirectX::XMFLOAT4& newColor);
+
+    void SetPosition(const DirectX::XMFLOAT4& newPosition);
+
+    void SetPosition(const DirectX::XMVECTOR& Position);
+
+    void SetDirection(const DirectX::XMFLOAT4& newDirection);
+
+    void SetDirection(const DirectX::XMVECTOR& Direction);
+
+    DirectX::XMFLOAT4 GetPosition() const;
+    DirectX::XMFLOAT4 GetDirection() const;
+    DirectX::XMFLOAT4 GetColor() const;
 
     float m_Intensity;
 };

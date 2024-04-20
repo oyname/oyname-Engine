@@ -5,8 +5,6 @@
 #include "gdxutil.h"
 #include "Surface.h"   
 
-class Shader;
-
 enum Space 
 {
     Local,
@@ -55,7 +53,8 @@ public:
 
     ID3D11Buffer* constantBuffer;
 
-    Shader* pShader;
+    void* pShader;
+    void* pBrush;
 
     void* operator new(size_t size) {
         // Ausrichtung auf 16 Bytes 

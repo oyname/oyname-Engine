@@ -26,25 +26,25 @@ HRESULT InputLayoutManager::CreateInputLayoutVertex(ID3D11InputLayout** layout, 
         currentOffset += sizeof(DirectX::XMFLOAT3); 
         cnt++;
     }
-    
+
+    if (flags & D3DVERTEX_NORMAL) {
+        layoutElements.push_back({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, cnt, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+        currentOffset += sizeof(DirectX::XMFLOAT3); 
+        cnt++;
+    }  
+
     if (flags & D3DVERTEX_COLOR) {
         layoutElements.push_back({ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, cnt, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 });
         currentOffset += sizeof(DirectX::XMFLOAT4); 
         cnt++;
     }
     
-    if (flags & D3DVERTEX_NORMAL) {
-        layoutElements.push_back({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, cnt, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 });
-        currentOffset += sizeof(DirectX::XMFLOAT3); 
-        cnt++;
-    }
-    
     if (flags & D3DVERTEX_TEX1) {
-        layoutElements.push_back({ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, cnt, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+        layoutElements.push_back({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, cnt, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 });
         currentOffset += sizeof(DirectX::XMFLOAT2); 
         cnt++;
     }
-    
+   
     if (flags & D3DVERTEX_TEX2) {
         layoutElements.push_back({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, cnt, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 });
         currentOffset += sizeof(DirectX::XMFLOAT2); 

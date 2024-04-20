@@ -1,8 +1,8 @@
 #include "ObjectManager.h"
 
-ObjectManager::ObjectManager() : m_device(nullptr){ 
-
+ObjectManager::ObjectManager() : m_device(nullptr) {
 }
+
 
 ObjectManager::~ObjectManager()
 {
@@ -61,12 +61,13 @@ SHADER* ObjectManager::createShader() {
 }
 
 void ObjectManager::addSurfaceToMesh(MESH* mesh, SURFACE* surface) {
-    surface->pShader = mesh->pShader;
+    surface->pShader = (SHADER*)mesh->pShader;
     mesh->surfaces->push_back(surface);
 }
 
 void ObjectManager::addMeshToBrush(BRUSH* brush, MESH* mesh) {
     mesh->pShader = brush->pShader;
+    mesh->pBrush = brush;
     brush->meshes->push_back(mesh);
 }
 
@@ -254,7 +255,7 @@ SURFACE* ObjectManager::getSurface(MESH* mesh)
 }
 
 
-BRUSH* ObjectManager::getStandardBrush()
+BRUSH* ObjectManager::getStandardBrush() const
 {
     if (!m_brushes.empty())
     {
@@ -264,17 +265,17 @@ BRUSH* ObjectManager::getStandardBrush()
         return nullptr;
 }
 
-SHADER* ObjectManager::getShader(SURFACE surface)
+void* ObjectManager::getShader(SURFACE surface) const
 {
     return surface.pShader;
 }
 
-SHADER* ObjectManager::getShader(MESH mesh)
+void* ObjectManager::getShader(MESH mesh) const
 {
     return mesh.pShader;
 }
 
-SHADER* ObjectManager::getShader(BRUSH brush)
+void* ObjectManager::getShader(BRUSH brush) const
 {
     return brush.pShader;
 }

@@ -43,31 +43,31 @@ void ShaderManager::Init(ID3D11Device* device)
 //    return S_OK;
 //}
 
-HRESULT ShaderManager::CreateShader(SHADER* shader, const std::wstring& vertexShaderFile, const std::wstring& pixelShaderFile, const std::string& entryPoint)
+HRESULT ShaderManager::CreateShader(SHADER* shader, const std::wstring& vertexShaderFile, const std::string& vertexEntryPoint, const std::wstring& pixelShaderFile, const std::string& pixelEntryPoint)
 {
     HRESULT hr;
 
     // Load and compile the vertex shader
-    hr = CompileShaderFromFile(m_shaderfolder + vertexShaderFile, "main", "vs_5_0", &shader->blobVS);
-    if (FAILED(hr)) {
+    hr = CompileShaderFromFile(m_shaderfolder + vertexShaderFile, vertexEntryPoint, "vs_5_0", &shader->blobVS);
+    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
         return hr;
     }
 
     // Create the vertex shader
     hr = m_device->CreateVertexShader(shader->blobVS->GetBufferPointer(), shader->blobVS->GetBufferSize(), nullptr, &shader->vertexShader);
-    if (FAILED(hr)) {
+    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
         return hr;
     }
 
     // Load and compile the pixel shader
-    hr = CompileShaderFromFile(m_shaderfolder + pixelShaderFile, entryPoint, "ps_5_0", &shader->blobPS);
-    if (FAILED(hr)) {
+    hr = CompileShaderFromFile(m_shaderfolder + pixelShaderFile, pixelEntryPoint, "ps_5_0", &shader->blobPS);
+    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
         return hr;
     }
 
     // Create the pixel shader
     hr = m_device->CreatePixelShader(shader->blobPS->GetBufferPointer(), shader->blobPS->GetBufferSize(), nullptr, &shader->pixelShader);
-    if (FAILED(hr)) {
+    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
         return hr;
     }
 

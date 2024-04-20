@@ -39,6 +39,8 @@ void RenderManager::RenderMesh()
         {
             Debug::Log("   BRUSH: ", brush);
             // Texture and material
+            brush->SetTexture(m_objectManager.m_device);
+
             for (const auto& mesh : *(brush->meshes))
             {
                 Debug::Log("      MESH: ", mesh);
@@ -47,11 +49,10 @@ void RenderManager::RenderMesh()
                 mesh->UpdateConstantBuffer(m_objectManager.m_device,
                                            m_currentCam->cb.viewMatrix,
                                            m_currentCam->cb.projectionMatrix);
-
+                
                 for (const auto& surface : *(mesh->surfaces))
                 {
                     Debug::Log("         SURFACE: ", surface);
-
                     // Render vertices
                     surface->Draw(m_objectManager.m_device, shader->flagsVertex);
                 }

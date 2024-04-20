@@ -1,4 +1,8 @@
 #include"main.h"
+#include <ole2.h>
+
+// Verknüpfung mit Ole32.lib
+#pragma comment(lib, "Ole32.lib")
 
 INT APIENTRY WinMain(HINSTANCE hInst,
 	HINSTANCE hPrevInst,
@@ -7,6 +11,12 @@ INT APIENTRY WinMain(HINSTANCE hInst,
 {
 	HWND hwnd;
 	MSG msg;
+
+	HRESULT hr = CoInitialize(nullptr);
+	if (FAILED(hr)) {
+		// Fehlerbehandlung, wenn CoInitialize fehlschlägt
+		return -1;
+	}
 
 	Windows::CWindow win;
 
@@ -40,6 +50,9 @@ INT APIENTRY WinMain(HINSTANCE hInst,
 	mainThread.join();
 
 	gdx::Release();
+
+	// Beende COM
+	CoUninitialize();
 
 	return msg.wParam;
 }

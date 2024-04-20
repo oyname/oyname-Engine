@@ -29,10 +29,6 @@ namespace Windows
 
         unsigned int GetColorRes(void);
 
-        unsigned int GetWidth(void);
-
-        unsigned int GetHeight(void);
-
         void CreateConsole(void);
 
     private:

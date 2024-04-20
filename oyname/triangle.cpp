@@ -16,7 +16,7 @@ int main_off3()
     Engine::CreateCamera(&camera);
 
     LPSHADER shader2;
-    Engine::CreateShader(&shader2, L"vertexshader.hlsl", L"pixelshader.hlsl", "main2", D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL);
+    Engine::CreateShader(&shader2, L"vertexshader.hlsl", "main", L"pixelshader.hlsl", "main", D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL);
 
     // Brush erstellen / Jedes Brush ist nach dem erstellen ein Child vom Standard-Shader
     LPBRUSH brush;

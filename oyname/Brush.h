@@ -6,14 +6,14 @@
 #include <string>
 #include "Mesh.h"   
 
-class Shader;
-
 class Brush 
 {
 public:
     Brush();
     ~Brush();
     
+    void SetTexture(const gdx::CDevice* device);
+
     bool isActive;
     float shininess;
     float transparency;
@@ -21,11 +21,13 @@ public:
     DirectX::XMFLOAT4 diffuseColor;
     DirectX::XMFLOAT4 specularColor;
 
-    ID3D11ShaderResourceView* pTexture;
+    ID3D11Texture2D* texture;
+    ID3D11ShaderResourceView* textureView;
+    ID3D11SamplerState* imageSamplerState;
 
     std::list<Mesh*>* meshes;
 
-    Shader* pShader;
+    void* pShader;
 
     void* operator new(size_t size) {
         // Ausrichtung auf 16 Bytes 

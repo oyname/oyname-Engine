@@ -51,11 +51,11 @@ public:
     SURFACE* getSurface(MESH* mesh);
 
     // Standardbrush
-    BRUSH* getStandardBrush();
+    BRUSH* getStandardBrush() const;
 
-    SHADER* getShader(SURFACE surface);
-    SHADER* getShader(MESH mesh);
-    SHADER* getShader(BRUSH brush);
+    void* getShader(SURFACE surface) const;
+    void* getShader(MESH mesh) const;
+    void* getShader(BRUSH brush) const;
 
 private:
     gdx::CDevice*       m_device;  

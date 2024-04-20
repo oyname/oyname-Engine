@@ -10,6 +10,7 @@
 #include "ShaderManager.h"
 #include "RenderManager.h"
 #include "LightManager.h"
+#include "TextureManager.h"
 #include "Camera.h"
 
 namespace gdx {
@@ -38,6 +39,7 @@ namespace gdx {
 		InputLayoutManager	m_inputLayoutManager;
 		BufferManager		m_bufferManager;
 		LightManager		m_lightManager;
+		TextureManager		m_texturManager;
 		Camera		        m_camera;
 
 	public:
@@ -64,12 +66,13 @@ namespace gdx {
 		unsigned int GetHeight();
 		unsigned int GetColorDepth();
 
-		BufferManager& GetBM();
-		ObjectManager&  GetOM();
-		ShaderManager& GetSM();
-		LightManager& GetLM();
-		InputLayoutManager& GetILM();
-		Camera& GetCam();
+		BufferManager& GetBM();			// BufferManager
+		ObjectManager&  GetOM();		// ObjectManager
+		ShaderManager& GetSM();			// ShaderManager
+		LightManager& GetLM();			// LightManager
+		InputLayoutManager& GetILM();	// InputManager
+		TextureManager& GetTM();		// TextureManager
+		Camera& GetCam();				// Kamera
 		
 		// Setter-Funktionen für private Variablen
 		void SetAdapter(unsigned int index);

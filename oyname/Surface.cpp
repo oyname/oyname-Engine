@@ -54,6 +54,18 @@ void Surface::VertexNormal(unsigned int index, float x, float y, float z)
     size_normal = sizeof(DirectX::XMFLOAT3);
 }
 
+void Surface::VertexTexCoords(unsigned int index, float u, float v)
+{
+    if (index >= 0 && index < uv1.size()) {
+        uv1[index] = DirectX::XMFLOAT2(u, v);
+    }
+    else {
+        uv1.push_back(DirectX::XMFLOAT2(u, v));
+    }
+    size_listUV1 = (unsigned int)uv1.size();
+    size_uv1 = sizeof(DirectX::XMFLOAT2);
+}
+
 void Surface::AddIndex(UINT index)
 {
     indices.push_back(index);
@@ -69,22 +81,22 @@ void Surface::Draw(const gdx::CDevice* device,const DWORD flagsVertex)
         device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &positionBuffer,&size_vertex, &offset);
         cnt++;
     }
+    if (flagsVertex & D3DVERTEX_NORMAL) {
+        device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &normalBuffer, &size_normal, &offset);
+        cnt++;
+    }
     if (flagsVertex & D3DVERTEX_COLOR) {
         device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &colorBuffer,   &size_color, &offset);
         cnt++;
     }
-    if (flagsVertex & D3DVERTEX_NORMAL) {
-        device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &normalBuffer,  &size_normal, &offset);
-        cnt++;
-    }
     if (flagsVertex & D3DVERTEX_TEX1) {
-        device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &normalBuffer,  &size_normal, &offset);
+        device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &uv1Buffer,  &size_uv1, &offset);
         cnt++;
     }
-    if (flagsVertex & D3DVERTEX_TEX2) {
-        device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &normalBuffer,  &size_normal, &offset);
-        cnt++;
-    }
+    //if (flagsVertex & D3DVERTEX_TEX2) {
+    //    device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &uv2Buffer,  &size_uv2, &offset);
+    //    cnt++;
+    //}
 
     device->GetDeviceContext()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 

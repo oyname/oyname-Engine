@@ -37,7 +37,6 @@ HRESULT BufferManager::CreateBuffer(const void* data, UINT size, UINT count, D3D
 void BufferManager::UpdateBuffer(ID3D11Buffer* buffer, const void* data, UINT dataSize)
 {
     m_context->UpdateSubresource(buffer, 0, nullptr, data, dataSize, 0);
-
 }
 
 HRESULT BufferManager::UpdateConstantBuffer(ID3D11Buffer* buffer, const void* data, UINT dataSize)

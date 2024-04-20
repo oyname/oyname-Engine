@@ -5,7 +5,7 @@ Light::Light():lightBuffer(nullptr)
 	type = D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL;
 	SetPosition(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f));
 	SetDirection(DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 0.0f));
-	SetColor(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.0f));
+	SetColor(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 Light::~Light()
@@ -58,11 +58,6 @@ DirectX::XMFLOAT4 Light::GetDirection() const
 DirectX::XMFLOAT4 Light::GetColor() const
 { 
 	return cbLight.lightColor;
-}
-
-float Light::GetIntensity() 
-{ 
-	return m_Intensity; 
 }
 
 // Funktion zum Aktualisieren des Richtungslichts und Kopieren der Daten in den Shader-Buffer

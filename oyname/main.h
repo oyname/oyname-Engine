@@ -4,7 +4,7 @@
 #include "gidxwin.h"
 #include <thread>
 #include <future>
-#include <windows.h>
+#include <Windows.h>
 
 // Deklariere eine Handle-Variablendie für einen Thread verwendet wird
 HANDLE hThread;

@@ -24,8 +24,6 @@ void LightManager::Update(const gdx::CDevice* device)
 {
     for (const auto& light : m_lights)
     {
-        Debug::Log("UPDATEN LIGHT :", light);
-
         light->UpdateLight(device);
     }
 }

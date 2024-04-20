@@ -115,12 +115,15 @@ namespace gdx
 		// Initialize Input-Layout Managers
 		m_inputLayoutManager.Init(m_device.GetDevice());
 
+		// Initialize Texture Managers
+		
+
 		// 2. Create standard stuff
 
 		// Create standard shader.
 		GetSM().SetShader(m_objectManager.createShader());
 		// ...and load
-		hr = GetSM().CreateShader(GetSM().GetShader(), L"vertexshader.hlsl", L"pixelshader.hlsl", "main");
+		hr = GetSM().CreateShader(GetSM().GetShader(), L"vertexshader.hlsl", "main", L"pixelshader.hlsl", "main");
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
@@ -130,9 +133,10 @@ namespace gdx
 
 		// Create layout for the vertices
 		hr = GetILM().CreateInputLayoutVertex(&GetSM().GetShader()->inputlayoutVertex, // Store the layout
-			GetSM().GetShader(),                    // The shader object
-			GetSM().GetShader()->flagsVertex,       // Store the flag
-			D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL);
+											  GetSM().GetShader(),                    // The shader object
+											  GetSM().GetShader()->flagsVertex,       // Store the flag
+			D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL | D3DVERTEX_TEX1);
+
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
@@ -226,6 +230,10 @@ namespace gdx
 
 	InputLayoutManager& CGIDX::GetILM() {
 		return m_inputLayoutManager;
+	}
+
+	TextureManager& CGIDX::GetTM() {
+		return m_texturManager;
 	}
 
 	Camera& CGIDX::GetCam() {
