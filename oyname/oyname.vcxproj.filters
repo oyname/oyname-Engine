@@ -138,6 +138,9 @@
     <ClCompile Include="Texture.cpp">
       <Filter>03_Engine\Manager\ObjectManager\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Quad.cpp">
+      <Filter>05_Beispiele</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gidx.h">

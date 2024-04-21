@@ -22,7 +22,7 @@ struct VS_INPUT
     float3 position : POSITION;
     float3 normal : NORMAL;
     float4 color : COLOR;
-    float2 texCoord : TEXCOORD0; // Hinzugefügt: Texturkoordinaten
+    float2 texCoord : TEXCOORD0; 
 };
 
 struct VS_OUTPUT
@@ -56,11 +56,11 @@ VS_OUTPUT main(VS_INPUT input)
     o.normal = normalize(mul(input.normal, (float3x3) _worldMatrix));
 
     // Kopiere die Farbe einfach
-    //o.color = input.color;
+    o.color = input.color;
 
     // Kopiere die Texturkoordinaten
     o.texCoord = input.texCoord;
-    o.color = input.color;
+    
     return o;
 }
 

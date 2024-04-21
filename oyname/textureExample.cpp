@@ -2,10 +2,11 @@
 
 // Function declaration
 void CreateCube(LPMESH* mesh, BRUSH* brush = nullptr);
+void CreateSphere(LPMESH* mesh, BRUSH* brush, int numSegments);
 
 int main()
 {
-    Engine::Graphics(1024, 768);
+    Engine::Graphics(1280, 720);
 
     LPTEXTURE texture1 = nullptr;
     Engine::LoadTexture(&texture1, L"..\\oyname\\Texture\\test4.bmp");
@@ -34,7 +35,7 @@ int main()
     // Creating light
     LPLIGHT light;
     Engine::CreateLight(&light, D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL);
-    Engine::RotateEntity(light, 0.0f, 0.0f, 0.0f);
+    Engine::RotateEntity(light, 130.0f, 0.0f, 0.0f);
 
     // Create cube
     LPMESH cube;
@@ -166,4 +167,54 @@ void CreateCube(LPMESH* mesh, BRUSH* brush)
     Engine::AddTriangle(wuerfel, 22, 21, 20);
 
     Engine::FillBuffer(wuerfel);
+}
+
+void CreateSphere(LPMESH* mesh, BRUSH* brush, int numSegments)
+{
+    LPSURFACE sphere = NULL;
+    const float radius = 1.0f;
+
+    Engine::CreateMesh(mesh, brush);
+    Engine::CreateSurface(&sphere, (*mesh));
+
+    // Erzeugung der Kugelgeometrie
+    for (int i = 0; i <= numSegments; ++i)
+    {
+        float theta1 = i * 3.14f / numSegments;
+        float theta2 = (i + 1) * 3.14f / numSegments;
+
+        for (int j = 0; j <= numSegments; ++j)
+        {
+            float phi = j * 2 * 3.14f / numSegments;
+
+            float x = radius * sin(theta1) * cos(phi);
+            float y = radius * sin(theta1) * sin(phi);
+            float z = radius * cos(theta1);
+
+            float u = static_cast<float>(j) / numSegments; // Texturkoordinate u
+            float v = static_cast<float>(i) / numSegments; // Texturkoordinate v
+
+            Engine::AddVertex(sphere, x, y, z);
+            Engine::VertexNormal(sphere, x / radius, y / radius, z / radius); // Normals for smoothing
+            Engine::VertexColor(sphere, 255, 255, 255, 255); // Ändere diese Zeile nach Bedarf
+            Engine::VertexTexCoord(sphere, u, v); // Füge Texturkoordinaten hinzu
+        }
+    }
+
+    // Definition der Dreiecke für die Kugel
+    for (int i = 0; i < numSegments; ++i)
+    {
+        for (int j = 0; j < numSegments; ++j)
+        {
+            int p0 = i * (numSegments + 1) + j;
+            int p1 = p0 + 1;
+            int p2 = (i + 1) * (numSegments + 1) + j;
+            int p3 = p2 + 1;
+
+            Engine::AddTriangle(sphere, p0, p2, p1);
+            Engine::AddTriangle(sphere, p2, p3, p1);
+        }
+    }
+
+    Engine::FillBuffer(sphere);
 }

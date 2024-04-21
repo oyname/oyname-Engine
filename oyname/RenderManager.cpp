@@ -31,19 +31,19 @@ void RenderManager::RenderMesh()
     // Iterate through all shaders and render all objects with each shader
     for (const auto& shader : m_objectManager.m_shaders)
     {
-        Debug::Log("SHADER: ", shader);
+        //Debug::Log("SHADER: ", shader);
 
         shader->UpdateShader(m_objectManager.m_device);
 
         for (const auto& brush : *(shader->brushes))
         {
-            Debug::Log("   BRUSH: ", brush);
+            //Debug::Log("   BRUSH: ", brush);
             // Texture and material
             brush->SetTexture(m_objectManager.m_device);
 
             for (const auto& mesh : *(brush->meshes))
             {
-                Debug::Log("      MESH: ", mesh);
+                //Debug::Log("      MESH: ", mesh);
 
                 // Write and set constants in the constant buffer
                 mesh->UpdateConstantBuffer(m_objectManager.m_device,
@@ -52,7 +52,7 @@ void RenderManager::RenderMesh()
                 
                 for (const auto& surface : *(mesh->surfaces))
                 {
-                    Debug::Log("         SURFACE: ", surface);
+                    //Debug::Log("         SURFACE: ", surface);
                     // Render vertices
                     surface->Draw(m_objectManager.m_device, shader->flagsVertex);
                 }

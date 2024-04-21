@@ -9,20 +9,19 @@ struct PS_INPUT
     float3 lightDirection : TEXCOORD3;
 };
 
-Texture2D textureMap; // Hinzugefügt: Die Textur, die Sie verwenden möchten
+Texture2D textureMap; 
 SamplerState samplerState;
 
-// Hauptfunktion des Pixel-Shaders
 float4 main(PS_INPUT input) : SV_Target
 {
     // Definiere die Richtung des Lichts (normiert)
     float3 lightDirection = normalize(input.lightDirection);
     
-    float ka = 0.2; // Materialreflexionskoeffizient
+    float ka = 0.5; // Materialreflexionskoeffizient
     
     // Beleuchtungseigenschaften
-    float3 ia = input.lightColor; // Umgebungslichtfarbe
-    float3 id = float3(1.0, 1.0, 1.0); // Diffuse Lichtfarbe
+    float3 ia = input.lightColor;
+    float3 id = float3(1.0, 1.0, 0.8); // Diffuse Lichtfarbe
     
     // Berechne den Diffuslichtbeitrag
     float diffuse_factor = max(dot(input.normal, -lightDirection), 0.0);
@@ -37,19 +36,21 @@ float4 main(PS_INPUT input) : SV_Target
     // Texturfarbe abrufen
     float4 texColor = textureMap.Sample(samplerState, texCoord);
     
-    // Berechne die endgültige Farbe unter Berücksichtigung der Textur
-    float3 final_color = texColor.rgb * (ambient_light + diffuse_light) * input.color.rgb;
+    // Überprüfe, ob die Textur befüllt wurde
+    bool textureFilled = (texColor.a > 0.0);
+    
+    // Berechne die endgültige Farbe unter Berücksichtigung der Textur, falls befüllt, sonst ohne Textur
+    float3 final_color;
+    if (textureFilled)
+    {
+        final_color = texColor.rgb * (ambient_light + diffuse_light) * input.color.rgb;
+    }
+    else
+    {
+        final_color = (ambient_light + diffuse_light) * input.color.rgb;
+    }
 
-    // Gib die Farbe als Ausgabe zurück
-
-   // return textureMap.Sample(samplerState, input.texCoord);
     return float4(final_color, texColor.a);
-    
-    // Berechne die endgültige Farbe
-    //float3 final_color = input.color.rgb * (ambient_light + diffuse_light);
-    
-    // Gib die Farbe als Ausgabe zurück
-    //return float4(final_color, input.color.a);
 }
 
 

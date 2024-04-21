@@ -155,6 +155,7 @@
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Quad.cpp" />
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Surface.cpp" />
