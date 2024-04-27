@@ -3,6 +3,7 @@
 // Function declaration
 void CreateCube(LPMESH* mesh, BRUSH* brush = nullptr);
 void CreateSphere(LPMESH* mesh, BRUSH* brush, int numSegments);
+void MoveObjectInCircle(LPMESH mesh, float centerX, float centerZ, float radius, float angle);
 
 int main()
 {
@@ -29,13 +30,14 @@ int main()
     LPCAMERA camera;
     Engine::CreateCamera(&camera);
     // Positioning the camera
+
     Engine::RotateEntity(camera, 60.0f, 0.0f, 0.0f);
-    Engine::MoveEntity(camera, 0.0f, 0.0f, -7.0f);
+    Engine::MoveEntity(camera, 0.0f, 0.0f, -15.0f);
 
     // Creating light
     LPLIGHT light;
     Engine::CreateLight(&light, D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL);
-    Engine::RotateEntity(light, 130.0f, 0.0f, 0.0f);
+    Engine::RotateEntity(light, 135.0f, 0.0f, 0.0f);
 
     // Create cube
     LPMESH cube;
@@ -43,7 +45,7 @@ int main()
     Engine::EntityTexture(cube, texture1); // Die Textur wird zum Brush, dass zu cube gehört angehängt. In diesem Fall dem Standard-Brush
     
     Engine::PositionEntity(cube, 0.0f, 0.0f, 0.0f);
-    Engine::RotateEntity(cube, 20.0f, 20.0f, 40.0f);
+    Engine::RotateEntity(cube, 0.0f, 0.0f, 0.0f);
 
     LPMESH cube2;
     CreateCube(&cube2, brush2);
@@ -51,24 +53,35 @@ int main()
     Engine::BrushTexture(brush2, texture2); // So kann man auch einem Brush eine Textur zuweisen
 
     Engine::PositionEntity(cube2, -4.0f, 0.0f, 0.0f);
-    Engine::RotateEntity(cube2, 20.0f, 20.0f, 40.0f);
+    Engine::RotateEntity(cube2, 0.0f, 0.0f, 0.0f);
 
     LPMESH cube3;
     CreateCube(&cube3, brush3);
-
+   
     Engine::BrushTexture(brush3, texture3);
 
     Engine::PositionEntity(cube3, 4.0f, 0.0f, 0.0f);
-    Engine::RotateEntity(cube3, 20.0f, 20.0f, 40.0f);
+    cube3->transform.Rotate(0.0f, 0.0f, 0.0f);
+
+    float distance = 0.0f;
+
+    // Winkel inkrementieren, um das Objekt im Kreis zu bewegen
+    float angle = 0.0f;
 
     while (gdx::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000)) // Main loop
     {
-        Engine::Cls(80, 80, 80);
+        Engine::Cls(0, 0, 0);
 
-        Engine::TurnEntity(cube, 0.3f, 0.0, 0.1f);
-        Engine::TurnEntity(cube2, -0.3f, 0.0, -0.1f);
-        Engine::TurnEntity(cube3, 0.3f, -0.1, 0.0f);
+        //Engine::TurnEntity(cube, 0.3f, 0.0, 0.1f);
+        //Engine::TurnEntity(cube2, 0.3f, 0.0, 0.1f);
+        //Engine::TurnEntity(cube3, 0.3f, 0.0, 0.1f);
+        //Engine::MoveEntity(camera, 0.0f, 0.0f, -0.01f);
+       
+        angle += 0.005f;
+        MoveObjectInCircle(cube, 0.0f, 0.0f, 10.0f, angle);
+        Engine::LookAt(cube, DirectX::XMVectorGetX(cube2->transform.getPosition()), DirectX::XMVectorGetY(cube2->transform.getPosition()), DirectX::XMVectorGetZ(cube2->transform.getPosition()));
 
+        Engine::UpdateWorld();
         Engine::RenderWorld();
 
         Engine::Flip();
@@ -76,6 +89,15 @@ int main()
 
     // Shutdown the engine
     return gdx::ShutDown();
+}
+
+void MoveObjectInCircle(LPMESH mesh, float centerX, float centerZ, float radius, float angle) {
+    // Berechnen der neuen Position basierend auf dem Winkel
+    float newX = centerX + radius * cos(angle);
+    float newZ = centerZ + radius * sin(angle);
+
+    // Setzen der neuen Position des Objekts
+    mesh->transform.Position(newX, 0.0f, newZ);
 }
 
 // Function definitions

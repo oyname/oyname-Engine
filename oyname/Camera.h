@@ -43,7 +43,6 @@ namespace gdx
 		LPMESH GetCurrentCam();
 
 		void CreateCamera(LPMESH* camera);
-		void Update();
 
 		D3D11_VIEWPORT GetViewPort();
 

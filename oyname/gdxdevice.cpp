@@ -155,6 +155,8 @@ HRESULT CDevice::CreateSwapChain(IDXGIFactory* pDXGIFactory, HWND hWnd,
         return hr;
     }
 
+    Memory::SafeRelease(pDXGIFactory);
+
     return hr;
 }
 
@@ -291,10 +293,26 @@ HRESULT CDevice::CreateDeepBuffer(unsigned int width, unsigned int height)
 
     // Set the Depth-Stencil View
     GetDeviceContext()->OMSetRenderTargets(1, &m_pRenderTargetView, m_depthStencilView);
+
+    // 
+    D3D11_RASTERIZER_DESC rasterizerDesc;
+    ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
+    rasterizerDesc.FillMode = D3D11_FILL_SOLID;      // Setze den Fill-Modus auf Wireframe
+    rasterizerDesc.CullMode = D3D11_CULL_BACK;       // Optional: Rückseiten-Culling aktivieren
+    rasterizerDesc.FrontCounterClockwise = FALSE;    // Optional: Reihenfolge der Dreiecks-Vertizes im Uhrzeigersinn
+    rasterizerDesc.DepthClipEnable = TRUE;           // Optional: Tiefen-Clipping aktivieren
+
+    // Erstelle den Rasterizerzustand
+    ID3D11RasterizerState* pRasterizerState = nullptr;
+    hr = GetDevice()->CreateRasterizerState(&rasterizerDesc, &pRasterizerState);
     if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
     {
         return hr;
     }
+
+    // Setze den Rasterizerzustand im Gerätekontext
+    GetDeviceContext()->RSSetState(pRasterizerState);
+
 
     // Define the Depth-Stencil State
     D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
@@ -320,30 +338,3 @@ HRESULT CDevice::CreateDeepBuffer(unsigned int width, unsigned int height)
     return hr;
 }
 
-HRESULT CDevice::SetRasterizerState()
-{
-    HRESULT hr = S_OK;
-    
-    D3D11_RASTERIZER_DESC rasterizerDesc;
-    ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
-    rasterizerDesc.FillMode = D3D11_FILL_SOLID;      // Setze den Fill-Modus auf Wireframe
-    rasterizerDesc.CullMode = D3D11_CULL_BACK;       // Optional: Rückseiten-Culling aktivieren
-    rasterizerDesc.FrontCounterClockwise = FALSE;    // Optional: Reihenfolge der Dreiecks-Vertizes im Uhrzeigersinn
-    rasterizerDesc.DepthClipEnable = TRUE;           // Optional: Tiefen-Clipping aktivieren
-
-    // Erstelle den Rasterizerzustand
-    ID3D11RasterizerState* pRasterizerState = nullptr;
-    hr = GetDevice()->CreateRasterizerState(&rasterizerDesc, &pRasterizerState);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
-    {
-        return hr;
-    }
-
-    // Setze den Rasterizerzustand im Gerätekontext
-    GetDeviceContext()->RSSetState(pRasterizerState);
-
-    // Freigabe des Rasterizerzustands (optional, wenn er nicht mehr benötigt wird)
-    Memory::SafeRelease(pRasterizerState);
-
-    return hr;
-}

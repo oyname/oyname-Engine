@@ -62,14 +62,8 @@ namespace gdx
             (*camera)->cb.projectionMatrix = XMMatrixOrthographicLH(m_ortho.width, m_ortho.height, m_ortho.nearPlane, m_ortho.farPlane);
         }
 
-        (*camera)->cb.viewMatrix = XMMatrixLookAtLH((*camera)->position, (*camera)->lookAt, (*camera)->up);
+        (*camera)->cb.viewMatrix = XMMatrixLookAtLH((*camera)->transform.getPosition(), (*camera)->transform.getLookAt(), (*camera)->transform.getUp());
         (*camera)->cb.worldMatrix = XMMatrixIdentity();
-    }
-
-    void Camera::Update()
-    {
-        if(m_currentCam)
-            this->m_currentCam->Update();
     }
 
     D3D11_VIEWPORT Camera::GetViewPort()

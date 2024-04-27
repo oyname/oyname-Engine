@@ -91,9 +91,6 @@ namespace gdx
 			return hr;
 		}
 
-		// RenderMode still needs to be reprogrammed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		m_device.SetRasterizerState();
-
 		// Object for organizing rendering
 
 		// 1. Initialize objects
@@ -115,15 +112,10 @@ namespace gdx
 		// Initialize Input-Layout Managers
 		m_inputLayoutManager.Init(m_device.GetDevice());
 
-		// Initialize Texture Managers
-		
-
-		// 2. Create standard stuff
-
 		// Create standard shader.
 		GetSM().SetShader(m_objectManager.createShader());
 		// ...and load
-		hr = GetSM().CreateShader(GetSM().GetShader(), L"vertexshader.hlsl", "main", L"pixelshader.hlsl", "main");
+		hr = GetSM().CreateShader(GetSM().GetShader(), VERTEX_SHADER_FILE, "main", PIXEL_SHADER_FILE, "main");
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
@@ -152,16 +144,16 @@ namespace gdx
 		// Clear Render Target
 		this->m_device.ClearRenderTargetDepthStencil();
 
-		// Update Camera position
-		m_camera.Update();
-
 		// Render objects
 		m_renderManager.RenderLoop();
 	}
 
 	void CGIDX::UpdateWorld()
 	{
-
+		// Durchlaufe alle Meshes in der Liste
+		// Auch die Kamera ist eine Mesh-Klasse und
+		// wird von der ObjektManager-Klasse verwaltet
+		GetOM().processMesh();
 	}
 
 	HRESULT CGIDX::Cls(float r, float g, float b, float a)

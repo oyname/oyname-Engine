@@ -7,6 +7,8 @@
 #include "ObjectManager.h"
 #include "gdxutil.h"
 
+#define SHADER_FOLDER L"..\\oyname\\"
+
 class ShaderManager {
 public:
     ShaderManager();
@@ -16,11 +18,9 @@ public:
     HRESULT CompileShaderFromFile(const std::wstring& filename, const std::string& entryPoint, const std::string& shaderModel, ID3DBlob** blob);
     LPSHADER GetShader();
     void SetShader(LPSHADER shader);
-    void SetShaderFolder(const std::wstring& shaderFolder);
     
 private:
     ID3D11Device* m_device;
     ObjectManager* m_objectManager; // Reference to the ObjectManager
     LPSHADER m_standardShader;
-    std::wstring m_shaderfolder;
 };

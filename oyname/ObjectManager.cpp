@@ -279,3 +279,13 @@ void* ObjectManager::getShader(BRUSH brush) const
 {
     return brush.pShader;
 }
+
+void ObjectManager::processMesh()
+{
+    // Durchlaufe alle Meshes in der Liste
+    for (auto it = this->m_meshes.begin(); it != this->m_meshes.end(); ++it) {
+        MESH* mesh = *it;
+
+        mesh->Update();
+    }
+}

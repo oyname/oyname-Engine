@@ -88,7 +88,6 @@ namespace gdx
                                         bool windowed);
         HRESULT CreateRenderTarget(unsigned int width, unsigned int height);
         HRESULT CreateDeepBuffer(unsigned int width, unsigned int height);
-        HRESULT SetRasterizerState();
 
         void CreateView(UINT NumViewport, D3D11_VIEWPORT viewport);
         void SetRenderTargets(unsigned int numViews = 1);

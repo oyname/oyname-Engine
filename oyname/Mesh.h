@@ -3,13 +3,8 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include "gdxutil.h"
-#include "Surface.h"   
-
-enum Space 
-{
-    Local,
-    World
-};
+#include "Surface.h"  
+#include "Transform.h"
 
 __declspec(align(16))
 struct MatrixSet
@@ -19,33 +14,18 @@ struct MatrixSet
     DirectX::XMMATRIX worldMatrix;
 };
 
-class Mesh 
+class Mesh
 {
 public:
     Mesh();
     ~Mesh();
-
-    void TurnEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local);
-    void RotateEntity(float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local);
-    void PositionEntity(float x, float y, float z);
-    void MoveEntity(float x, float y, float z);
-    void ScaleEntity(float x, float y, float z);
-    
-    DirectX::XMMATRIX MatrixAxes(DirectX::XMMATRIX* mOut, const DirectX::XMVECTOR& vXAxis, const DirectX::XMVECTOR& vYAxis, const DirectX::XMVECTOR& vZAxis);
 
     void UpdateConstantBuffer(const gdx::CDevice* device, const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj);
     void Update();
 
     bool isActive;
 
-    DirectX::XMVECTOR position;
-    DirectX::XMVECTOR lookAt;
-    DirectX::XMVECTOR up;
-    DirectX::XMVECTOR right;
-    
-    DirectX::XMMATRIX mRotate;
-    DirectX::XMMATRIX mTranslation;
-    DirectX::XMMATRIX mScaling;
+    Transform transform;
 
     MatrixSet cb;
 
@@ -67,8 +47,7 @@ public:
     }
 
 private:
-    DirectX::XMVECTOR defaultLookAt = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    DirectX::XMVECTOR defaultUp = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
 };
 
 typedef Mesh* LPMESH;

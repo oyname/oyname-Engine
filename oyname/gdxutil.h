@@ -27,8 +27,7 @@ enum D3DLIGHTTYPE {
 	D3DLIGHT_DIRECTIONAL = 3,
 };
 
-enum D3DVERTEX_FLAGS
-{
+enum D3DVERTEX_FLAGS{
 	D3DVERTEX_POSITION = (1 << 0),
 	D3DVERTEX_COLOR = (1 << 1),
 	D3DVERTEX_NORMAL = (1 << 2),
@@ -40,8 +39,7 @@ enum D3DVERTEX_FLAGS
 	// Add more options here ...
 };
 
-enum GXFORMAT
-{
+enum GXFORMAT{
 	NONE = 0,
 	B8G8R8A8_UNORM = 1 << 0,
 	B8G8R8A8_UNORM_SRGB = 1 << 1,
@@ -52,8 +50,7 @@ enum GXFORMAT
 	R10G10B10_XR_BIAS_A2_UNORM = 1 << 6,
 };
 
-typedef enum
-{
+typedef enum{
 	AUTOMATIC_WINDOW_MODE = 0,
 	FULLSCREEN_MODE = 1,
 	WINDOW_MODE = 2,
@@ -67,8 +64,7 @@ enum Options {
 	// Add more options here ...
 };
 
-struct TextureFormat
-{
+struct TextureFormat{
 	GXFORMAT format;
 	LPCWSTR name;
 };
@@ -83,8 +79,7 @@ const TextureFormat textureFormats[] = {
 	{ GXFORMAT::R10G10B10_XR_BIAS_A2_UNORM, L"R10G10B10_XR_BIAS_A2_UNORM" },
 };
 
-enum Error
-{
+enum Error{
 	None,
 	Success,
 	CreateEngineFailed,
@@ -104,8 +99,7 @@ enum Error
 	InvalidParameter
 };
 
-namespace GXUTIL
-{
+namespace GXUTIL{
 	DXGI_FORMAT GetDXGIFormat(GXFORMAT format);
 	std::wstring ErrorToString(Error err);
 	std::wstring GetTextureFormatName(GXFORMAT format);
@@ -116,8 +110,7 @@ namespace GXUTIL
 	GXFORMAT GetSupportedFormats(D3D_FEATURE_LEVEL featureLevel);
 }
 
-class Debug
-{
+class Debug{
 public:
 	static HRESULT GetErrorMessage(const char* file, int line, DWORD errorCode);
 
@@ -166,8 +159,7 @@ private:
 	}
 };
 
-namespace Memory
-{
+namespace Memory{
 	// Memory Release
 	//
 	template<typename T>void SafeRelease(T*& IUnk)
@@ -215,5 +207,10 @@ namespace Memory
 		p.clear();
 	}
 };
+
+namespace Time
+{
+
+}
 
 #endif // GXUTIL_H_INCLUDED

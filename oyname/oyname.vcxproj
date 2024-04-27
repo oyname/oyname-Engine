@@ -145,6 +145,7 @@
     <ClCompile Include="Brush.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="createCube.cpp" />
+    <ClCompile Include="createTetxure.cpp" />
     <ClCompile Include="gdxdevice.cpp" />
     <ClCompile Include="gdxinterface.cpp" />
     <ClCompile Include="gidx.cpp" />
@@ -162,6 +163,8 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="textureExample.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="triangle.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
@@ -193,6 +196,8 @@
     <ClInclude Include="Surface.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Time.h" />
+    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pixelshader.hlsl">

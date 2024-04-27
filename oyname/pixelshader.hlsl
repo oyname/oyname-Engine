@@ -9,8 +9,9 @@ struct PS_INPUT
     float3 lightDirection : TEXCOORD3;
 };
 
-Texture2D textureMap; 
-SamplerState samplerState;
+SamplerState samplerState : register(s0);
+Texture2D textureMap : register(t0);
+
 
 float4 main(PS_INPUT input) : SV_Target
 {
@@ -21,7 +22,7 @@ float4 main(PS_INPUT input) : SV_Target
     
     // Beleuchtungseigenschaften
     float3 ia = input.lightColor;
-    float3 id = float3(1.0, 1.0, 0.8); // Diffuse Lichtfarbe
+    float3 id = float3(0.8, 1.0, 0.8); // Diffuse Lichtfarbe
     
     // Berechne den Diffuslichtbeitrag
     float diffuse_factor = max(dot(input.normal, -lightDirection), 0.0);
@@ -41,14 +42,14 @@ float4 main(PS_INPUT input) : SV_Target
     
     // Berechne die endgültige Farbe unter Berücksichtigung der Textur, falls befüllt, sonst ohne Textur
     float3 final_color;
-    if (textureFilled)
-    {
+   // if (textureFilled)
+   // {
         final_color = texColor.rgb * (ambient_light + diffuse_light) * input.color.rgb;
-    }
-    else
-    {
-        final_color = (ambient_light + diffuse_light) * input.color.rgb;
-    }
+   // }
+   // else
+   // {
+   //     final_color = (ambient_light + diffuse_light) * input.color.rgb;
+   // }
 
     return float4(final_color, texColor.a);
 }

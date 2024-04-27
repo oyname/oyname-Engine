@@ -44,14 +44,14 @@ void Light::SetColor(const DirectX::XMFLOAT4& Color)
 DirectX::XMFLOAT4 Light::GetPosition() const
 {
 	DirectX::XMFLOAT4 positionFloat;
-	DirectX::XMStoreFloat4(&positionFloat, this->position);
+	DirectX::XMStoreFloat4(&positionFloat, this->transform.getPosition());
 	return positionFloat;
 }
 
 DirectX::XMFLOAT4 Light::GetDirection() const
 {
 	DirectX::XMFLOAT4 directionFloat;
-	DirectX::XMStoreFloat4(&directionFloat, this->lookAt);
+	DirectX::XMStoreFloat4(&directionFloat, this->transform.getLookAt());
 	return directionFloat;
 }
 
@@ -66,8 +66,8 @@ void Light::UpdateLight(const gdx::CDevice* device)
 	HRESULT hr = S_OK;
 
 	// Aktualisieren der Position des Richtungslichts
-	SetPosition(position);
-	SetDirection(lookAt);
+	SetPosition(this->transform.getPosition());
+	SetDirection(this->transform.getLookAt());
 
 	// Kopieren der Daten in den lightBuffer
 	D3D11_MAPPED_SUBRESOURCE mappedResource;

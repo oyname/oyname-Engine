@@ -48,6 +48,9 @@ public:
     BRUSH* getPreviousBrush(BRUSH* currentBrush);
     SHADER* getPreviousShader(SHADER* currentShader);
 
+
+    void processMesh();
+
     SURFACE* getSurface(MESH* mesh);
 
     // Standardbrush
