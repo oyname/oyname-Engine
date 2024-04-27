@@ -24,7 +24,7 @@ public:
     void Update();
 
     bool isActive;
-
+    
     Transform transform;
 
     MatrixSet cb;
