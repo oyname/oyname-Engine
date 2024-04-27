@@ -10,3 +10,9 @@
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+/oyname/adapter.cpp
+/oyname/createCube.cpp
+/oyname/createTetxure.cpp
+/oyname/Quad.cpp
+/oyname/triangle.cpp
+/oyname/turnlight.cpp
