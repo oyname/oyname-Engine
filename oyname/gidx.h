@@ -113,9 +113,6 @@ namespace Engine
     {
         *light = engine->GetLM().createLight(type);
         
-        if(type == D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL)
-            engine->SetDirectionalLight(*light);
-
         HRESULT hr = engine->GetBM().CreateBuffer(&((*light)->cbLight), sizeof(LightSet), 1, D3D11_BIND_CONSTANT_BUFFER, &((*light)->lightBuffer));
         if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
         

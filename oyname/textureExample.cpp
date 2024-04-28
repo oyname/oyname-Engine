@@ -37,7 +37,7 @@ int main()
     // Creating light
     LPLIGHT light;
     Engine::CreateLight(&light, D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL);
-    Engine::RotateEntity(light, 135.0f, 0.0f, 0.0f);
+    Engine::RotateEntity(light, 30.0f, 30.0f, 0.0f);
 
     // Create cube
     LPMESH cube;
@@ -57,11 +57,16 @@ int main()
 
     LPMESH cube3;
     CreateCube(&cube3, brush3);
-   
     Engine::BrushTexture(brush3, texture3);
 
     Engine::PositionEntity(cube3, 4.0f, 0.0f, 0.0f);
     cube3->transform.Rotate(0.0f, 0.0f, 0.0f);
+
+    LPMESH floor;
+    CreateCube(&floor);
+    Engine::PositionEntity(floor, 0.0f, -2.25f, 0.0f);
+
+    floor->transform.Scale(10.0f, 0.1f, 10.0f);
 
     float distance = 0.0f;
 
@@ -72,14 +77,14 @@ int main()
     {
         Engine::Cls(0, 0, 0);
 
-        //Engine::TurnEntity(cube, 0.3f, 0.0, 0.1f);
-        //Engine::TurnEntity(cube2, 0.3f, 0.0, 0.1f);
-        //Engine::TurnEntity(cube3, 0.3f, 0.0, 0.1f);
+        Engine::TurnEntity(cube, 0.3f, 0.0, 0.1f);
+        Engine::TurnEntity(cube2, 0.3f, 0.0, 0.1f);
+        Engine::TurnEntity(cube3, 0.3f, 0.0, 0.1f);
         //Engine::MoveEntity(camera, 0.0f, 0.0f, -0.01f);
        
         angle += 0.005f;
-        MoveObjectInCircle(cube, 0.0f, 0.0f, 10.0f, angle);
-        Engine::LookAt(cube, DirectX::XMVectorGetX(cube2->transform.getPosition()), DirectX::XMVectorGetY(cube2->transform.getPosition()), DirectX::XMVectorGetZ(cube2->transform.getPosition()));
+        MoveObjectInCircle(camera, 0.0f, 0.0f, 10.0f, angle);
+        Engine::LookAt(camera, DirectX::XMVectorGetX(cube2->transform.getPosition()), DirectX::XMVectorGetY(cube2->transform.getPosition()), DirectX::XMVectorGetZ(cube2->transform.getPosition()));
 
         Engine::UpdateWorld();
         Engine::RenderWorld();
@@ -97,7 +102,7 @@ void MoveObjectInCircle(LPMESH mesh, float centerX, float centerZ, float radius,
     float newZ = centerZ + radius * sin(angle);
 
     // Setzen der neuen Position des Objekts
-    mesh->transform.Position(newX, 0.0f, newZ);
+    mesh->transform.Position(newX, 2.0f, newZ);
 }
 
 // Function definitions

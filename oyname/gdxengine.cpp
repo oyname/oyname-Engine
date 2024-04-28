@@ -247,14 +247,4 @@ namespace gdx
 		GetCam().SetCamera(mesh);
 		m_renderManager.SetCamera(mesh);
 	}
-
-	void CGIDX::SetDirectionalLight(LPLIGHT dirLight)
-	{
-		m_renderManager.SetDirectionalLight(dirLight);
-	}
-
-	void CGIDX::SetFormat(DXGI_FORMAT bufferFormat)
-	{
-		// ....
-	}
 }
