@@ -13,6 +13,7 @@
 #include "TextureManager.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "Timer.h"
 
 #define VERTEX_SHADER_FILE L"VertexShader.hlsl"
 #define PIXEL_SHADER_FILE L"PixelShader.hlsl"

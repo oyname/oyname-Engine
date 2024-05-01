@@ -9,7 +9,7 @@ namespace Windows
         m_nWidth(500),
         m_nHeight(500),
         m_bInitialized(false),
-        m_sName(L"")
+        m_sName(L"giDX³ Engine")
     {
     }
 

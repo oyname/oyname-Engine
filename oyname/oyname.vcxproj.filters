@@ -49,9 +49,6 @@
     <Filter Include="03_Engine\04 Manager\04 TexturManager">
       <UniqueIdentifier>{c8875f1f-f060-41b1-a484-47b134f89519}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_Engine\04 Manager\02 ObjectManager\01 Objects">
-      <UniqueIdentifier>{24ee07c5-294e-4020-9189-de8538ac3f02}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02_DirectX\01 Common">
       <UniqueIdentifier>{9c466ec8-1998-4019-89c0-9abd6ad634e5}</UniqueIdentifier>
     </Filter>
@@ -66,6 +63,15 @@
     </Filter>
     <Filter Include="03_Engine\08 Timer">
       <UniqueIdentifier>{ee902689-32f5-4e8f-a878-2cc295085e4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\04 Manager\00 Objects">
+      <UniqueIdentifier>{831d8765-efe7-427b-bc6b-7903a750ee46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\04 Manager\00 Objects\01 Objects">
+      <UniqueIdentifier>{24ee07c5-294e-4020-9189-de8538ac3f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\04 Manager\00 Objects\02 Objects">
+      <UniqueIdentifier>{25d96459-7e26-4905-af6d-6ff8547e841e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -115,19 +121,16 @@
       <Filter>03_Engine\02 Camera</Filter>
     </ClCompile>
     <ClCompile Include="Surface.cpp">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
+      <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
+      <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>
     </ClCompile>
     <ClCompile Include="Brush.cpp">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
+      <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
+      <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>
     </ClCompile>
     <ClCompile Include="LightManager.cpp">
       <Filter>03_Engine\04 Manager\01 LightManager</Filter>
@@ -144,9 +147,6 @@
     <ClCompile Include="textureExample.cpp">
       <Filter>05_Example</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Quad.cpp">
       <Filter>05_Example</Filter>
     </ClCompile>
@@ -156,8 +156,14 @@
     <ClCompile Include="Transform.cpp">
       <Filter>03_Engine\05 Transform</Filter>
     </ClCompile>
-    <ClCompile Include="Time.cpp">
+    <ClCompile Include="Timer.cpp">
       <Filter>03_Engine\08 Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>03_Engine\04 Manager\00 Objects\02 Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>03_Engine\04 Manager\00 Objects\02 Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -201,19 +207,16 @@
       <Filter>03_Engine\02 Camera</Filter>
     </ClInclude>
     <ClInclude Include="Surface.h">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
+      <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
+      <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>
     </ClInclude>
     <ClInclude Include="Brush.h">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
+      <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
+      <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>
     </ClInclude>
     <ClInclude Include="LightManager.h">
       <Filter>03_Engine\04 Manager\01 LightManager</Filter>
@@ -221,17 +224,20 @@
     <ClInclude Include="TextureManager.h">
       <Filter>03_Engine\04 Manager\04 TexturManager</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>03_Engine\04 Manager\02 ObjectManager\01 Objects</Filter>
-    </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>03_Engine\05 Transform</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>06 Extern</Filter>
     </ClInclude>
-    <ClInclude Include="Time.h">
+    <ClInclude Include="Timer.h">
       <Filter>03_Engine\08 Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>03_Engine\04 Manager\00 Objects\02 Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>03_Engine\04 Manager\00 Objects\02 Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

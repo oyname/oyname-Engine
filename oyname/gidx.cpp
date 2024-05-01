@@ -1,39 +1,13 @@
 #include "gdxengine.h"
-
-// Function to retrieve error message
-HRESULT Debug::GetErrorMessage(const char* file, int line, DWORD errorCode) {
-    if (errorCode == ERROR_SUCCESS) {
-        return S_OK;
-    }
-
-    LPSTR messageBuffer = NULL;
-    size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
-        errorCode,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-        (LPSTR)&messageBuffer,
-        0,
-        NULL);
-
-    std::string errorMessage;
-
-    if (size != 0) {
-        errorMessage = messageBuffer;
-        LocalFree(messageBuffer);
-    }
-    else {
-        errorMessage = "Unknown error.";
-    }
-
-    Debug::Log(file, " in line: ", line, " Error : ", errorMessage);
-
-    return E_FAIL; // Return failure code if error occurred
-}
+#include "Timer.h"
 
 // Engine namespace
 namespace Engine {
     gdx::CGIDX* engine;
 }
+
+// 
+Timer Time;
 
 // Functions automatically called when window is created, intended for internal use
 namespace gdx {
@@ -78,6 +52,36 @@ namespace gdx {
     bool MainLoop() {
         return _running;
     }
+}
+
+// Function to retrieve error message
+HRESULT Debug::GetErrorMessage(const char* file, int line, DWORD errorCode) {
+    if (errorCode == ERROR_SUCCESS) {
+        return S_OK;
+    }
+
+    LPSTR messageBuffer = NULL;
+    size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        errorCode,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPSTR)&messageBuffer,
+        0,
+        NULL);
+
+    std::string errorMessage;
+
+    if (size != 0) {
+        errorMessage = messageBuffer;
+        LocalFree(messageBuffer);
+    }
+    else {
+        errorMessage = "Unknown error.";
+    }
+
+    Debug::Log(file, " in line: ", line, " Error : ", errorMessage);
+
+    return E_FAIL; // Return failure code if error occurred
 }
 
 // GXUTIL namespace

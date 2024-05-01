@@ -1,4 +1,4 @@
-#include "gidx.h"
+//#include "gidx.h"
 
 // Engine::CreateTexture(&texture, width, height):
 // Diese Funktion erstellt eine neue Textur mit den angegebenen Abmessungen (Breite und Höhe). Die Textur wird im Speicher reserviert 
@@ -40,14 +40,14 @@
 // y Die Y-Koordinate des Pixels.
 // Rückgabewert ein Color-Objekt, das die extrahierten Farbinformationen des Pixels enthält.
 
-void CreateCube(LPMESH* mesh, BRUSH* brush = nullptr);
+//void CreateCube(LPMESH* mesh, BRUSH* brush = nullptr);
 
 // Diese Funktion nimmt einen Wert value, dessen ursprünglichen Bereich(in_min bis in_max) und den Bereich,
 // in den er abgebildet werden soll(out_min bis out_max), und gibt den abgebildeten Wert zurück.Zum Beispiel
 // wird der Wert value von seinem ursprünglichen Bereich in den neuen Bereich gemappt.
-double map(double value, double in_min, double in_max, double out_min, double out_max) {
-   return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
+//double map(double value, double in_min, double in_max, double out_min, double out_max) {
+//   return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+//}
 
 //int main()
 //{

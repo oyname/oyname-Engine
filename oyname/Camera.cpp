@@ -1,4 +1,3 @@
-#include "gdxengine.h"
 #include "Camera.h"
 
 namespace gdx
@@ -51,8 +50,6 @@ namespace gdx
 
     void Camera::CreateCamera(LPMESH* camera)
     {
-        *camera = m_engine->GetOM().createMesh();
-
         if (m_projMode == PERSPECTIVE_LH)
         {
             (*camera)->cb.projectionMatrix = XMMatrixPerspectiveFovLH(m_perspective.fieldOfView, m_perspective.aspectRatio, m_perspective.nearPlane, m_perspective.farPlane);

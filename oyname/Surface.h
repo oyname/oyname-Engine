@@ -44,6 +44,18 @@ public:
     std::vector<unsigned int> indices;
     unsigned int size_listIndex;
 
+    // Getter
+    float getVertexX(unsigned int index) const;
+    float getVertexY(unsigned int index) const;
+    float getVertexZ(unsigned int index) const;
+
+    float getSizeX() {return sizeX;};
+    float getSizeY() {return sizeY;};
+    float getSizeZ() {return sizeZ;};
+
+    void CalculateObjectSize();
+
+    //
     ID3D11Buffer* positionBuffer;
     ID3D11Buffer* normalBuffer;
     ID3D11Buffer* colorBuffer;
@@ -62,6 +74,11 @@ public:
         // richtigen Speicherdeallokator
         _aligned_free(p);
     }
+
+public:
+    float sizeX;
+    float sizeY;
+    float sizeZ;
 };
 
 typedef Surface* LPSURFACE;

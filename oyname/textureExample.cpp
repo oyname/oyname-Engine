@@ -7,7 +7,13 @@ void MoveObjectInCircle(LPMESH mesh, float centerX, float centerZ, float radius,
 
 int main()
 {
-    Engine::Graphics(1280, 720);
+    bool sw = true;
+
+    sw == true ? Engine::Graphics(1200, 650) : Engine::Graphics(1980, 1080, false);
+
+    //Engine::Graphics(1200, 650);
+    //Engine::Graphics(1200, 650);
+
 
     LPTEXTURE texture1 = nullptr;
     Engine::LoadTexture(&texture1, L"..\\oyname\\Texture\\test4.bmp");
@@ -39,33 +45,48 @@ int main()
     Engine::CreateLight(&light, D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL);
     Engine::RotateEntity(light, 30.0f, 30.0f, 0.0f);
 
-    // Create cube
-    LPMESH cube;
+    LPENTITY cube;
     CreateCube(&cube);
     Engine::EntityTexture(cube, texture1); // Die Textur wird zum Brush, dass zu cube gehört angehängt. In diesem Fall dem Standard-Brush
     
     Engine::PositionEntity(cube, 0.0f, 0.0f, 0.0f);
     Engine::RotateEntity(cube, 0.0f, 0.0f, 0.0f);
-
+    
     LPMESH cube2;
     CreateCube(&cube2, brush2);
-
+    
     Engine::BrushTexture(brush2, texture2); // So kann man auch einem Brush eine Textur zuweisen
-
+    
     Engine::PositionEntity(cube2, -4.0f, 0.0f, 0.0f);
     Engine::RotateEntity(cube2, 0.0f, 0.0f, 0.0f);
-
-    LPMESH cube3;
-    CreateCube(&cube3, brush3);
+    
+    LPENTITY cube3;
+    CreateCube(&cube3, brush2);
     Engine::BrushTexture(brush3, texture3);
+
+    std::vector<LPENTITY> cubesx;
+    // Setze den Zufallszahlengenerator
+    srand(time(NULL));
+    // Schleife zum Erstellen der Würfel
+    for (int i = 0; i < 250; ++i) {
+    
+        float z = static_cast<float>(rand() % 50 - 25);
+        float x = static_cast<float>(rand() % 50 - 25); // Wert zwischen -10 und 10
+        float y = static_cast<float>(rand() % 50 - 25); // Wert zwischen -10 und 10
+    
+        LPMESH cubexx;
+        CreateCube(&cubexx, brush2);
+        Engine::PositionEntity(cubexx, x, y, z);
+        cubesx.push_back(cubexx); // Füge den Würfel zum Vektor hinzu
+    }
 
     Engine::PositionEntity(cube3, 4.0f, 0.0f, 0.0f);
     cube3->transform.Rotate(0.0f, 0.0f, 0.0f);
 
-    LPMESH floor;
+    LPENTITY floor;
     CreateCube(&floor);
     Engine::PositionEntity(floor, 0.0f, -2.25f, 0.0f);
-
+    
     floor->transform.Scale(10.0f, 0.1f, 10.0f);
 
     float distance = 0.0f;
@@ -73,23 +94,34 @@ int main()
     // Winkel inkrementieren, um das Objekt im Kreis zu bewegen
     float angle = 0.0f;
 
+    Time.timeScale = 1.0;
+
+    float speed = 30.0f;
+
     while (gdx::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000)) // Main loop
     {
         Engine::Cls(0, 0, 0);
 
-        Engine::TurnEntity(cube, 0.3f, 0.0, 0.1f);
-        Engine::TurnEntity(cube2, 0.3f, 0.0, 0.1f);
-        Engine::TurnEntity(cube3, 0.3f, 0.0, 0.1f);
-        //Engine::MoveEntity(camera, 0.0f, 0.0f, -0.01f);
+        //Engine::TurnEntity(cube,  speed * Time.deltaTime, 0.0, speed * Time.deltaTime);
+        //Engine::TurnEntity(cube2, speed * Time.deltaTime, 0.0, speed * Time.deltaTime);
+        //Engine::TurnEntity(cube3, speed * Time.deltaTime, 0.0, speed * Time.deltaTime);
        
-        angle += 0.005f;
+        for (auto& cubes : cubesx) {
+            Engine::TurnEntity(cubes, speed * Time.deltaTime, 0.0f, speed * Time.deltaTime);
+        }
+
+        angle += 0.5f * Time.deltaTime;
+
+
         MoveObjectInCircle(camera, 0.0f, 0.0f, 10.0f, angle);
         Engine::LookAt(camera, DirectX::XMVectorGetX(cube2->transform.getPosition()), DirectX::XMVectorGetY(cube2->transform.getPosition()), DirectX::XMVectorGetZ(cube2->transform.getPosition()));
+        Engine::TurnEntity(camera, 0.0f, 0.0f, speed * Time.deltaTime);
+
 
         Engine::UpdateWorld();
         Engine::RenderWorld();
 
-        Engine::Flip();
+        Engine::Flip(0);
     }
 
     // Shutdown the engine
@@ -102,10 +134,9 @@ void MoveObjectInCircle(LPMESH mesh, float centerX, float centerZ, float radius,
     float newZ = centerZ + radius * sin(angle);
 
     // Setzen der neuen Position des Objekts
-    mesh->transform.Position(newX, 2.0f, newZ);
+    mesh->transform.Position(newX, 7.0f, newZ);
 }
 
-// Function definitions
 void CreateCube(LPMESH* mesh, BRUSH* brush)
 {
     LPSURFACE wuerfel = NULL;

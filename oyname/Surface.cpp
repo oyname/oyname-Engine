@@ -15,6 +15,7 @@ Surface::Surface() :
     normalBuffer(nullptr),
     pShader(nullptr)
 {
+
 }
 
 Surface::~Surface() {
@@ -28,6 +29,30 @@ void Surface::AddVertex(float x, float y, float z)
     position.push_back(DirectX::XMFLOAT3(x, y, z));
     size_listVertices = (unsigned int)position.size();
     size_vertex = sizeof(DirectX::XMFLOAT3);
+}
+
+float Surface::getVertexX(unsigned int index) const
+{
+    if (index < 0 || index >= position.size())
+        return 0.0f;
+
+    return position[index].x;
+}
+
+float Surface::getVertexY(unsigned int index) const
+{
+    if (index < 0 || index >= position.size())
+        return 0.0f;
+
+    return position[index].y;
+}
+
+float Surface::getVertexZ(unsigned int index) const
+{
+    if (index < 0 || index >= position.size())
+        return 0.0f;
+
+    return position[index].z;
 }
 
 void Surface::VertexColor(unsigned int index, float r, float g, float b)
@@ -93,13 +118,45 @@ void Surface::Draw(const gdx::CDevice* device,const DWORD flagsVertex)
         device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &uv1Buffer,  &size_uv1, &offset);
         cnt++;
     }
-    //if (flagsVertex & D3DVERTEX_TEX2) {
-    //    device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &uv2Buffer,  &size_uv2, &offset);
-    //    cnt++;
-    //}
+    if (flagsVertex & D3DVERTEX_TEX2) {
+        device->GetDeviceContext()->IASetVertexBuffers(cnt, 1, &uv2Buffer,  &size_uv2, &offset);
+        cnt++;
+    }
 
     device->GetDeviceContext()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
     device->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     device->GetDeviceContext()->DrawIndexed(size_listIndex, 0, 0);
+}
+
+void Surface::CalculateObjectSize()
+{
+    float minX = FLT_MAX;
+    float minY = FLT_MAX;
+    float minZ = FLT_MAX;
+    float maxX = -FLT_MAX;
+    float maxY = -FLT_MAX;
+    float maxZ = -FLT_MAX;
+
+    // Durchlaufe alle Vertices des Objekts und aktualisiere die minimalen und maximalen Koordinaten
+    for (const auto& vertex : position) {
+        if (vertex.x < minX)
+            minX = vertex.x;
+        if (vertex.y < minY)
+            minY = vertex.y;
+        if (vertex.z < minZ)
+            minZ = vertex.z;
+
+        if (vertex.x > maxX)
+            maxX = vertex.x;
+        if (vertex.y > maxY)
+            maxY = vertex.y;
+        if (vertex.z > maxZ)
+            maxZ = vertex.z;
+    }
+
+    // Berechne die Größe in X, Y und Z
+    sizeX = maxX - minX;
+    sizeY = maxY - minY;
+    sizeZ = maxZ - minZ;
 }

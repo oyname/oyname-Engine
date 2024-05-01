@@ -5,6 +5,9 @@
 
 #include "gdxengine.h"
 
+
+extern Timer Time;
+
 namespace Engine
 {
     extern gdx::CGIDX* engine;
@@ -135,9 +138,9 @@ namespace Engine
         mesh->transform.Move(x, y, z);
     }
 
-    inline void RotateEntity(LPMESH mesh, float fRotateX, float fRotateY, float fRotateZ)
+    inline void RotateEntity(LPMESH mesh, float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local)
     {
-        mesh->transform.Rotate(fRotateX, fRotateY, fRotateZ);
+        mesh->transform.Rotate(fRotateX, fRotateY, fRotateZ, mode);
     }
 
     inline void TurnEntity(LPMESH mesh, float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local)
@@ -152,6 +155,7 @@ namespace Engine
                                         1.0f,
                                         1000.0f);
 
+        *camera = engine->GetOM().createMesh();
         engine->GetCam().CreateCamera(camera); 
 
         // Current Camera  
@@ -189,6 +193,8 @@ namespace Engine
             // Indexbuffer befüllen
             engine->GetBM().CreateBuffer(surface->indices.data(), sizeof(UINT), surface->size_listIndex, D3D11_BIND_INDEX_BUFFER, &surface->indexBuffer);
         }
+
+        surface->CalculateObjectSize();
     }
 
     inline void UpdateBuffer(LPSURFACE surface) {
@@ -234,13 +240,20 @@ namespace Engine
 
     inline int Cls(int r, int g, int b, int a = 255) { return static_cast<int>(engine->Cls(float(r / 255.0f), float(g / 255.0f), float(b / 255.0f), float(a / 255.0f))); }
 
-    inline int Flip(int syncInterval = 1) { return static_cast<int>(engine->m_device.Flip(syncInterval)); }
+    inline int Flip(int syncInterval = 1) { 
+        Time.update();
+        return static_cast<int>(engine->m_device.Flip(syncInterval)); 
+    }
 
     inline unsigned int Graphics(unsigned int width, unsigned int height, bool windowed = true) { return static_cast<int>(engine->Graphic(width, height, windowed)); }
 
-    inline void RenderWorld() { engine->RenderWorld(); }
+    inline void RenderWorld() { 
+        engine->RenderWorld(); 
+    }
 
-    inline void UpdateWorld() { engine->UpdateWorld(); }
+    inline void UpdateWorld() { 
+        engine->UpdateWorld(); 
+    }
 
     inline void LoadTexture(LPLPTEXTURE texture, const wchar_t* filename)
     {
@@ -313,7 +326,7 @@ namespace Engine
 
     inline void LookAt(LPMESH mesh, float targetX, float targetY, float targetZ)
     {
-        mesh->transform.LookAt(DirectX::XMVectorSet(targetX, targetY, targetZ, 0.0f), mesh->transform.upVector);
+        mesh->transform.LookAt(DirectX::XMVectorSet(targetX, targetY, targetZ, 0.0f), DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
     }
 
 } // End of namespace Engine

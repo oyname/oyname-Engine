@@ -52,6 +52,27 @@ void RenderManager::RenderMesh()
                 
                 for (const auto& surface : *(mesh->surfaces))
                 {
+                    //// Berechne die Differenzvektor zwischen Kamera- und Objektposition
+                    //XMFLOAT3 diffVector;
+                    //XMStoreFloat3(&diffVector, XMVectorSubtract(mesh->transform.getPosition(), m_currentCam->transform.getPosition()));
+                    //
+                    //// Berechne den Abstand zwischen Kamera und Objekt
+                    //float distance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&diffVector)));
+                    //
+                    //if (distance > 0)
+                    //{
+                    //    // Objekt liegt vor der Kamera
+                    //    surface->Draw(m_objectManager.m_device, shader->flagsVertex);
+                    //}
+                    //else if (distance < 0)
+                    //{
+                    //    // Objekt liegt hinter der Kamera
+                    //}
+                    //else
+                    //{
+                    //    // Objekt befindet sich genau auf der Kamera
+                    //}
+
                     //Debug::Log("         SURFACE: ", surface);
                     // Render vertices
                     surface->Draw(m_objectManager.m_device, shader->flagsVertex);

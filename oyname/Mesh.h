@@ -52,8 +52,10 @@ private:
 
 typedef Mesh* LPMESH;
 typedef Mesh* LPCAMERA;
+typedef Mesh* LPENTITY;
 typedef Mesh MESH;
 typedef Mesh CAMERA;
+typedef Mesh ENTITY;
 
 
 

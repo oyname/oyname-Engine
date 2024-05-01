@@ -208,9 +208,4 @@ namespace Memory{
 	}
 };
 
-namespace Time
-{
-
-}
-
 #endif // GXUTIL_H_INCLUDED

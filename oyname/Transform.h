@@ -1,6 +1,8 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include <DirectXCollision.h>
+#include "gdxutil.h"
 
 enum class Space {
     Local,
@@ -19,10 +21,9 @@ private:
     DirectX::XMMATRIX translation;
     DirectX::XMMATRIX scaling;
 
+    float ExtractRoll(const DirectX::XMMATRIX* XMMatrix_p_Rotation);
+
 public:
-    DirectX::XMVECTOR upVector;
-    DirectX::XMVECTOR forwardVector;
-    DirectX::XMVECTOR rightVector;
 
     Transform();
 

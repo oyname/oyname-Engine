@@ -150,10 +150,12 @@ namespace gdx
 
 	void CGIDX::UpdateWorld()
 	{
+		//Time.update();
 		// Durchlaufe alle Meshes in der Liste
 		// Auch die Kamera ist eine Mesh-Klasse und
 		// wird von der ObjektManager-Klasse verwaltet
-		GetOM().processMesh();
+		GetCam().GetCurrentCam()->Update();
+		//GetOM().processMesh();
 	}
 
 	HRESULT CGIDX::Cls(float r, float g, float b, float a)

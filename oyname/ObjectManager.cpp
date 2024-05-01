@@ -282,10 +282,10 @@ void* ObjectManager::getShader(BRUSH brush) const
 
 void ObjectManager::processMesh()
 {
-    // Durchlaufe alle Meshes in der Liste
-    for (auto it = this->m_meshes.begin(); it != this->m_meshes.end(); ++it) {
-        MESH* mesh = *it;
-
-        mesh->Update();
-    }
+     //Durchlaufe alle Meshes in der Liste
+     for (auto it = this->m_meshes.begin(); it != this->m_meshes.end(); ++it) {
+         MESH* mesh = *it;
+     
+         mesh->Update();
+     }
 }
