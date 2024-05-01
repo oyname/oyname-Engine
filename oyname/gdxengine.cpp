@@ -96,9 +96,9 @@ namespace gdx
 		// 1. Initialize objects
 
 		// Camera 
-		m_camera.Init(this);
-		m_camera.SetViewport(0.0f, 0.0f, (float)width, (float)height, 0.0f, 1.0f);
-		m_device.CreateView(1, m_camera.GetViewPort());
+		m_cameraManager.Init(this);
+		m_cameraManager.SetViewport(0.0f, 0.0f, (float)width, (float)height, 0.0f, 1.0f);
+		m_device.CreateView(1, m_cameraManager.GetViewPort());
 
 		// Object manager
 		m_objectManager.Init(&m_device);
@@ -119,14 +119,14 @@ namespace gdx
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
-		
+
 		// Create standard brush and add to standard shader
-		GetOM().addBrushToShader(GetSM().GetShader(),GetOM().createBrush());
+		GetOM().addBrushToShader(GetSM().GetShader(), GetOM().createBrush());
 
 		// Create layout for the vertices
 		hr = GetILM().CreateInputLayoutVertex(&GetSM().GetShader()->inputlayoutVertex, // Store the layout
-											  GetSM().GetShader(),                    // The shader object
-											  GetSM().GetShader()->flagsVertex,       // Store the flag
+			GetSM().GetShader(),                    // The shader object
+			GetSM().GetShader()->flagsVertex,       // Store the flag
 			D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL | D3DVERTEX_TEX1);
 
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
@@ -230,8 +230,8 @@ namespace gdx
 		return m_texturManager;
 	}
 
-	Camera& CGIDX::GetCam() {
-		return m_camera;
+	CameraManager& CGIDX::GetCam() {
+		return m_cameraManager;
 	}
 
 	void CGIDX::SetAdapter(unsigned int index)

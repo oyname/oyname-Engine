@@ -19,9 +19,6 @@
     <Filter Include="03_Engine\01 Engine">
       <UniqueIdentifier>{8d9dcfa2-55fa-492a-b7d0-c7bae370e5d0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_Engine\02 Camera">
-      <UniqueIdentifier>{0074fd9c-dac5-4849-b987-005c955868ee}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03_Engine\03 InputLayout">
       <UniqueIdentifier>{b12912a0-da6c-40b7-a781-9dec879f936e}</UniqueIdentifier>
     </Filter>
@@ -73,6 +70,9 @@
     <Filter Include="03_Engine\04 Manager\00 Objects\02 Objects">
       <UniqueIdentifier>{25d96459-7e26-4905-af6d-6ff8547e841e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03_Engine\02 CameraManager">
+      <UniqueIdentifier>{0074fd9c-dac5-4849-b987-005c955868ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BufferManager.cpp">
@@ -117,8 +117,8 @@
     <ClCompile Include="RenderManager.cpp">
       <Filter>03_Engine\04 Manager\03 RenderManager</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>03_Engine\02 Camera</Filter>
+    <ClCompile Include="CameraManager.cpp">
+      <Filter>03_Engine\02 CameraManager</Filter>
     </ClCompile>
     <ClCompile Include="Surface.cpp">
       <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>
@@ -203,8 +203,8 @@
     <ClInclude Include="RenderManager.h">
       <Filter>03_Engine\04 Manager\03 RenderManager</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>03_Engine\02 Camera</Filter>
+    <ClInclude Include="CameraManager.h">
+      <Filter>03_Engine\02 CameraManager</Filter>
     </ClInclude>
     <ClInclude Include="Surface.h">
       <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>

@@ -143,7 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Brush.cpp" />
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="createCube.cpp" />
     <ClCompile Include="createTetxure.cpp" />
     <ClCompile Include="gdxdevice.cpp" />
@@ -175,7 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Brush.h" />
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraManager.h" />
     <ClInclude Include="gdxdevice.h" />
     <ClInclude Include="gdxinterface.h" />
     <ClInclude Include="gidx.h" />

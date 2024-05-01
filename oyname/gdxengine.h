@@ -11,7 +11,7 @@
 #include "RenderManager.h"
 #include "LightManager.h"
 #include "TextureManager.h"
-#include "Camera.h"
+#include "CameraManager.h"
 #include "Transform.h"
 #include "Timer.h"
 
@@ -45,14 +45,14 @@ namespace gdx {
 		BufferManager		m_bufferManager;
 		LightManager		m_lightManager;
 		TextureManager		m_texturManager;
-		Camera		        m_camera;
+		CameraManager		m_cameraManager;
 
 	public:
 		CDevice m_device;		// Device Manager, not to be confused with DirectXDevice
 		CInterface m_interface;	// Interface Manager
-		
+
 	public:
-		CGIDX(HWND hwnd, HINSTANCE hinst, unsigned int bpp, unsigned int screenX, unsigned int screenY,  int* result);
+		CGIDX(HWND hwnd, HINSTANCE hinst, unsigned int bpp, unsigned int screenX, unsigned int screenY, int* result);
 		~CGIDX();
 
 		void Cleanup();
@@ -72,13 +72,13 @@ namespace gdx {
 		unsigned int GetColorDepth();
 
 		BufferManager& GetBM();			// BufferManager
-		ObjectManager&  GetOM();		// ObjectManager
+		ObjectManager& GetOM();		// ObjectManager
 		ShaderManager& GetSM();			// ShaderManager
 		LightManager& GetLM();			// LightManager
 		InputLayoutManager& GetILM();	// InputManager
 		TextureManager& GetTM();		// TextureManager
-		Camera& GetCam();				// Kamera
-		
+		CameraManager& GetCam();		// KameraManager
+
 		// Setter-Funktionen für private Variablen
 		void SetAdapter(unsigned int index);
 		void SetOutput(unsigned int index);
