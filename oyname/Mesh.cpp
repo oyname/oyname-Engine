@@ -5,7 +5,8 @@ Mesh::Mesh() :
     isActive(false),
     constantBuffer(nullptr),
     surfaces(nullptr),
-    pShader(nullptr)
+    pShader(nullptr),
+    pBrush(nullptr)
 {
     cb.projectionMatrix = DirectX::XMMatrixIdentity();
     cb.viewMatrix = DirectX::XMMatrixIdentity();

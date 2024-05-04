@@ -93,7 +93,7 @@ void Transform::LookAt(const DirectX::XMVECTOR& target, const DirectX::XMVECTOR&
     rotation = rotationZ * rotationX * rotationY;
 
     lookAt = DirectX::XMVector3Normalize(DirectX::XMVector3TransformNormal(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), rotation));
-    up = DirectX::XMVector3Normalize(DirectX::XMVector3TransformNormal(DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), rotation));
+    up = DirectX::XMVector3Normalize(DirectX::XMVector3TransformNormal(upVector, rotation));
     right = DirectX::XMVector3Cross(DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 }
 

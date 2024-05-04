@@ -9,13 +9,3 @@ I invite everyone interested to exchange ideas and learn together. At the oyname
 Thank you for your interest in my project!
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
-
-Willkommen zur oyname Engine! Dies ist ein einfaches Hobbyprojekt, das sich der Erstellung einer 3D-Engine widmet.
-Bitte beachte, dass diese Engine rein aus Hobbyinteresse entstanden ist und ich keinerlei Anspruch auf professionelle Qualität erhebt.
-
-Mein Ziel ist es, die Grundlagen der 3D-Programmierung zu erforschen und kreative Ideen umzusetzen. 
-Die oyname Engine ist ein Ort des Experimentierens und Lernens, ohne den Druck kommerzieller Standards erfüllen zu müssen.
-
-Ich lade alle Interessierten ein Ideen auszutauschen und gemeinsam zu lernen. Bei der oyname Engine steht der Spaß am Entdecken im Vordergrund.
-
-Vielen Dank für dein Interesse an meinem Projekt!

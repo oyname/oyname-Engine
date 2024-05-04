@@ -5,7 +5,7 @@ Light::Light():lightBuffer(nullptr)
 	type = D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL;
 	SetPosition(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f));
 	SetDirection(DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 0.0f));
-	SetColor(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	SetDiffuseColor(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 Light::~Light()
@@ -33,31 +33,25 @@ void Light::SetDirection(const DirectX::XMVECTOR& newDirection)
 	DirectX::XMStoreFloat4(&cbLight.lightDirection, newDirection);
 }
 
-void Light::SetColor(const DirectX::XMFLOAT4& Color) 
+void Light::SetDiffuseColor(const DirectX::XMFLOAT4& Color)
 {
-	cbLight.lightColor.x = Color.x;
-	cbLight.lightColor.y = Color.y;
-	cbLight.lightColor.z = Color.z;
-	cbLight.lightColor.w = Color.w;
+	cbLight.lightDiffuseColor.x = Color.x;
+	cbLight.lightDiffuseColor.y = Color.y;
+	cbLight.lightDiffuseColor.z = Color.z;
+	cbLight.lightDiffuseColor.w = Color.w;
 }
 
-DirectX::XMFLOAT4 Light::GetPosition() const
+void Light::SetAmbientColor(const DirectX::XMFLOAT4& Color)
 {
-	DirectX::XMFLOAT4 positionFloat;
-	DirectX::XMStoreFloat4(&positionFloat, this->transform.getPosition());
-	return positionFloat;
+	cbLight.lightAmbientColor.x = Color.x;
+	cbLight.lightAmbientColor.y = Color.y;
+	cbLight.lightAmbientColor.z = Color.z;
+	cbLight.lightAmbientColor.w = Color.w;
 }
 
-DirectX::XMFLOAT4 Light::GetDirection() const
+void Light::SetLightType(D3DLIGHTTYPE lightType)
 {
-	DirectX::XMFLOAT4 directionFloat;
-	DirectX::XMStoreFloat4(&directionFloat, this->transform.getLookAt());
-	return directionFloat;
-}
-
-DirectX::XMFLOAT4 Light::GetColor() const
-{ 
-	return cbLight.lightColor;
+	this->type = lightType;
 }
 
 // Funktion zum Aktualisieren des Richtungslichts und Kopieren der Daten in den Shader-Buffer
@@ -82,4 +76,19 @@ void Light::UpdateLight(const gdx::CDevice* device)
 	// Setzen des lightBuffers im Shader
 	device->GetDeviceContext()->VSSetConstantBuffers(1, 1, &lightBuffer);
 	device->GetDeviceContext()->PSSetConstantBuffers(1, 1, &lightBuffer);
+}
+
+void Light::GenerateViewMatrix()
+{
+	this->cb.viewMatrix = DirectX::XMMatrixLookAtLH(this->transform.getPosition(), this->transform.getLookAt(), this->transform.getUp());
+}
+
+void Light::GenerateProjectionMatrix(float nearZ, float farZ)
+{
+	float fieldOfView, screenAspect;
+
+	fieldOfView = 3.1415927f/2.0f;
+	screenAspect = 1.0f;
+
+	this->cb.projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, nearZ, farZ);
 }

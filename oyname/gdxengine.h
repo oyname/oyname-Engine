@@ -38,7 +38,7 @@ namespace gdx {
 		int m_monitorIndex;	   // Index of the monitor
 
 		// Manager classes
-		ObjectManager		m_objectManager;
+		ObjectManager       m_objectManager;
 		RenderManager		m_renderManager;
 		ShaderManager		m_shaderManager;
 		InputLayoutManager	m_inputLayoutManager;
@@ -82,6 +82,6 @@ namespace gdx {
 		// Setter-Funktionen für private Variablen
 		void SetAdapter(unsigned int index);
 		void SetOutput(unsigned int index);
-		void SetCamera(LPMESH mesh);
+		void SetCamera(LPENTITY mesh);
 	};
 }

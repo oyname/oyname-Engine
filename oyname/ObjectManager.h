@@ -27,37 +27,37 @@ public:
     void Init(gdx::CDevice* device);
 
     SURFACE* createSurface(); 
-    MESH* createMesh();
+    ENTITY* createMesh();
     BRUSH* createBrush();
     SHADER* createShader();
 
-    void addSurfaceToMesh(MESH* mesh, SURFACE* surface);
-    void addMeshToBrush(BRUSH* brush, MESH* mesh);
+    void addSurfaceToMesh(ENTITY* mesh, SURFACE* surface);
+    void addMeshToBrush(BRUSH* brush, ENTITY* mesh);
     void addBrushToShader(SHADER* shader, BRUSH* brush);
 
     void deleteSurface(SURFACE* surface);
-    void deleteMesh(MESH* mesh);
+    void deleteMesh(ENTITY* mesh);
     void deleteBrush(BRUSH* brush);
 
-    void removeSurfacefromMesh(MESH* mesh, SURFACE* surface);
-    void removeMeshfromBrush(BRUSH* brush, MESH* mesh);
+    void removeSurfacefromMesh(ENTITY* mesh, SURFACE* surface);
+    void removeMeshfromBrush(BRUSH* brush, ENTITY* mesh);
     void removeBrushfromShader(SHADER* shader, BRUSH* brush);
 
     SURFACE* getPreviousSurface(SURFACE* currentSurface);
-    MESH* getPreviousMesh(MESH* currentMesh);
+    ENTITY* getPreviousMesh(ENTITY* currentMesh);
     BRUSH* getPreviousBrush(BRUSH* currentBrush);
     SHADER* getPreviousShader(SHADER* currentShader);
 
 
     void processMesh();
 
-    SURFACE* getSurface(MESH* mesh);
+    SURFACE* getSurface(ENTITY* mesh);
 
     // Standardbrush
     BRUSH* getStandardBrush() const;
 
     void* getShader(SURFACE surface) const;
-    void* getShader(MESH mesh) const;
+    void* getShader(ENTITY mesh) const;
     void* getShader(BRUSH brush) const;
 
 private:

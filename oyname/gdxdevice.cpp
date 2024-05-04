@@ -4,13 +4,21 @@
 using namespace gdx;
 
 CDevice::CDevice() : m_bInitialized(false),
-m_pd3dDevice(nullptr),
-m_pContext(nullptr),
-m_pSwapChain(nullptr),
-m_depthStencilBuffer(nullptr),
-m_depthStencilView(nullptr),
-m_pBackBuffer(nullptr),
-m_pRenderTargetView(nullptr)
+                     m_pd3dDevice(nullptr),
+                     m_pContext(nullptr),
+                     m_pSwapChain(nullptr),
+                     m_depthStencilBuffer(nullptr),
+                     m_depthStencilView(nullptr),
+                     m_pBackBuffer(nullptr),
+                     m_pRenderTargetView(nullptr),
+                     m_pShadowRenderState(nullptr),
+                     m_pComparisonSampler_point(nullptr),
+                     m_depthStencilState(nullptr),
+                     m_pRasterizerState(nullptr),
+                     m_pShadowMap(nullptr),
+                     m_pShadowMapSRView(nullptr),
+                     m_pShadowMapDepthView(nullptr),
+                     m_pShadowTargetView(nullptr)
 {
 
 }
@@ -27,12 +35,17 @@ void CDevice::Release()
         if (m_pSwapChain != nullptr)
             m_pSwapChain->SetFullscreenState(FALSE, NULL);
 
-        Memory::SafeRelease(m_depthStencilBuffer);
-        Memory::SafeRelease(m_depthStencilView);
-        Memory::SafeRelease(m_pBackBuffer);
-        Memory::SafeRelease(m_pSwapChain);
-        Memory::SafeRelease(m_pContext);
         Memory::SafeRelease(m_pd3dDevice);
+        Memory::SafeRelease(m_pContext);
+        Memory::SafeRelease(m_pSwapChain);
+        Memory::SafeRelease(m_pBackBuffer);
+        Memory::SafeRelease(m_depthStencilBuffer);
+        Memory::SafeRelease(m_depthStencilState);
+        Memory::SafeRelease(m_depthStencilView);
+        Memory::SafeRelease(m_pRenderTargetView);
+        Memory::SafeRelease(m_pShadowMap);
+        Memory::SafeRelease(m_pShadowMapSRView);
+        Memory::SafeRelease(m_pShadowMapDepthView);
     }
 
     m_bInitialized = false;
@@ -45,7 +58,7 @@ HRESULT CDevice::Init()
 
 HRESULT CDevice::GetSystemInfo()
 {
-    HRESULT hr;
+    HRESULT hr = S_OK;
 
     D3D_FEATURE_LEVEL featureLevels[] =
     {
@@ -67,39 +80,37 @@ HRESULT CDevice::GetSystemInfo()
     IDXGIAdapter* adapter = nullptr;
 
     hr = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&factory));
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (SUCCEEDED(hr))
     {
-        return hr;
-    }
-
-    D3D_FEATURE_LEVEL featureLevel;
-    for (UINT i = 0; factory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND; ++i)
-    {
-        HRESULT hr = D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, 0, featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &d3ddevice, &featureLevel, nullptr);
-        if (SUCCEEDED(hr))
+        D3D_FEATURE_LEVEL featureLevel;
+        for (UINT i = 0; factory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND; ++i)
         {
-            if (!GXUTIL::isWindowsRenderer(adapter))
+            hr = D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, 0, featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &d3ddevice, &featureLevel, nullptr);
+            if (SUCCEEDED(hr))
             {
-                // Only if not using Windows Renderer
-                GXDEVICE gxDevice = {};
-                gxDevice.featureLevel = featureLevel;
-                gxDevice.supportedFormat = GXUTIL::GetSupportedFormats(featureLevel);
-                gxDevice.directxVersion = GXUTIL::GetDirectXVersion(gxDevice.featureLevel);
+                if (!GXUTIL::isWindowsRenderer(adapter))
+                {
+                    // Nur wenn kein Windows-Renderer verwendet wird
+                    GXDEVICE gxDevice = {};
+                    gxDevice.featureLevel = featureLevel;
+                    gxDevice.supportedFormat = GXUTIL::GetSupportedFormats(featureLevel);
+                    gxDevice.directxVersion = GXUTIL::GetDirectXVersion(gxDevice.featureLevel);
 
-                // Add new device
-                this->deviceManager.GetDevices().push_back(gxDevice);
+                    // Füge neues Gerät hinzu
+                    this->deviceManager.GetDevices().push_back(gxDevice);
+                }
             }
+            else
+                FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr));
+
+            Memory::SafeRelease(adapter);
         }
-
-        Memory::SafeRelease(adapter);
-
-        return hr;
     }
 
     Memory::SafeRelease(d3ddevice);
     Memory::SafeRelease(factory);
 
-    m_bInitialized = true;
+    m_bInitialized = SUCCEEDED(hr);
 
     return hr;
 }
@@ -124,12 +135,12 @@ HRESULT CDevice::CreateSwapChain(IDXGIFactory* pDXGIFactory, HWND hWnd,
     unsigned int numerator, unsigned int denominator,
     bool windowed)
 {
-    HRESULT hr;
+    HRESULT hr = S_OK;
 
-    // Adjust window size
+    // Fenstergröße anpassen
     ResizeWindow(hWnd, width, height, windowed);
 
-    // Swap Chain description
+    // Swap Chain Beschreibung
     DXGI_SWAP_CHAIN_DESC swapChainDesc = { 0 };
     swapChainDesc.BufferCount = 1;
     swapChainDesc.BufferDesc.Width = width;
@@ -141,21 +152,17 @@ HRESULT CDevice::CreateSwapChain(IDXGIFactory* pDXGIFactory, HWND hWnd,
     swapChainDesc.OutputWindow = hWnd;
     swapChainDesc.SampleDesc.Count = 1;
     swapChainDesc.SampleDesc.Quality = 0;
-    swapChainDesc.Windowed = windowed; 
-    swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // Allow fullscreen switch
+    swapChainDesc.Windowed = windowed;
+    swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // Vollbildwechsel zulassen
 
-    // Create Swap Chain
+    // Swap Chain erstellen
     hr = pDXGIFactory->CreateSwapChain(m_pd3dDevice, &swapChainDesc, &m_pSwapChain);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (SUCCEEDED(hr))
     {
-        // Release memory
-        Memory::SafeRelease(m_pSwapChain);
-
-        // Return error
-        return hr;
+        Memory::SafeRelease(pDXGIFactory);
     }
-
-    Memory::SafeRelease(pDXGIFactory);
+    else 
+        FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr));
 
     return hr;
 }
@@ -185,24 +192,15 @@ HRESULT CDevice::CreateRenderTarget(unsigned int width, unsigned int height)
     return hr;
 }
 
-void CDevice::CreateView(UINT NumViewport, D3D11_VIEWPORT viewport)
+HRESULT CDevice::Flip(int syncInterval)
 {
-    m_pContext->RSSetViewports(NumViewport, &viewport);
-}
-
-void CDevice::ClearRenderTargetDepthStencil()
-{
-    // Set the Render Target View and Depth-Stencil Buffer
-    m_pContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_depthStencilView);
-
-    // Clear the Depth-Stencil Buffer
-    m_pContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-}
-
-void gdx::CDevice::SetRenderTargets(unsigned int numViews)
-{
-    // numViews = 1 is default setting
-    m_pContext->OMSetRenderTargets(numViews, &m_pRenderTargetView, NULL);
+    // SyncInterval: This parameter determines how the monitor's refresh rate (vertical synchronization) is used. 
+    // A value of 0 means that the VSYNC reset is not considered, and the image is displayed immediately when available. 
+    // A value greater than 0 means that the VSYNC reset occurs every SyncInterval - frames. For example, a value of 1 
+    // means that the VSYNC reset occurs once every two frames, which corresponds to a refresh rate of 30 Hz on a 60 Hz monitor.
+    // 
+    // Present the backbuffer to the screen
+    return m_pSwapChain->Present(syncInterval, 0);
 }
 
 void CDevice::SetVertexShader(ID3D11VertexShader* vs)
@@ -213,17 +211,6 @@ void CDevice::SetVertexShader(ID3D11VertexShader* vs)
 void CDevice::SetPixelShader(ID3D11PixelShader* ps)
 {
     m_pContext->PSSetShader(ps, nullptr, 0);
-}
-
-HRESULT CDevice::Flip(int syncInterval)
-{
-    // SyncInterval: This parameter determines how the monitor's refresh rate (vertical synchronization) is used. 
-    // A value of 0 means that the VSYNC reset is not considered, and the image is displayed immediately when available. 
-    // A value greater than 0 means that the VSYNC reset occurs every SyncInterval - frames. For example, a value of 1 
-    // means that the VSYNC reset occurs once every two frames, which corresponds to a refresh rate of 30 Hz on a 60 Hz monitor.
-    // 
-    // Present the backbuffer to the screen
-    return m_pSwapChain->Present(syncInterval, 0);
 }
 
 void CDevice::ResizeWindow(HWND hwnd, unsigned int x, unsigned int y, bool windowed)
@@ -251,13 +238,57 @@ void CDevice::ResizeWindow(HWND hwnd, unsigned int x, unsigned int y, bool windo
     UpdateWindow(hwnd);
 }
 
-HRESULT CDevice::CreateDeepBuffer(unsigned int width, unsigned int height)
+HRESULT CDevice::CreateDepthBuffer(unsigned int width, unsigned int height)
 {
     HRESULT hr = S_OK;
 
-    // Create the texture for the depth buffer.
-    D3D11_TEXTURE2D_DESC depthBufferDesc;
+    hr = CreateDepthTexture(width, height);
+    if (FAILED(hr))
+        return hr;
 
+    hr = CreateDepthStencilView();
+    if (FAILED(hr))
+        return hr;
+
+    hr = CreateRasterizerState();
+    if (FAILED(hr))
+        return hr;
+
+    hr = CreateDepthStencilState();
+    if (FAILED(hr))
+        return hr;
+
+    return hr;
+}
+
+HRESULT CDevice::CreateShadowBuffer(unsigned int width, unsigned int height)
+{
+    HRESULT hr = S_OK;
+
+    // Tiefebuffer ertellen
+    hr = CreateShadowMapTexture(width, height);
+    if (FAILED(hr))
+        return hr;
+    
+    // Erstellen Ressourcenansichten
+    hr = CreateResourceViews();
+    if (FAILED(hr))
+        return hr;
+
+    hr = CreateComparisonStatus();
+    if (FAILED(hr))
+        return hr;
+
+    hr = CreateRenderStats();
+    if (FAILED(hr))
+        return hr;
+
+    return hr;
+}
+
+HRESULT CDevice::CreateDepthTexture(unsigned int width, unsigned int height)
+{
+    D3D11_TEXTURE2D_DESC depthBufferDesc;
     ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
     depthBufferDesc.Width = width;
     depthBufferDesc.Height = height;
@@ -271,69 +302,140 @@ HRESULT CDevice::CreateDeepBuffer(unsigned int width, unsigned int height)
     depthBufferDesc.CPUAccessFlags = 0;
     depthBufferDesc.MiscFlags = 0;
 
-    hr = GetDevice()->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
-    {
-        return hr;
-    }
+    return GetDevice()->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
+}
 
-    // Create the depth stencil view.
+HRESULT CDevice::CreateDepthStencilView()
+{
     D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
     ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
     depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     depthStencilViewDesc.Texture2D.MipSlice = 0;
-    hr = GetDevice()->CreateDepthStencilView(m_depthStencilBuffer,
-        &depthStencilViewDesc,
-        &m_depthStencilView);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
-    {
-        return hr;
-    }
 
-    // Set the Depth-Stencil View
-    GetDeviceContext()->OMSetRenderTargets(1, &m_pRenderTargetView, m_depthStencilView);
+    return GetDevice()->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
+}
 
-    // 
+HRESULT CDevice::CreateRasterizerState()
+{
     D3D11_RASTERIZER_DESC rasterizerDesc;
     ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
-    rasterizerDesc.FillMode = D3D11_FILL_SOLID;      // Setze den Fill-Modus auf Wireframe
-    rasterizerDesc.CullMode = D3D11_CULL_BACK;       // Optional: Rückseiten-Culling aktivieren
-    rasterizerDesc.FrontCounterClockwise = FALSE;    // Optional: Reihenfolge der Dreiecks-Vertizes im Uhrzeigersinn
-    rasterizerDesc.DepthClipEnable = TRUE;           // Optional: Tiefen-Clipping aktivieren
+    rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+    rasterizerDesc.CullMode = D3D11_CULL_BACK;
+    rasterizerDesc.FrontCounterClockwise = FALSE;
+    rasterizerDesc.DepthClipEnable = TRUE;
 
-    // Erstelle den Rasterizerzustand
-    ID3D11RasterizerState* pRasterizerState = nullptr;
-    hr = GetDevice()->CreateRasterizerState(&rasterizerDesc, &pRasterizerState);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
-    {
-        return hr;
-    }
+    return GetDevice()->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerState);
+}
 
-    // Setze den Rasterizerzustand im Gerätekontext
-    GetDeviceContext()->RSSetState(pRasterizerState);
-
-
-    // Define the Depth-Stencil State
+HRESULT CDevice::CreateDepthStencilState()
+{
     D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
-    depthStencilDesc.DepthEnable = true; // Enable depth test
-    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL; // Allow writing to the depth buffer
-    depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // Comparison operation for depth test
-    // Define more settings here
+    depthStencilDesc.DepthEnable = true;
+    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-    // Create the Depth-Stencil State
-    ID3D11DepthStencilState* depthStencilState;
-    hr = GetDevice()->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
-    {
+    return GetDevice()->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
+}
+
+HRESULT CDevice::CreateShadowMapTexture(UINT width, UINT height)
+{
+    HRESULT hr = S_OK;
+
+    // Schattenmap-Textur erstellen
+    D3D11_TEXTURE2D_DESC shadowMapDesc;
+    ZeroMemory(&shadowMapDesc, sizeof(shadowMapDesc));
+    shadowMapDesc.Format = DXGI_FORMAT_R24G8_TYPELESS; // Anpassen des Formats je nach Anforderungen
+    shadowMapDesc.MipLevels = 1;
+    shadowMapDesc.ArraySize = 1;
+    shadowMapDesc.SampleDesc.Count = 1;
+    shadowMapDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Binden als Tiefen-Stencil-Ziel und Shader-Ressource
+    shadowMapDesc.Width = width;
+    shadowMapDesc.Height = height;
+    //shadowMapDesc.SampleDesc.Quality = 0;
+    //shadowMapDesc.Usage = D3D11_USAGE_DEFAULT;
+    //shadowMapDesc.CPUAccessFlags = 0;
+    //shadowMapDesc.MiscFlags = 0;
+
+    hr = GetDevice()->CreateTexture2D(&shadowMapDesc, NULL, &m_pShadowMap);
+    if (FAILED(hr))
         return hr;
-    }
 
-    // Set the Depth-Stencil State
-    GetDeviceContext()->OMSetDepthStencilState(depthStencilState, 1);
+    return hr;
+}
 
-    // Release the Depth-Stencil State
-    Memory::SafeRelease(depthStencilState);
+HRESULT CDevice::CreateResourceViews()
+{
+    HRESULT hr = S_OK;
+
+    // Depth-Stencil-View für die Schattenmap erstellen
+    D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+    ZeroMemory(&dsvDesc, sizeof(dsvDesc));
+    dsvDesc.Format = DXGI_FORMAT_D32_FLOAT; // Anpassen des Formats je nach Anforderungen
+    dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    dsvDesc.Texture2D.MipSlice = 0;
+
+    hr = GetDevice()->CreateDepthStencilView(m_pShadowMap, &dsvDesc, &m_pShadowMapDepthView);
+    if (FAILED(hr))
+        return hr;
+
+    // Shader-Ressourcenansicht für die Schattenmap erstellen
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+    ZeroMemory(&srvDesc, sizeof(srvDesc));
+    srvDesc.Format = DXGI_FORMAT_R32_FLOAT; // Anpassen des Formats je nach Anforderungen
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+
+    hr = GetDevice()->CreateShaderResourceView(m_pShadowMap, &srvDesc, &m_pShadowMapSRView);
+    if (FAILED(hr))
+        return hr;
+
+    return hr;
+}
+
+HRESULT CDevice::CreateComparisonStatus()
+{
+    HRESULT hr = S_OK;
+
+    D3D11_SAMPLER_DESC comparisonSamplerDesc;
+    ZeroMemory(&comparisonSamplerDesc, sizeof(D3D11_SAMPLER_DESC));
+    comparisonSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    comparisonSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    comparisonSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+    comparisonSamplerDesc.BorderColor[0] = 1.0f;
+    comparisonSamplerDesc.BorderColor[1] = 1.0f;
+    comparisonSamplerDesc.BorderColor[2] = 1.0f;
+    comparisonSamplerDesc.BorderColor[3] = 1.0f;
+    comparisonSamplerDesc.MinLOD = 0.f;
+    comparisonSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+    comparisonSamplerDesc.MipLODBias = 0.f;
+    comparisonSamplerDesc.MaxAnisotropy = 0;
+    comparisonSamplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+    comparisonSamplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
+
+    // Point filtered shadows can be faster, and may be a good choice when
+    // rendering on hardware with lower feature levels. This sample has a
+    // UI option to enable/disable filtering so you can see the difference
+    // in quality and speed.
+
+    hr = GetDevice()->CreateSamplerState(&comparisonSamplerDesc, &m_pComparisonSampler_point);
+    if (FAILED(hr))
+        return hr;
+    
+    return hr;
+}
+
+HRESULT CDevice::CreateRenderStats()
+{
+    HRESULT hr = S_OK;
+
+    D3D11_RASTERIZER_DESC shadowRenderStateDesc;
+    ZeroMemory(&shadowRenderStateDesc, sizeof(D3D11_RASTERIZER_DESC));
+    shadowRenderStateDesc.CullMode = D3D11_CULL_FRONT;
+    shadowRenderStateDesc.FillMode = D3D11_FILL_SOLID;
+    shadowRenderStateDesc.DepthClipEnable = true;
+
+    hr = GetDevice()->CreateRasterizerState(&shadowRenderStateDesc, &m_pShadowRenderState);
 
     return hr;
 }

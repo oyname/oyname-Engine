@@ -55,18 +55,38 @@ namespace gdx
 
         ID3D11Device*               m_pd3dDevice;
         ID3D11DeviceContext*        m_pContext;
-        IDXGISwapChain*             m_pSwapChain;
 
+        IDXGISwapChain*             m_pSwapChain;
         ID3D11Texture2D*            m_pBackBuffer;
+
         ID3D11Texture2D*            m_depthStencilBuffer;
+        ID3D11DepthStencilState*    m_depthStencilState;
         ID3D11DepthStencilView*     m_depthStencilView;
         ID3D11RenderTargetView*     m_pRenderTargetView;
+        ID3D11RasterizerState*      m_pRasterizerState;
+
+        ID3D11Texture2D*            m_pShadowMap;
+        ID3D11ShaderResourceView*   m_pShadowMapSRView;
+        ID3D11DepthStencilView*     m_pShadowMapDepthView;
+        ID3D11RenderTargetView*     m_pShadowTargetView;
+        ID3D11RasterizerState*      m_pShadowRenderState;
+        ID3D11SamplerState*         m_pComparisonSampler_point;
+
         HRESULT GetSystemInfo();
 
         friend class CGIDX;
 
         void ResizeWindow(HWND hwnd, unsigned int x, unsigned int y, bool windowed);
 
+        HRESULT CreateDepthTexture(unsigned int width, unsigned int height);
+        HRESULT CreateDepthStencilView();
+        HRESULT CreateRasterizerState();
+        HRESULT CreateDepthStencilState();
+
+        HRESULT CreateResourceViews();
+        HRESULT CreateComparisonStatus();
+        HRESULT CreateRenderStats();
+        HRESULT CreateShadowMapTexture(UINT width, UINT height);
     public:
 		DEVICEMANAGER deviceManager;
 
@@ -87,17 +107,15 @@ namespace gdx
                                         unsigned int denominator,
                                         bool windowed);
         HRESULT CreateRenderTarget(unsigned int width, unsigned int height);
-        HRESULT CreateDeepBuffer(unsigned int width, unsigned int height);
+        HRESULT CreateDepthBuffer(unsigned int width, unsigned int height);
+        HRESULT CreateShadowBuffer(unsigned int width, unsigned int height);
 
-        void CreateView(UINT NumViewport, D3D11_VIEWPORT viewport);
-        void SetRenderTargets(unsigned int numViews = 1);
         void SetVertexShader(ID3D11VertexShader* vertexshader);
         void SetPixelShader(ID3D11PixelShader* pixelshader);
 
-        void ClearRenderTargetDepthStencil();
         HRESULT Flip(int syncInterval);
 
-        ID3D11Device* GetDevice(){
+        ID3D11Device* GetDevice() const {
             return m_pd3dDevice;}
 
         ID3D11DeviceContext* GetDeviceContext() const {

@@ -24,12 +24,22 @@ namespace gdx
 
     void CameraManager::SetViewport(float TopLeftX, float TopLeftY, float Width, float Height, float MinDepth, float MaxDepth)
     {
-        m_viewport.TopLeftX = TopLeftX;
-        m_viewport.TopLeftY = TopLeftY;
         m_viewport.Width = Width;
         m_viewport.Height = Height;
         m_viewport.MinDepth = MinDepth;
         m_viewport.MaxDepth = MaxDepth;
+        m_viewport.TopLeftX = TopLeftX;
+        m_viewport.TopLeftY = TopLeftY;
+    }
+
+    void CameraManager::SetShadowMapViewport(float TopLeftX, float TopLeftY, float Width, float Height, float MinDepth, float MaxDepth)
+    {
+        m_shadowMapViewport.Width = Width;
+        m_shadowMapViewport.Height = Height;
+        m_shadowMapViewport.MinDepth = MinDepth;
+        m_shadowMapViewport.MaxDepth = MaxDepth;
+        m_shadowMapViewport.TopLeftX = TopLeftX;
+        m_shadowMapViewport.TopLeftY = TopLeftY;
     }
 
     void CameraManager::SetPerspective(float fieldOfView, float aspectRatio, float nearPlane, float farPlane)
@@ -48,7 +58,7 @@ namespace gdx
         m_ortho.farPlane = farPlane;
     }
 
-    void CameraManager::CreateCamera(LPMESH* camera)
+    void CameraManager::CreateCamera(LPENTITY* camera)
     {
         if (m_projMode == PERSPECTIVE_LH)
         {
@@ -63,17 +73,7 @@ namespace gdx
         (*camera)->cb.worldMatrix = XMMatrixIdentity();
     }
 
-    D3D11_VIEWPORT CameraManager::GetViewPort()
-    {
-        return m_viewport;
-    }
-
-    LPMESH CameraManager::GetCurrentCam()
-    {
-        return m_currentCam;
-    }
-
-    void CameraManager::SetCamera(LPMESH camera)
+    void CameraManager::SetCamera(LPENTITY camera)
     {
         m_currentCam = camera;
     }

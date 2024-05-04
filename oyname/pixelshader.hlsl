@@ -1,17 +1,20 @@
 struct PS_INPUT
 {
-    float4 position : SV_POSITION;
-    float3 normal : NORMAL;    
-    float4 color : COLOR;
-    float2 texCoord : TEXCOORD0;   
-    float4 lightPosition : TEXCOORD1;
-    float3 lightColor : TEXCOORD2;
-    float3 lightDirection : TEXCOORD3;
+    float4 position : SV_POSITION; 
+    float3 normal : NORMAL; 
+    float4 color : COLOR; 
+    float2 texCoord : TEXCOORD0; 
+    float4 positionLightSpace : TEXCOORD1; 
+    float4 lightPosition : TEXCOORD2; 
+    float3 lightColor : TEXCOORD3; 
+    float3 lightDirection : TEXCOORD4; 
 };
 
-SamplerState samplerState : register(s0);
 Texture2D textureMap : register(t0);
+SamplerState samplerState : register(s0);
 
+Texture2D shadowMapTexture : register(t1); 
+SamplerState shadowSampler : register(s1); 
 
 float4 main(PS_INPUT input) : SV_Target
 {
@@ -42,14 +45,19 @@ float4 main(PS_INPUT input) : SV_Target
     
     // Berechne die endgültige Farbe unter Berücksichtigung der Textur, falls befüllt, sonst ohne Textur
     float3 final_color;
-   // if (textureFilled)
-   // {
-        final_color = texColor.rgb * (ambient_light + diffuse_light) * input.color.rgb;
-   // }
-   // else
-   // {
-   //     final_color = (ambient_light + diffuse_light) * input.color.rgb;
-   // }
+    
+    // Schattenfaktor berechnen
+    float shadowDepth = shadowMapTexture.SampleLevel(shadowSampler, input.texCoord, 0).r;
+    float shadowFactor = (shadowDepth < input.lightPosition.z) ? 0.1f : 1.0f;
+    
+    if (textureFilled)
+    {
+        final_color = texColor.rgb * (ambient_light + diffuse_light) * input.color.rgb;// * shadowFactor;
+    }
+    else
+    {
+        final_color = (ambient_light + diffuse_light) * input.color.rgb;// * shadowFactor;
+    }
 
     return float4(final_color, texColor.a);
 }

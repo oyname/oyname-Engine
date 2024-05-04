@@ -82,23 +82,23 @@ namespace gdx
 			return hr;
 		}
 
-		// Set Render Target
-		m_device.SetRenderTargets();
-
 		// Initialization of the Depth-Stencil buffer and views
-		hr = m_device.CreateDeepBuffer(width, height);
+		hr = m_device.CreateDepthBuffer(width, height);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
 
-		// Object for organizing rendering
+		hr = m_device.CreateShadowMapTexture(width, height);
+		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+			return hr;
+		}
 
 		// 1. Initialize objects
-
+		//
 		// Camera 
 		m_cameraManager.Init(this);
 		m_cameraManager.SetViewport(0.0f, 0.0f, (float)width, (float)height, 0.0f, 1.0f);
-		m_device.CreateView(1, m_cameraManager.GetViewPort());
+		m_cameraManager.SetShadowMapViewport(0.0f, 0.0f, (float)512, (float)512, 0.0f, 1.0f);
 
 		// Object manager
 		m_objectManager.Init(&m_device);
@@ -124,10 +124,10 @@ namespace gdx
 		GetOM().addBrushToShader(GetSM().GetShader(), GetOM().createBrush());
 
 		// Create layout for the vertices
-		hr = GetILM().CreateInputLayoutVertex(&GetSM().GetShader()->inputlayoutVertex, // Store the layout
-			GetSM().GetShader(),                    // The shader object
-			GetSM().GetShader()->flagsVertex,       // Store the flag
-			D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL | D3DVERTEX_TEX1);
+		hr = GetILM().CreateInputLayoutVertex(&GetSM().GetShader()->inputlayoutVertex,	// Store the layout
+			 GetSM().GetShader(),														// The shader object
+			 GetSM().GetShader()->flagsVertex,											// Store the flag
+			 D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL | D3DVERTEX_TEX1);
 
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
@@ -141,20 +141,20 @@ namespace gdx
 
 	void CGIDX::RenderWorld()
 	{
-		// Clear Render Target
-		this->m_device.ClearRenderTargetDepthStencil();
+		this->m_lightManager.Update(&this->m_device);
+		
+		this->m_device.GetDeviceContext()->ClearDepthStencilView(this->m_device.m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		this->m_device.GetDeviceContext()->OMSetRenderTargets(1, &this->m_device.m_pRenderTargetView, this->m_device.m_depthStencilView);
+		this->m_device.GetDeviceContext()->RSSetState(this->m_device.m_pRasterizerState);
+		this->m_device.GetDeviceContext()->RSSetViewports(1, m_cameraManager.GetViewPort());
 
-		// Render objects
-		m_renderManager.RenderLoop();
+		m_renderManager.RenderScene(m_cameraManager.GetCurrentCam()->cb.viewMatrix, m_cameraManager.GetCurrentCam()->cb.projectionMatrix);
 	}
 
 	void CGIDX::UpdateWorld()
 	{
-		//Time.update();
-		// Durchlaufe alle Meshes in der Liste
-		// Auch die Kamera ist eine Mesh-Klasse und
-		// wird von der ObjektManager-Klasse verwaltet
-		GetCam().GetCurrentCam()->Update();
+		m_cameraManager.GetCurrentCam()->Update();
+		
 		//GetOM().processMesh();
 	}
 
@@ -244,7 +244,7 @@ namespace gdx
 		m_monitorIndex = index;
 	}
 
-	void CGIDX::SetCamera(LPMESH mesh)
+	void CGIDX::SetCamera(LPENTITY mesh)
 	{
 		GetCam().SetCamera(mesh);
 		m_renderManager.SetCamera(mesh);

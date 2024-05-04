@@ -34,24 +34,31 @@ namespace gdx
 		~CameraManager();
 
 		void Init(gdx::CGIDX* engine);
+		void CreateCamera(LPENTITY* camera);
 
 		void SetViewport(float TopLeftX, float TopLeftY, float Width, float Height, float MinDepth, float MaxDepth);
+		void SetShadowMapViewport(float TopLeftX, float TopLeftY, float Width, float Height, float MinDepth, float MaxDepth);
 		void SetPerspective(float fieldOfView, float aspectRatio, float nearPlane, float farPlane);
 		void SetOrthographic(float width, float height, float nearPlane, float farPlane);
-		void SetCamera(LPMESH mesh);
+		void SetCamera(LPENTITY mesh);
 
-		LPMESH GetCurrentCam();
-
-		void CreateCamera(LPMESH* camera);
-
-		D3D11_VIEWPORT GetViewPort();
-
+		const LPENTITY GetCurrentCam() const {
+			return m_currentCam; 
+		}
+		D3D11_VIEWPORT* GetViewPort(){ 
+			return &m_viewport; 
+		}
+		D3D11_VIEWPORT* GetViewPortShadow() {
+			return &m_shadowMapViewport;
+		}
+		
 	private:
 		gdx::CGIDX* m_engine;
 		PROJ_MODE m_projMode;
 		D3D11_VIEWPORT m_viewport;
+		D3D11_VIEWPORT m_shadowMapViewport;
 		Perspective m_perspective;
 		Ortho m_ortho;
-		LPMESH m_currentCam;
+		LPENTITY m_currentCam;
 	};
 }

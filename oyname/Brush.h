@@ -13,6 +13,7 @@ public:
     ~Brush();
     
     void SetTexture(const gdx::CDevice* device);
+    void SetTexture(ID3D11Texture2D* texture, ID3D11ShaderResourceView* textureView, ID3D11SamplerState* imageSamplerState);
 
     bool isActive;
     float shininess;
@@ -21,9 +22,9 @@ public:
     DirectX::XMFLOAT4 diffuseColor;
     DirectX::XMFLOAT4 specularColor;
 
-    ID3D11Texture2D* texture;
-    ID3D11ShaderResourceView* textureView;
-    ID3D11SamplerState* imageSamplerState;
+    ID3D11Texture2D* m_texture;
+    ID3D11ShaderResourceView* m_textureView;
+    ID3D11SamplerState* m_imageSamplerState;
 
     std::list<Mesh*>* meshes;
 

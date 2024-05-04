@@ -97,7 +97,7 @@ namespace Engine
         engine->GetOM().addBrushToShader(shader, *brush);
     }
     
-    inline void CreateMesh(LPMESH *mesh, BRUSH* brush = nullptr) {
+    inline void CreateMesh(LPENTITY *mesh, BRUSH* brush = nullptr) {
         *mesh = engine->GetOM().createMesh();
         brush = brush == nullptr ? engine->GetOM().getStandardBrush() : brush;
         engine->GetOM().addMeshToBrush(brush, *mesh);
@@ -116,16 +116,25 @@ namespace Engine
     {
         *light = engine->GetLM().createLight(type);
         
+        (*light)->GenerateViewMatrix();
+        (*light)->GenerateProjectionMatrix(1.0f, 1000.0f);
+
         HRESULT hr = engine->GetBM().CreateBuffer(&((*light)->cbLight), sizeof(LightSet), 1, D3D11_BIND_CONSTANT_BUFFER, &((*light)->lightBuffer));
         if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
         
             return;
         }
+
+        hr = engine->GetBM().CreateBuffer(&((*light)->cb), sizeof(MatrixSet), 1, D3D11_BIND_CONSTANT_BUFFER, &((*light)->constantBuffer));
+        if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+
+            return;
+        }
     }
 
-    inline void PositionEntity(LPMESH mesh, float x, float y, float z)
+    inline void PositionEntity(LPENTITY entity, float x, float y, float z)
     {
-        mesh->transform.Position(x, y, z);
+        entity->transform.Position(x, y, z);
     }
 
     inline void PositionEntity(LPLIGHT light, float x, float y, float z)
@@ -133,24 +142,24 @@ namespace Engine
         light->transform.Position(x, y, z);
     }
 
-    inline void MoveEntity(LPMESH mesh, float x, float y, float z)
+    inline void MoveEntity(LPENTITY entity, float x, float y, float z)
     {
-        mesh->transform.Move(x, y, z);
+        entity->transform.Move(x, y, z);
     }
 
-    inline void RotateEntity(LPMESH mesh, float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local)
+    inline void RotateEntity(LPENTITY entity, float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local)
     {
-        mesh->transform.Rotate(fRotateX, fRotateY, fRotateZ, mode);
+        entity->transform.Rotate(fRotateX, fRotateY, fRotateZ, mode);
     }
 
-    inline void TurnEntity(LPMESH mesh, float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local)
+    inline void TurnEntity(LPENTITY entity, float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local)
     {
-        mesh->transform.Turn(fRotateX, fRotateY, fRotateZ, mode);
+        entity->transform.Turn(fRotateX, fRotateY, fRotateZ, mode);
     }
 
-    inline void CreateCamera(LPMESH* camera)
-    {
-        engine->GetCam().SetPerspective(XMConvertToRadians(75.0f),
+    inline void CreateCamera(LPENTITY* camera)
+    { 
+        engine->GetCam().SetPerspective(XMConvertToRadians(90.0f),
                                         (static_cast<float>(engine->GetWidth()) / static_cast<float>(engine->GetHeight())),
                                         1.0f,
                                         1000.0f);
@@ -162,12 +171,12 @@ namespace Engine
         engine->SetCamera(*camera); 
     }
 
-    inline void CreateSurface(LPSURFACE* surface, MESH* lpMesh){
+    inline void CreateSurface(LPSURFACE* surface, ENTITY* lpMesh){
         *surface = engine->GetOM().createSurface();
         engine->GetOM().addSurfaceToMesh(lpMesh, *surface);
     }
 
-    inline LPSURFACE GetSurface(LPMESH mesh) {
+    inline LPSURFACE GetSurface(LPENTITY mesh) {
         return engine->GetOM().getSurface(mesh);
     }
 
@@ -269,23 +278,17 @@ namespace Engine
     {
         if (brush != nullptr)
         {
-            LPBRUSH b = static_cast<LPBRUSH>(brush);
-
-            b->texture = texture->m_texture;
-            b->textureView = texture->m_textureView;
-            b->imageSamplerState = texture->m_imageSamplerState;
+            brush->SetTexture(texture->m_texture, texture->m_textureView, texture->m_imageSamplerState);
         }
     }
 
-    inline void EntityTexture(LPMESH mesh, LPTEXTURE texture)
+    inline void EntityTexture(LPENTITY entity, LPTEXTURE texture)
     {
-        if (mesh != nullptr && mesh->pBrush != nullptr)
+        if (entity != nullptr && entity->pBrush != nullptr)
         {
-            LPBRUSH brush = static_cast<LPBRUSH>(mesh->pBrush);
+            LPBRUSH brush = static_cast<LPBRUSH>(entity->pBrush);
         
-            brush->texture = texture->m_texture;
-            brush->textureView = texture->m_textureView;
-            brush->imageSamplerState = texture->m_imageSamplerState;
+            brush->SetTexture(texture->m_texture, texture->m_textureView, texture->m_imageSamplerState);
         }
     }
 
@@ -319,14 +322,14 @@ namespace Engine
         return Color(r, g, b, alpha);
     }
 
-    inline void SetCamera(LPMESH mesh)
+    inline void SetCamera(LPENTITY mesh)
     {
         engine->SetCamera(mesh);
     }
 
-    inline void LookAt(LPMESH mesh, float targetX, float targetY, float targetZ)
+    inline void LookAt(LPENTITY entity, float targetX, float targetY, float targetZ)
     {
-        mesh->transform.LookAt(DirectX::XMVectorSet(targetX, targetY, targetZ, 0.0f), DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+        entity->transform.LookAt(DirectX::XMVectorSet(targetX, targetY, targetZ, 0.0f), DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
     }
 
 } // End of namespace Engine

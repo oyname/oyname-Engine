@@ -37,15 +37,6 @@
     <Filter Include="03_Engine\04 Manager\01 LightManager">
       <UniqueIdentifier>{1d7578f3-255b-48b5-afb1-00a450c09288}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_Engine\04 Manager\02 ObjectManager">
-      <UniqueIdentifier>{ac7a7a5e-4fb4-4faa-a6b7-ad53c1639fdc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03_Engine\04 Manager\03 RenderManager">
-      <UniqueIdentifier>{ce6832ad-1fce-4767-a764-2862af829e02}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03_Engine\04 Manager\04 TexturManager">
-      <UniqueIdentifier>{c8875f1f-f060-41b1-a484-47b134f89519}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02_DirectX\01 Common">
       <UniqueIdentifier>{9c466ec8-1998-4019-89c0-9abd6ad634e5}</UniqueIdentifier>
     </Filter>
@@ -70,8 +61,17 @@
     <Filter Include="03_Engine\04 Manager\00 Objects\02 Objects">
       <UniqueIdentifier>{25d96459-7e26-4905-af6d-6ff8547e841e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_Engine\02 CameraManager">
+    <Filter Include="03_Engine\04 Manager\02 CameraManager">
       <UniqueIdentifier>{0074fd9c-dac5-4849-b987-005c955868ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\04 Manager\03 ObjectManager">
+      <UniqueIdentifier>{ac7a7a5e-4fb4-4faa-a6b7-ad53c1639fdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\04 Manager\04 RenderManager">
+      <UniqueIdentifier>{ce6832ad-1fce-4767-a764-2862af829e02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Engine\04 Manager\05 TexturManager">
+      <UniqueIdentifier>{c8875f1f-f060-41b1-a484-47b134f89519}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -82,7 +82,7 @@
       <Filter>03_Engine\06 Shader</Filter>
     </ClCompile>
     <ClCompile Include="ObjectManager.cpp">
-      <Filter>03_Engine\04 Manager\02 ObjectManager</Filter>
+      <Filter>03_Engine\04 Manager\03 ObjectManager</Filter>
     </ClCompile>
     <ClCompile Include="InputLayoutManager.cpp">
       <Filter>03_Engine\03 InputLayout</Filter>
@@ -115,10 +115,10 @@
       <Filter>05_Example</Filter>
     </ClCompile>
     <ClCompile Include="RenderManager.cpp">
-      <Filter>03_Engine\04 Manager\03 RenderManager</Filter>
+      <Filter>03_Engine\04 Manager\04 RenderManager</Filter>
     </ClCompile>
     <ClCompile Include="CameraManager.cpp">
-      <Filter>03_Engine\02 CameraManager</Filter>
+      <Filter>03_Engine\04 Manager\02 CameraManager</Filter>
     </ClCompile>
     <ClCompile Include="Surface.cpp">
       <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>
@@ -142,7 +142,7 @@
       <Filter>05_Example</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
-      <Filter>03_Engine\04 Manager\04 TexturManager</Filter>
+      <Filter>03_Engine\04 Manager\05 TexturManager</Filter>
     </ClCompile>
     <ClCompile Include="textureExample.cpp">
       <Filter>05_Example</Filter>
@@ -177,7 +177,7 @@
       <Filter>03_Engine\06 Shader</Filter>
     </ClInclude>
     <ClInclude Include="ObjectManager.h">
-      <Filter>03_Engine\04 Manager\02 ObjectManager</Filter>
+      <Filter>03_Engine\04 Manager\03 ObjectManager</Filter>
     </ClInclude>
     <ClInclude Include="InputLayoutManager.h">
       <Filter>03_Engine\03 InputLayout</Filter>
@@ -201,10 +201,10 @@
       <Filter>01_Windows</Filter>
     </ClInclude>
     <ClInclude Include="RenderManager.h">
-      <Filter>03_Engine\04 Manager\03 RenderManager</Filter>
+      <Filter>03_Engine\04 Manager\04 RenderManager</Filter>
     </ClInclude>
     <ClInclude Include="CameraManager.h">
-      <Filter>03_Engine\02 CameraManager</Filter>
+      <Filter>03_Engine\04 Manager\02 CameraManager</Filter>
     </ClInclude>
     <ClInclude Include="Surface.h">
       <Filter>03_Engine\04 Manager\00 Objects\01 Objects</Filter>
@@ -222,7 +222,7 @@
       <Filter>03_Engine\04 Manager\01 LightManager</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
-      <Filter>03_Engine\04 Manager\04 TexturManager</Filter>
+      <Filter>03_Engine\04 Manager\05 TexturManager</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>03_Engine\05 Transform</Filter>

@@ -7,12 +7,7 @@ RenderManager::RenderManager(ObjectManager& objectManager, LightManager& lightMa
     m_directionLight = nullptr;
 }
 
-void RenderManager::RenderLoop()
-{
-    RenderMesh();
-}
-
-void RenderManager::SetCamera(LPMESH camera)
+void RenderManager::SetCamera(LPENTITY camera)
 {
     m_currentCam = camera;
 }
@@ -22,57 +17,48 @@ void RenderManager::SetDirectionalLight(LPLIGHT dirLight)
     m_directionLight = dirLight;
 }
 
-void RenderManager::RenderMesh()
+void RenderManager::RenderShadow(const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj)
 {
-    HRESULT hr = S_OK;
+    m_objectManager.m_shaders.front()->UpdateShader(m_objectManager.m_device);
 
-    m_lightManager.Update(m_objectManager.m_device);
+    for (const auto& mesh : m_objectManager.m_meshes)
+    {
+        if (!mesh->surfaces->empty())
+        {
+            Debug::Log("      MESH: ", mesh);
+            mesh->UpdateConstantBuffer(m_objectManager.m_device,
+                m_currentCam->cb.viewMatrix,
+                m_currentCam->cb.projectionMatrix);
 
+            for (const auto& surface : *mesh->surfaces)
+            {
+                Debug::Log("         SURFACE: ", surface);
+                // Render vertices
+                surface->Draw(m_objectManager.m_device, D3DVERTEX_POSITION | D3DVERTEX_NORMAL);
+            }
+        }
+    }
+
+}
+
+void RenderManager::RenderScene(const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj)
+{
     // Iterate through all shaders and render all objects with each shader
     for (const auto& shader : m_objectManager.m_shaders)
     {
-        //Debug::Log("SHADER: ", shader);
-
         shader->UpdateShader(m_objectManager.m_device);
 
         for (const auto& brush : *(shader->brushes))
         {
-            //Debug::Log("   BRUSH: ", brush);
-            // Texture and material
             brush->SetTexture(m_objectManager.m_device);
 
             for (const auto& mesh : *(brush->meshes))
             {
-                //Debug::Log("      MESH: ", mesh);
 
-                // Write and set constants in the constant buffer
-                mesh->UpdateConstantBuffer(m_objectManager.m_device,
-                                           m_currentCam->cb.viewMatrix,
-                                           m_currentCam->cb.projectionMatrix);
+                mesh->UpdateConstantBuffer(m_objectManager.m_device,view,proj);
                 
                 for (const auto& surface : *(mesh->surfaces))
                 {
-                    //// Berechne die Differenzvektor zwischen Kamera- und Objektposition
-                    //XMFLOAT3 diffVector;
-                    //XMStoreFloat3(&diffVector, XMVectorSubtract(mesh->transform.getPosition(), m_currentCam->transform.getPosition()));
-                    //
-                    //// Berechne den Abstand zwischen Kamera und Objekt
-                    //float distance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&diffVector)));
-                    //
-                    //if (distance > 0)
-                    //{
-                    //    // Objekt liegt vor der Kamera
-                    //    surface->Draw(m_objectManager.m_device, shader->flagsVertex);
-                    //}
-                    //else if (distance < 0)
-                    //{
-                    //    // Objekt liegt hinter der Kamera
-                    //}
-                    //else
-                    //{
-                    //    // Objekt befindet sich genau auf der Kamera
-                    //}
-
                     //Debug::Log("         SURFACE: ", surface);
                     // Render vertices
                     surface->Draw(m_objectManager.m_device, shader->flagsVertex);
@@ -81,4 +67,5 @@ void RenderManager::RenderMesh()
         }
     }
 }
+
 

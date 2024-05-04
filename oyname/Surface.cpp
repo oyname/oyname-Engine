@@ -13,7 +13,17 @@ Surface::Surface() :
     colorBuffer(nullptr),
     indexBuffer(nullptr),
     normalBuffer(nullptr),
-    pShader(nullptr)
+    pShader(nullptr),
+    uv1Buffer(nullptr),
+    uv2Buffer(nullptr),
+    sizeX(0),
+    sizeY(0),
+    sizeZ(0),
+    size_listUV1(0),
+    size_listUV2(0),
+    size_uv1(0),
+    size_uv2(0)
+
 {
 
 }

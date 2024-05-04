@@ -8,14 +8,14 @@ public:
     RenderManager();
     RenderManager(ObjectManager& objectManager, LightManager& lightManager);
 
-    void SetCamera(LPMESH camera);
+    void SetCamera(LPENTITY camera);
     void SetDirectionalLight(LPLIGHT dirLight);
-    void RenderLoop();
-    void RenderMesh();
+    void RenderScene(const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj);
+    void RenderShadow(const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj);
 
 private:
     // Objekte im 3D Raum
-    LPMESH m_currentCam;
+    LPENTITY m_currentCam;
     LPLIGHT m_directionLight;
 
     // Manager-Klassen

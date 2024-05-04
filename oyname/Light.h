@@ -8,7 +8,8 @@ struct LightSet
 {
     DirectX::XMFLOAT4 lightPosition;  
     DirectX::XMFLOAT4 lightDirection;
-    DirectX::XMFLOAT4 lightColor;
+    DirectX::XMFLOAT4 lightDiffuseColor;
+    DirectX::XMFLOAT4 lightAmbientColor;
 };
 
 class Light : public Mesh
@@ -17,11 +18,34 @@ public:
     Light();
     ~Light();
     
-    void UpdateLight(const gdx::CDevice* device);   
+    void UpdateLight(const gdx::CDevice* device); 
 
-    D3DLIGHTTYPE    type;
-    LightSet        cbLight;
-    ID3D11Buffer*   lightBuffer;
+    void SetAmbientColor(const DirectX::XMFLOAT4& newColor);
+    void SetDiffuseColor(const DirectX::XMFLOAT4& newColor);
+    void SetLightType(const D3DLIGHTTYPE lightType);
+
+    const DirectX::XMFLOAT4 GetPosition() const {
+        return cbLight.lightPosition;
+    }
+    const DirectX::XMFLOAT4 GetDirection() const {
+        return cbLight.lightDirection;
+    }
+    const DirectX::XMFLOAT4 GetDiffuseColor() const {
+        return cbLight.lightDiffuseColor;
+    }
+    const DirectX::XMFLOAT4 GetAmbientColor() const {
+        return cbLight.lightDiffuseColor;
+    }
+
+    void GenerateViewMatrix();
+    void GenerateProjectionMatrix(float nearZ, float farZ);
+
+    DirectX::XMMATRIX const GetViewMatrix(DirectX::XMMATRIX&) const {
+        return this->cb.viewMatrix;
+    }
+    DirectX::XMMATRIX const GetProjectionMatrix(DirectX::XMMATRIX&) const {
+        return this->cb.projectionMatrix;
+    }
 
     void* operator new(size_t size) {
         // Ausrichtung auf 16 Bytes 
@@ -31,23 +55,19 @@ public:
     void operator delete(void* p) noexcept {
         _aligned_free(p);
     }
+
+public:
+    ID3D11Buffer* lightBuffer;
+    LightSet      cbLight;
+
 private:
 
-    void SetColor(const DirectX::XMFLOAT4& newColor);
+    D3DLIGHTTYPE    type;
 
     void SetPosition(const DirectX::XMFLOAT4& newPosition);
-
     void SetPosition(const DirectX::XMVECTOR& Position);
-
     void SetDirection(const DirectX::XMFLOAT4& newDirection);
-
     void SetDirection(const DirectX::XMVECTOR& Direction);
-
-    DirectX::XMFLOAT4 GetPosition() const;
-    DirectX::XMFLOAT4 GetDirection() const;
-    DirectX::XMFLOAT4 GetColor() const;
-
-    float m_Intensity;
 };
 
 typedef Light LIGHT;

@@ -39,8 +39,8 @@ SURFACE* ObjectManager::createSurface() {
     return surface;
 }
 
-MESH* ObjectManager::createMesh() {
-    MESH* mesh = new MESH;
+ENTITY* ObjectManager::createMesh() {
+    ENTITY* mesh = new ENTITY;
     mesh->surfaces = new std::list<SURFACE*>;
     m_meshes.push_back(mesh);
     return mesh;
@@ -48,7 +48,7 @@ MESH* ObjectManager::createMesh() {
 
 BRUSH* ObjectManager::createBrush() {
     BRUSH* brush = new BRUSH;
-    brush->meshes = new std::list<MESH*>;
+    brush->meshes = new std::list<ENTITY*>;
     m_brushes.push_back(brush);
     return brush;
 }
@@ -60,12 +60,12 @@ SHADER* ObjectManager::createShader() {
     return shader;
 }
 
-void ObjectManager::addSurfaceToMesh(MESH* mesh, SURFACE* surface) {
+void ObjectManager::addSurfaceToMesh(ENTITY* mesh, SURFACE* surface) {
     surface->pShader = (SHADER*)mesh->pShader;
     mesh->surfaces->push_back(surface);
 }
 
-void ObjectManager::addMeshToBrush(BRUSH* brush, MESH* mesh) {
+void ObjectManager::addMeshToBrush(BRUSH* brush, ENTITY* mesh) {
     mesh->pShader = brush->pShader;
     mesh->pBrush = brush;
     brush->meshes->push_back(mesh);
@@ -99,7 +99,7 @@ void ObjectManager::deleteSurface(SURFACE* surface) {
     }
 }
 
-void ObjectManager::deleteMesh(MESH* mesh) {
+void ObjectManager::deleteMesh(ENTITY* mesh) {
     // Iterate through all brushes
     for (auto& brush : m_brushes) {
         // Iterate through all meshes in the current brush
@@ -143,7 +143,7 @@ void ObjectManager::deleteBrush(BRUSH* brush) {
     }
 }
 
-void ObjectManager::removeSurfacefromMesh(MESH* mesh, SURFACE* surface) {
+void ObjectManager::removeSurfacefromMesh(ENTITY* mesh, SURFACE* surface) {
     // Iterate through all brushes
 
     auto& surfaces = *(mesh->surfaces);
@@ -156,7 +156,7 @@ void ObjectManager::removeSurfacefromMesh(MESH* mesh, SURFACE* surface) {
     }
 }
 
-void ObjectManager::removeMeshfromBrush(BRUSH* brush, MESH* mesh) {
+void ObjectManager::removeMeshfromBrush(BRUSH* brush, ENTITY* mesh) {
     // Iterate through all brushes
 
     auto& meshes = *(brush->meshes);
@@ -197,7 +197,7 @@ SURFACE* ObjectManager::getPreviousSurface(SURFACE* currentSurface) {
     return nullptr;
 }
 
-MESH* ObjectManager::getPreviousMesh(MESH* currentMesh) {
+ENTITY* ObjectManager::getPreviousMesh(ENTITY* currentMesh) {
     for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it) {
         if (*it == currentMesh) {
             if (it != m_meshes.begin()) {
@@ -244,7 +244,7 @@ SHADER* ObjectManager::getPreviousShader(SHADER* currentShader)
     return nullptr; // Case when the passed shader object is not found in the list
 }
 
-SURFACE* ObjectManager::getSurface(MESH* mesh)
+SURFACE* ObjectManager::getSurface(ENTITY* mesh)
 {
     if (!mesh->surfaces->empty())
     {
@@ -270,7 +270,7 @@ void* ObjectManager::getShader(SURFACE surface) const
     return surface.pShader;
 }
 
-void* ObjectManager::getShader(MESH mesh) const
+void* ObjectManager::getShader(ENTITY mesh) const
 {
     return mesh.pShader;
 }
@@ -284,7 +284,7 @@ void ObjectManager::processMesh()
 {
      //Durchlaufe alle Meshes in der Liste
      for (auto it = this->m_meshes.begin(); it != this->m_meshes.end(); ++it) {
-         MESH* mesh = *it;
+         ENTITY* mesh = *it;
      
          mesh->Update();
      }
