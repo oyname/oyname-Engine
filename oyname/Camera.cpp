@@ -2,6 +2,8 @@
 
 Camera::Camera()
 {
+    viewport = { 0 };
+
     matrixSet.projectionMatrix = DirectX::XMMatrixIdentity();
     matrixSet.viewMatrix = DirectX::XMMatrixIdentity();
     matrixSet.worldMatrix = DirectX::XMMatrixIdentity();

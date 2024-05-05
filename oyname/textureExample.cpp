@@ -121,11 +121,11 @@ int main()
         Engine::TurnEntity(light, speed * Time.deltaTime, 0, 0);
         //Engine::TurnEntity(cube, speed * Time.deltaTime, 0, 0);
 
-        MoveObjectInCircle(camera, 0.0f, 0.0f, 10.0f, angle);
+        //MoveObjectInCircle(camera, 0.0f, 0.0f, 10.0f, angle);
         Engine::LookAt(camera, DirectX::XMVectorGetX(cube2->transform.getPosition()), DirectX::XMVectorGetY(cube2->transform.getPosition()), DirectX::XMVectorGetZ(cube2->transform.getPosition()));
         //Engine::TurnEntity(camera, 0.0f, 0.0f, speed * Time.deltaTime);
 
-        //MoveObjectInCircle(light, 0.0f, 0.0f, 10.0f, angle);
+        MoveObjectInCircle(cube3, 0.0f, 0.0f, 5.0f, angle);
         //Engine::LookAt(light, DirectX::XMVectorGetX(cube2->transform.getPosition()), DirectX::XMVectorGetY(cube2->transform.getPosition()), DirectX::XMVectorGetZ(cube2->transform.getPosition()));
 
 

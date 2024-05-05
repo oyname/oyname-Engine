@@ -88,7 +88,7 @@ namespace gdx
 			return hr;
 		}
 
-		hr = m_device.CreateShadowMapTexture(width, height);
+		hr = m_device.CreateShadowBuffer(width, height);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
@@ -149,8 +149,6 @@ namespace gdx
 	void CGIDX::UpdateWorld()
 	{
 		m_cameraManager.GetCurrentCam()->Update();
-		
-		//GetOM().processMesh();
 	}
 
 	HRESULT CGIDX::Cls(float r, float g, float b, float a)

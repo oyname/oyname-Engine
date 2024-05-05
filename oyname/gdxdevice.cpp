@@ -358,7 +358,7 @@ HRESULT CDevice::CreateShadowMapTexture(UINT width, UINT height)
     //shadowMapDesc.MiscFlags = 0;
 
     hr = GetDevice()->CreateTexture2D(&shadowMapDesc, NULL, &m_pShadowMap);
-    if (FAILED(hr))
+    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
         return hr;
 
     return hr;
@@ -371,24 +371,30 @@ HRESULT CDevice::CreateResourceViews()
     // Depth-Stencil-View für die Schattenmap erstellen
     D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
     ZeroMemory(&dsvDesc, sizeof(dsvDesc));
-    dsvDesc.Format = DXGI_FORMAT_D32_FLOAT; // Anpassen des Formats je nach Anforderungen
+    dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     dsvDesc.Texture2D.MipSlice = 0;
 
     hr = GetDevice()->CreateDepthStencilView(m_pShadowMap, &dsvDesc, &m_pShadowMapDepthView);
     if (FAILED(hr))
+    {
+        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
+    }
 
     // Shader-Ressourcenansicht für die Schattenmap erstellen
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
     ZeroMemory(&srvDesc, sizeof(srvDesc));
-    srvDesc.Format = DXGI_FORMAT_R32_FLOAT; // Anpassen des Formats je nach Anforderungen
+    srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = 1;
 
     hr = GetDevice()->CreateShaderResourceView(m_pShadowMap, &srvDesc, &m_pShadowMapSRView);
     if (FAILED(hr))
+    {
+        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
+    }
 
     return hr;
 }
@@ -419,7 +425,7 @@ HRESULT CDevice::CreateComparisonStatus()
     // in quality and speed.
 
     hr = GetDevice()->CreateSamplerState(&comparisonSamplerDesc, &m_pComparisonSampler_point);
-    if (FAILED(hr))
+    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
         return hr;
     
     return hr;
@@ -436,6 +442,8 @@ HRESULT CDevice::CreateRenderStats()
     shadowRenderStateDesc.DepthClipEnable = true;
 
     hr = GetDevice()->CreateRasterizerState(&shadowRenderStateDesc, &m_pShadowRenderState);
+    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+        return hr;
 
     return hr;
 }
