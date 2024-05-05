@@ -55,7 +55,7 @@ void RenderManager::RenderScene()
             for (const auto& mesh : *(brush->meshes))
             {
 
-                mesh->UpdateConstantBuffer(m_objectManager.m_device, &this->m_currentCam->matrixSet);
+                mesh->Update(m_objectManager.m_device, &this->m_currentCam->matrixSet);
                 
                 for (const auto& surface : *(mesh->surfaces))
                 {

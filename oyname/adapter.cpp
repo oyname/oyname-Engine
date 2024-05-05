@@ -5,6 +5,39 @@
 // This example demonstrates how the graphics properties of a system can be queried.
 // The queried data will be output in the debug window.
 
+int monitors();
+int adapter();
+int grafikadapter();
+int grafikmodus();
+void directxversion();
+int grafikformats();
+
+int main_off1()
+{
+    grafikformats();
+    directxversion();
+    grafikmodus();
+    grafikadapter();
+    adapter();
+    monitors();
+
+    Engine::Graphics(1024,768);
+
+    Engine::SetGfxDriver(0);
+    Engine::SetOutput(1);
+
+    Debug::Log("X: ", Engine::GetWidth(), " Y: ", Engine::GetHeight(), " Hz: ", Engine::GetMaxFrequency(1920,1080));
+
+    while (gdx::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000)) // Main loop
+    {
+ 
+    }
+
+    // Shutdown the engine
+    return gdx::ShutDown();
+
+}
+
 int monitors()
 {
     int count = Engine::CountGfxDrivers(); // Count the number of graphics drivers available
@@ -117,28 +150,3 @@ int grafikformats()
 
 using namespace gdx;
 
-int main_off1()
-{
-    grafikformats();
-    directxversion();
-    grafikmodus();
-    grafikadapter();
-    adapter();
-    monitors();
-
-    Engine::Graphics(1024,768);
-
-    Engine::SetGfxDriver(0);
-    Engine::SetOutput(1);
-
-    Debug::Log("X: ", Engine::GetWidth(), " Y: ", Engine::GetHeight(), " Hz: ", Engine::GetMaxFrequency(1920,1080));
-
-    while (gdx::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000)) // Main loop
-    {
- 
-    }
-
-    // Shutdown the engine
-    return gdx::ShutDown();
-
-}

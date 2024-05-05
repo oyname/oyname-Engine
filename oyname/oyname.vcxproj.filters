@@ -105,9 +105,6 @@
     <ClCompile Include="main.cpp">
       <Filter>01_Windows</Filter>
     </ClCompile>
-    <ClCompile Include="triangle.cpp">
-      <Filter>05_Example</Filter>
-    </ClCompile>
     <ClCompile Include="adapter.cpp">
       <Filter>05_Example</Filter>
     </ClCompile>
@@ -135,22 +132,10 @@
     <ClCompile Include="LightManager.cpp">
       <Filter>03_Engine\04 Manager\01 LightManager</Filter>
     </ClCompile>
-    <ClCompile Include="createCube.cpp">
-      <Filter>05_Example</Filter>
-    </ClCompile>
-    <ClCompile Include="turnlight.cpp">
-      <Filter>05_Example</Filter>
-    </ClCompile>
     <ClCompile Include="TextureManager.cpp">
       <Filter>03_Engine\04 Manager\05 TexturManager</Filter>
     </ClCompile>
     <ClCompile Include="textureExample.cpp">
-      <Filter>05_Example</Filter>
-    </ClCompile>
-    <ClCompile Include="Quad.cpp">
-      <Filter>05_Example</Filter>
-    </ClCompile>
-    <ClCompile Include="createTetxure.cpp">
       <Filter>05_Example</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">

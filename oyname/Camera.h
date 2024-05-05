@@ -2,6 +2,8 @@
 
 #include "gdxutil.h"
 
+using namespace DirectX;
+
 class Camera
 {
 	enum PROJ_MODE
@@ -25,14 +27,16 @@ public:
 	MatrixSet matrixSet;
 	D3D11_VIEWPORT viewport;
 
+	void UpdateCamera(XMVECTOR position, XMVECTOR lookAt, XMVECTOR up);
+
 	void GenerateViewport(float TopLeftX, float TopLeftY, float Width, float Height, float MinDepth, float MaxDepth);
-	void GenerateViewMatrix(DirectX::XMVECTOR position, DirectX::XMVECTOR lookAt, DirectX::XMVECTOR up);
+	void GenerateViewMatrix(XMVECTOR position, XMVECTOR lookAt, XMVECTOR up);
 	void GenerateProjectionMatrix(float fieldOfView, float screenAspect, float nearZ, float farZ);
 
-	DirectX::XMMATRIX const GetViewMatrix(DirectX::XMMATRIX&) const {
+	DirectX::XMMATRIX const GetViewMatrix(XMMATRIX&) const {
 		return matrixSet.viewMatrix;
 	}
-	DirectX::XMMATRIX const GetProjectionMatrix(DirectX::XMMATRIX&) const {
+	DirectX::XMMATRIX const GetProjectionMatrix(XMMATRIX&) const {
 		return matrixSet.projectionMatrix;
 	}
 

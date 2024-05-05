@@ -14,6 +14,11 @@ Camera::~Camera()
 
 }
 
+void Camera::UpdateCamera(XMVECTOR position, XMVECTOR lookAt, XMVECTOR up)
+{
+    matrixSet.viewMatrix = DirectX::XMMatrixLookToLH(position, lookAt, up);
+}
+
 void Camera::GenerateViewMatrix(DirectX::XMVECTOR position, DirectX::XMVECTOR lookAt, DirectX::XMVECTOR up)
 {
 	this->matrixSet.viewMatrix = DirectX::XMMatrixLookAtLH(position, lookAt, up);

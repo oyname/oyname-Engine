@@ -145,8 +145,6 @@
     <ClCompile Include="Brush.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraManager.cpp" />
-    <ClCompile Include="createCube.cpp" />
-    <ClCompile Include="createTetxure.cpp" />
     <ClCompile Include="gdxdevice.cpp" />
     <ClCompile Include="gdxinterface.cpp" />
     <ClCompile Include="gidx.cpp" />
@@ -157,7 +155,6 @@
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Quad.cpp" />
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Surface.cpp" />
@@ -166,13 +163,11 @@
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="triangle.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="adapter.cpp" />
     <ClCompile Include="simple.cpp" />
     <ClCompile Include="BufferManager.cpp" />
-    <ClCompile Include="turnlight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Brush.h" />

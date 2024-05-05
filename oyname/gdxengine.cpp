@@ -148,7 +148,10 @@ namespace gdx
 
 	void CGIDX::UpdateWorld()
 	{
-		m_cameraManager.GetCurrentCam()->Update();
+		XMVECTOR position = m_cameraManager.GetCurrentCam()->transform.getPosition();
+		XMVECTOR lookAt = m_cameraManager.GetCurrentCam()->transform.getLookAt();
+		XMVECTOR up = m_cameraManager.GetCurrentCam()->transform.getUp();
+		m_cameraManager.GetCurrentCam()->UpdateCamera(position, lookAt, up);
 	}
 
 	HRESULT CGIDX::Cls(float r, float g, float b, float a)

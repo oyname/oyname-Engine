@@ -13,9 +13,7 @@ public:
     Mesh();
     ~Mesh();
 
-    void UpdateConstantBuffer(const gdx::CDevice* device, MatrixSet* cb);
-    //void UpdateConstantBuffer(const gdx::CDevice* device, const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj);
-    void Update();
+    void Update(const gdx::CDevice* device, MatrixSet* cb);
 
     bool isActive;
     

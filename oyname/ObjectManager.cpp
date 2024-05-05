@@ -286,6 +286,6 @@ void ObjectManager::processMesh()
      for (auto it = this->m_meshes.begin(); it != this->m_meshes.end(); ++it) {
          ENTITY* mesh = *it;
      
-         mesh->Update();
+
      }
 }

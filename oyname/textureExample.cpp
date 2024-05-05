@@ -11,9 +11,6 @@ int main()
 
     sw == true ? Engine::Graphics(1200, 650) : Engine::Graphics(1980, 1080, false);
 
-    //Engine::Graphics(1200, 650);
-    //Engine::Graphics(1200, 650);
-
     LPTEXTURE texture1 = nullptr;
     Engine::LoadTexture(&texture1, L"..\\oyname\\Texture\\test4.bmp");
 
@@ -53,9 +50,7 @@ int main()
     cube->transform.Scale(1.0f, 3.0f, 1.0f);
 
     Engine::RotateEntity(cube, 0.0f, 0.0f, 0.0f);
-    //Engine::PositionEntity(cube, 0.0f, 1.5f, 0.0f);
-
-    
+ 
     LPENTITY cube2;
     CreateCube(&cube2, brush2);
     
@@ -71,6 +66,7 @@ int main()
     std::vector<LPENTITY> cubesx;
     // Setze den Zufallszahlengenerator
     srand(time(NULL));
+
     // Schleife zum Erstellen der Würfel
     for (int i = 0; i < 100; ++i) {
     
@@ -102,15 +98,15 @@ int main()
 
     float speed = 30.0f;
 
-    //Engine::SetCamera(cube);
+    //Engine::SetCamera(light);
 
     while (gdx::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000)) // Main loop
     {
         Engine::Cls(0, 0, 0);
 
         Engine::TurnEntity(cube, 0.0, speed * Time.deltaTime, 0.0f);
-        //Engine::TurnEntity(cube2, speed * Time.deltaTime, 0.0, speed * Time.deltaTime);
-        //Engine::TurnEntity(cube3, speed * Time.deltaTime, 0.0, speed * Time.deltaTime);
+        Engine::TurnEntity(cube2, -speed * Time.deltaTime, 0.0, speed * Time.deltaTime);
+
        
         for (auto& cubes : cubesx) {
             Engine::TurnEntity(cubes, speed * Time.deltaTime, 0.0f, speed * Time.deltaTime);
@@ -119,15 +115,13 @@ int main()
         angle += 0.5f * Time.deltaTime;
 
         Engine::TurnEntity(light, speed * Time.deltaTime, 0, 0);
-        //Engine::TurnEntity(cube, speed * Time.deltaTime, 0, 0);
 
-        //MoveObjectInCircle(camera, 0.0f, 0.0f, 10.0f, angle);
+        MoveObjectInCircle(camera, 0.0f, 0.0f, 10.0f, angle);
         Engine::LookAt(camera, DirectX::XMVectorGetX(cube2->transform.getPosition()), DirectX::XMVectorGetY(cube2->transform.getPosition()), DirectX::XMVectorGetZ(cube2->transform.getPosition()));
-        //Engine::TurnEntity(camera, 0.0f, 0.0f, speed * Time.deltaTime);
 
-        MoveObjectInCircle(cube3, 0.0f, 0.0f, 5.0f, angle);
-        //Engine::LookAt(light, DirectX::XMVectorGetX(cube2->transform.getPosition()), DirectX::XMVectorGetY(cube2->transform.getPosition()), DirectX::XMVectorGetZ(cube2->transform.getPosition()));
 
+        MoveObjectInCircle(cube3, 0.0f, 0.0f, 5.0f, angle*4);
+       
 
         Engine::UpdateWorld();
         Engine::RenderWorld();
