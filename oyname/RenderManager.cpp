@@ -25,10 +25,10 @@ void RenderManager::RenderShadow(const DirectX::XMMATRIX view, const DirectX::XM
     {
         if (!mesh->surfaces->empty())
         {
-            Debug::Log("      MESH: ", mesh);
-            mesh->UpdateConstantBuffer(m_objectManager.m_device,
-                m_currentCam->cb.viewMatrix,
-                m_currentCam->cb.projectionMatrix);
+           //Debug::Log("      MESH: ", mesh);
+           //mesh->UpdateConstantBuffer(m_objectManager.m_device,
+           //    m_currentCam->cb.viewMatrix,
+           //    m_currentCam->cb.projectionMatrix);
 
             for (const auto& surface : *mesh->surfaces)
             {
@@ -41,7 +41,7 @@ void RenderManager::RenderShadow(const DirectX::XMMATRIX view, const DirectX::XM
 
 }
 
-void RenderManager::RenderScene(const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj)
+void RenderManager::RenderScene()
 {
     // Iterate through all shaders and render all objects with each shader
     for (const auto& shader : m_objectManager.m_shaders)
@@ -55,7 +55,7 @@ void RenderManager::RenderScene(const DirectX::XMMATRIX view, const DirectX::XMM
             for (const auto& mesh : *(brush->meshes))
             {
 
-                mesh->UpdateConstantBuffer(m_objectManager.m_device,view,proj);
+                mesh->UpdateConstantBuffer(m_objectManager.m_device, &this->m_currentCam->matrixSet);
                 
                 for (const auto& surface : *(mesh->surfaces))
                 {

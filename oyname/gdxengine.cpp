@@ -95,11 +95,6 @@ namespace gdx
 
 		// 1. Initialize objects
 		//
-		// Camera 
-		m_cameraManager.Init(this);
-		m_cameraManager.SetViewport(0.0f, 0.0f, (float)width, (float)height, 0.0f, 1.0f);
-		m_cameraManager.SetShadowMapViewport(0.0f, 0.0f, (float)512, (float)512, 0.0f, 1.0f);
-
 		// Object manager
 		m_objectManager.Init(&m_device);
 
@@ -146,9 +141,9 @@ namespace gdx
 		this->m_device.GetDeviceContext()->ClearDepthStencilView(this->m_device.m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		this->m_device.GetDeviceContext()->OMSetRenderTargets(1, &this->m_device.m_pRenderTargetView, this->m_device.m_depthStencilView);
 		this->m_device.GetDeviceContext()->RSSetState(this->m_device.m_pRasterizerState);
-		this->m_device.GetDeviceContext()->RSSetViewports(1, m_cameraManager.GetViewPort());
+		this->m_device.GetDeviceContext()->RSSetViewports(1, &m_cameraManager.GetCurrentCam()->viewport);
 
-		m_renderManager.RenderScene(m_cameraManager.GetCurrentCam()->cb.viewMatrix, m_cameraManager.GetCurrentCam()->cb.projectionMatrix);
+		m_renderManager.RenderScene();
 	}
 
 	void CGIDX::UpdateWorld()

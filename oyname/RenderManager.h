@@ -10,7 +10,7 @@ public:
 
     void SetCamera(LPENTITY camera);
     void SetDirectionalLight(LPLIGHT dirLight);
-    void RenderScene(const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj);
+    void RenderScene();
     void RenderShadow(const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj);
 
 private:

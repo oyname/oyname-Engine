@@ -69,6 +69,14 @@ struct TextureFormat{
 	LPCWSTR name;
 };
 
+__declspec(align(16))
+struct MatrixSet
+{
+	DirectX::XMMATRIX viewMatrix;
+	DirectX::XMMATRIX projectionMatrix;
+	DirectX::XMMATRIX worldMatrix;
+};
+
 const TextureFormat textureFormats[] = {
 	{ GXFORMAT::B8G8R8A8_UNORM, L"B8G8R8A8_UNORM" },
 	{ GXFORMAT::B8G8R8A8_UNORM_SRGB, L"B8G8R8A8_UNORM_SRGB" },

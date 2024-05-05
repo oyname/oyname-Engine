@@ -2,9 +2,10 @@
 
 #include "gdxutil.h"
 #include "Mesh.h"
+#include "Camera.h"
 
 __declspec(align(16))
-struct LightSet
+struct LightBufferData
 {
     DirectX::XMFLOAT4 lightPosition;  
     DirectX::XMFLOAT4 lightDirection;
@@ -24,29 +25,6 @@ public:
     void SetDiffuseColor(const DirectX::XMFLOAT4& newColor);
     void SetLightType(const D3DLIGHTTYPE lightType);
 
-    const DirectX::XMFLOAT4 GetPosition() const {
-        return cbLight.lightPosition;
-    }
-    const DirectX::XMFLOAT4 GetDirection() const {
-        return cbLight.lightDirection;
-    }
-    const DirectX::XMFLOAT4 GetDiffuseColor() const {
-        return cbLight.lightDiffuseColor;
-    }
-    const DirectX::XMFLOAT4 GetAmbientColor() const {
-        return cbLight.lightDiffuseColor;
-    }
-
-    void GenerateViewMatrix();
-    void GenerateProjectionMatrix(float nearZ, float farZ);
-
-    DirectX::XMMATRIX const GetViewMatrix(DirectX::XMMATRIX&) const {
-        return this->cb.viewMatrix;
-    }
-    DirectX::XMMATRIX const GetProjectionMatrix(DirectX::XMMATRIX&) const {
-        return this->cb.projectionMatrix;
-    }
-
     void* operator new(size_t size) {
         // Ausrichtung auf 16 Bytes 
         return _aligned_malloc(size, 16);
@@ -57,17 +35,12 @@ public:
     }
 
 public:
-    ID3D11Buffer* lightBuffer;
-    LightSet      cbLight;
+    ID3D11Buffer*   lightBuffer;
+    LightBufferData cbLight;
 
 private:
 
     D3DLIGHTTYPE    type;
-
-    void SetPosition(const DirectX::XMFLOAT4& newPosition);
-    void SetPosition(const DirectX::XMVECTOR& Position);
-    void SetDirection(const DirectX::XMFLOAT4& newDirection);
-    void SetDirection(const DirectX::XMVECTOR& Direction);
 };
 
 typedef Light LIGHT;

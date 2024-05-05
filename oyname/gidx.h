@@ -102,10 +102,17 @@ namespace Engine
         brush = brush == nullptr ? engine->GetOM().getStandardBrush() : brush;
         engine->GetOM().addMeshToBrush(brush, *mesh);
 
-        (*mesh)->cb.viewMatrix = engine->GetCam().GetCurrentCam()->cb.viewMatrix;
-        (*mesh)->cb.projectionMatrix = engine->GetCam().GetCurrentCam()->cb.projectionMatrix;
+        //(*mesh)->matrixSet.viewMatrix = engine->GetCam().GetCurrentCam()->matrixSet.viewMatrix;
+        //(*mesh)->matrixSet.projectionMatrix = engine->GetCam().GetCurrentCam()->matrixSet.projectionMatrix;
 
-        HRESULT hr = engine->GetBM().CreateBuffer(&((*mesh)->cb), sizeof(MatrixSet), 1, D3D11_BIND_CONSTANT_BUFFER, &((*mesh)->constantBuffer));
+        (*mesh)->GenerateViewMatrix(DirectX::XMVECTOR{ 0.0f,0.0f,0.0f,0.0f }, DirectX::XMVECTOR{ 0.0f,0.0f,1.0f,10.0f }, DirectX::XMVECTOR{ 0.0f,1.0f,0.0f,0.0f });
+        (*mesh)->GenerateProjectionMatrix(XMConvertToRadians(90.0f),
+            (static_cast<float>(engine->GetWidth()) / static_cast<float>(engine->GetHeight())),
+            1.0f, 1000.0f);
+
+        (*mesh)->GenerateViewport(0.0f, 0.0f, static_cast<float>(engine->GetWidth()), static_cast<float>(engine->GetHeight()), 0.0f, 1.0f);
+
+        HRESULT hr = engine->GetBM().CreateBuffer(&((*mesh)->matrixSet), sizeof(MatrixSet), 1, D3D11_BIND_CONSTANT_BUFFER, &((*mesh)->constantBuffer));
         if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 
             return;
@@ -116,16 +123,20 @@ namespace Engine
     {
         *light = engine->GetLM().createLight(type);
         
-        (*light)->GenerateViewMatrix();
-        (*light)->GenerateProjectionMatrix(1.0f, 1000.0f);
+        (*light)->GenerateViewMatrix(DirectX::XMVECTOR{ 0.0f,0.0f,0.0f,0.0f }, DirectX::XMVECTOR{ 0.0f,0.0f,1.0f,10.0f }, DirectX::XMVECTOR{ 0.0f,1.0f,0.0f,0.0f });
+        (*light)->GenerateProjectionMatrix(XMConvertToRadians(90.0f),
+                                           (static_cast<float>(engine->GetWidth()) / static_cast<float>(engine->GetHeight())), 
+                                           1.0f, 1000.0f);
 
-        HRESULT hr = engine->GetBM().CreateBuffer(&((*light)->cbLight), sizeof(LightSet), 1, D3D11_BIND_CONSTANT_BUFFER, &((*light)->lightBuffer));
+        (*light)->GenerateViewport(0.0f, 0.0f, static_cast<float>(engine->GetWidth()), static_cast<float>(engine->GetHeight()), 0.0f, 1.0f);
+
+        HRESULT hr = engine->GetBM().CreateBuffer(&((*light)->cbLight), sizeof(LightBufferData), 1, D3D11_BIND_CONSTANT_BUFFER, &((*light)->lightBuffer));
         if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
         
             return;
         }
 
-        hr = engine->GetBM().CreateBuffer(&((*light)->cb), sizeof(MatrixSet), 1, D3D11_BIND_CONSTANT_BUFFER, &((*light)->constantBuffer));
+        hr = engine->GetBM().CreateBuffer(&((*light)->matrixSet), sizeof(MatrixSet), 1, D3D11_BIND_CONSTANT_BUFFER, &((*light)->constantBuffer));
         if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 
             return;
@@ -159,13 +170,12 @@ namespace Engine
 
     inline void CreateCamera(LPENTITY* camera)
     { 
-        engine->GetCam().SetPerspective(XMConvertToRadians(90.0f),
-                                        (static_cast<float>(engine->GetWidth()) / static_cast<float>(engine->GetHeight())),
-                                        1.0f,
-                                        1000.0f);
-
         *camera = engine->GetOM().createMesh();
-        engine->GetCam().CreateCamera(camera); 
+        (*camera)->GenerateViewMatrix(DirectX::XMVECTOR{ 0.0f,0.0f,0.0f,0.0f }, DirectX::XMVECTOR{ 0.0f,0.0f,1.0f,10.0f }, DirectX::XMVECTOR{ 0.0f,1.0f,0.0f,0.0f });
+        (*camera)->GenerateProjectionMatrix(XMConvertToRadians(90.0f),
+                                            (static_cast<float>(engine->GetWidth()) / static_cast<float>(engine->GetHeight())),
+                                             1.0f, 1000.0f);
+        (*camera)->GenerateViewport(0.0f, 0.0f, static_cast<float>(engine->GetWidth()), static_cast<float>(engine->GetHeight()), 0.0f, 1.0f);
 
         // Current Camera  
         engine->SetCamera(*camera); 

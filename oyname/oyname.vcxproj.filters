@@ -165,6 +165,9 @@
     <ClCompile Include="Light.cpp">
       <Filter>03_Engine\04 Manager\00 Objects\02 Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>03_Engine\04 Manager\00 Objects\02 Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gidx.h">
@@ -237,6 +240,9 @@
       <Filter>03_Engine\04 Manager\00 Objects\02 Objects</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
+      <Filter>03_Engine\04 Manager\00 Objects\02 Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>03_Engine\04 Manager\00 Objects\02 Objects</Filter>
     </ClInclude>
   </ItemGroup>

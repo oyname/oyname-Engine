@@ -5,29 +5,21 @@
 #include "gdxutil.h"
 #include "Surface.h"  
 #include "Transform.h"
+#include "Camera.h"
 
-__declspec(align(16))
-struct MatrixSet
-{
-    DirectX::XMMATRIX viewMatrix;
-    DirectX::XMMATRIX projectionMatrix;
-    DirectX::XMMATRIX worldMatrix;
-};
-
-class Mesh
+class Mesh : public Camera
 {
 public:
     Mesh();
     ~Mesh();
 
-    void UpdateConstantBuffer(const gdx::CDevice* device, const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj);
+    void UpdateConstantBuffer(const gdx::CDevice* device, MatrixSet* cb);
+    //void UpdateConstantBuffer(const gdx::CDevice* device, const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj);
     void Update();
 
     bool isActive;
     
     Transform transform;
-
-    MatrixSet cb;
 
     std::list<Surface*>* surfaces;
 

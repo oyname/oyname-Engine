@@ -25,7 +25,5 @@ void LightManager::Update(const gdx::CDevice* device)
     for (const auto& light : m_lights)
     {
         light->UpdateLight(device);
-        light->Update(); //viewmatrix for shadow
-        //light->UpdateConstantBuffer(device, light->cb.viewMatrix, light->cb.projectionMatrix);
     }
 }

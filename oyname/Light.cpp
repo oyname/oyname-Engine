@@ -3,34 +3,16 @@
 Light::Light():lightBuffer(nullptr)
 {
 	type = D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL;
-	SetPosition(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f));
-	SetDirection(DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 0.0f));
+
+	DirectX::XMStoreFloat4(&cbLight.lightPosition, DirectX::XMVECTOR{0.0f,0.0f,0.0f,0.0f});
+	DirectX::XMStoreFloat4(&cbLight.lightDirection, DirectX::XMVECTOR{0.0f,1.0f,0.0f,0.0f});
+
 	SetDiffuseColor(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 Light::~Light()
 {
 	Memory::SafeRelease(lightBuffer);
-}
-
-void Light::SetPosition(const DirectX::XMFLOAT4& newPosition)
-{
-	cbLight.lightPosition = newPosition;
-}
-
-void Light::SetPosition(const DirectX::XMVECTOR& newPosition)
-{
-	DirectX::XMStoreFloat4(&cbLight.lightPosition, newPosition);
-}
-
-void Light::SetDirection(const DirectX::XMFLOAT4& newDirection)
-{
-	cbLight.lightDirection = newDirection;
-}
-
-void Light::SetDirection(const DirectX::XMVECTOR& newDirection)
-{
-	DirectX::XMStoreFloat4(&cbLight.lightDirection, newDirection);
 }
 
 void Light::SetDiffuseColor(const DirectX::XMFLOAT4& Color)
@@ -60,8 +42,8 @@ void Light::UpdateLight(const gdx::CDevice* device)
 	HRESULT hr = S_OK;
 
 	// Aktualisieren der Position des Richtungslichts
-	SetPosition(this->transform.getPosition());
-	SetDirection(this->transform.getLookAt());
+	DirectX::XMStoreFloat4(&cbLight.lightPosition, this->transform.getPosition());
+	DirectX::XMStoreFloat4(&cbLight.lightDirection, this->transform.getLookAt());
 
 	// Kopieren der Daten in den lightBuffer
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -70,7 +52,7 @@ void Light::UpdateLight(const gdx::CDevice* device)
 		return;
 	}
 
-	memcpy(mappedResource.pData, &cbLight, sizeof(LightSet));
+	memcpy(mappedResource.pData, &cbLight, sizeof(LightBufferData));
 	device->GetDeviceContext()->Unmap(lightBuffer, 0);
 
 	// Setzen des lightBuffers im Shader
@@ -78,17 +60,3 @@ void Light::UpdateLight(const gdx::CDevice* device)
 	device->GetDeviceContext()->PSSetConstantBuffers(1, 1, &lightBuffer);
 }
 
-void Light::GenerateViewMatrix()
-{
-	this->cb.viewMatrix = DirectX::XMMatrixLookAtLH(this->transform.getPosition(), this->transform.getLookAt(), this->transform.getUp());
-}
-
-void Light::GenerateProjectionMatrix(float nearZ, float farZ)
-{
-	float fieldOfView, screenAspect;
-
-	fieldOfView = 3.1415927f/2.0f;
-	screenAspect = 1.0f;
-
-	this->cb.projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, nearZ, farZ);
-}

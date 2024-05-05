@@ -42,7 +42,7 @@ int main()
     // Creating light
     LPLIGHT light;
     Engine::CreateLight(&light, D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL);
-    Engine::RotateEntity(light, 60.0f, 0.0f, 0.0f);
+    Engine::RotateEntity(light, 20.0f, 0.0f, 0.0f);
     Engine::MoveEntity(light, 0.0f, 5.0f, -10.0f);
 
 
@@ -53,7 +53,6 @@ int main()
     cube->transform.Scale(1.0f, 3.0f, 1.0f);
 
     Engine::RotateEntity(cube, 0.0f, 0.0f, 0.0f);
-    Engine::MoveEntity(light, 0.0f, 2.0f, -10.0f);
     //Engine::PositionEntity(cube, 0.0f, 1.5f, 0.0f);
 
     
@@ -103,13 +102,13 @@ int main()
 
     float speed = 30.0f;
 
-    //Engine::SetCamera(light);
+    //Engine::SetCamera(cube);
 
     while (gdx::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000)) // Main loop
     {
         Engine::Cls(0, 0, 0);
 
-        //Engine::TurnEntity(cube,  speed * Time.deltaTime, 0.0, speed * Time.deltaTime);
+        Engine::TurnEntity(cube, 0.0, speed * Time.deltaTime, 0.0f);
         //Engine::TurnEntity(cube2, speed * Time.deltaTime, 0.0, speed * Time.deltaTime);
         //Engine::TurnEntity(cube3, speed * Time.deltaTime, 0.0, speed * Time.deltaTime);
        
@@ -119,7 +118,7 @@ int main()
 
         angle += 0.5f * Time.deltaTime;
 
-        //Engine::TurnEntity(light, speed * Time.deltaTime, 0, 0);
+        Engine::TurnEntity(light, speed * Time.deltaTime, 0, 0);
         //Engine::TurnEntity(cube, speed * Time.deltaTime, 0, 0);
 
         MoveObjectInCircle(camera, 0.0f, 0.0f, 10.0f, angle);
