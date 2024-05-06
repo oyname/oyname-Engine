@@ -6,8 +6,9 @@
 #include "Surface.h"  
 #include "Transform.h"
 #include "Camera.h"
+#include "Light.h"
 
-class Mesh : public Camera
+class Mesh : public Camera , public Light
 {
 public:
     Mesh();

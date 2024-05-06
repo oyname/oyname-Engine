@@ -1,8 +1,11 @@
 #pragma once
 
 #include "gdxutil.h"
-#include "Mesh.h"
+#include "gdxdevice.h"
 #include "Camera.h"
+#include "Transform.h"
+
+using namespace DirectX;
 
 __declspec(align(16))
 struct LightBufferData
@@ -13,13 +16,13 @@ struct LightBufferData
     DirectX::XMFLOAT4 lightAmbientColor;
 };
 
-class Light : public Mesh
+class Light
 {
 public:
     Light();
     ~Light();
     
-    void UpdateLight(const gdx::CDevice* device); 
+    void UpdateLight(const gdx::CDevice* device, XMVECTOR position, XMVECTOR lookAt);
 
     void SetAmbientColor(const DirectX::XMFLOAT4& newColor);
     void SetDiffuseColor(const DirectX::XMFLOAT4& newColor);
@@ -43,5 +46,3 @@ private:
     D3DLIGHTTYPE    type;
 };
 
-typedef Light LIGHT;
-typedef Light* LPLIGHT;

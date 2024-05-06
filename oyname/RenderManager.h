@@ -9,14 +9,14 @@ public:
     RenderManager(ObjectManager& objectManager, LightManager& lightManager);
 
     void SetCamera(LPENTITY camera);
-    void SetDirectionalLight(LPLIGHT dirLight);
+    void SetDirectionalLight(LPENTITY dirLight);
     void RenderScene();
     void RenderShadow(const DirectX::XMMATRIX view, const DirectX::XMMATRIX proj);
 
 private:
     // Objekte im 3D Raum
     LPENTITY m_currentCam;
-    LPLIGHT m_directionLight;
+    LPENTITY m_directionLight;
 
     // Manager-Klassen
     ObjectManager& m_objectManager; // Referenz auf den ObjektManager

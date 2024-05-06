@@ -37,7 +37,7 @@ int main()
     Engine::MoveEntity(camera, 5.0f, 0.0f, -20.0f);
 
     // Creating light
-    LPLIGHT light;
+    LPENTITY light;
     Engine::CreateLight(&light, D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL);
     Engine::RotateEntity(light, 20.0f, 0.0f, 0.0f);
     Engine::MoveEntity(light, 0.0f, 5.0f, -10.0f);
@@ -68,7 +68,7 @@ int main()
     srand(time(NULL));
 
     // Schleife zum Erstellen der Würfel
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 0; ++i) {
     
         float z = static_cast<float>(rand() % 50 - 25);
         float x = static_cast<float>(rand() % 50 - 25); // Wert zwischen -10 und 10

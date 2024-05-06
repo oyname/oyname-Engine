@@ -37,13 +37,13 @@ void Light::SetLightType(D3DLIGHTTYPE lightType)
 }
 
 // Funktion zum Aktualisieren des Richtungslichts und Kopieren der Daten in den Shader-Buffer
-void Light::UpdateLight(const gdx::CDevice* device)
+void Light::UpdateLight(const gdx::CDevice* device, XMVECTOR position, XMVECTOR lookAt)
 {
 	HRESULT hr = S_OK;
 
 	// Aktualisieren der Position des Richtungslichts
-	DirectX::XMStoreFloat4(&cbLight.lightPosition, this->transform.getPosition());
-	DirectX::XMStoreFloat4(&cbLight.lightDirection, this->transform.getLookAt());
+	DirectX::XMStoreFloat4(&cbLight.lightPosition, position);
+	DirectX::XMStoreFloat4(&cbLight.lightDirection, lookAt);
 
 	// Kopieren der Daten in den lightBuffer
 	D3D11_MAPPED_SUBRESOURCE mappedResource;

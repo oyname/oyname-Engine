@@ -119,7 +119,7 @@ namespace Engine
         }
     }
 
-    inline void CreateLight(LPLIGHT* light, D3DLIGHTTYPE type)
+    inline void CreateLight(LPENTITY* light, D3DLIGHTTYPE type)
     {
         *light = engine->GetLM().createLight(type);
         
@@ -146,11 +146,6 @@ namespace Engine
     inline void PositionEntity(LPENTITY entity, float x, float y, float z)
     {
         entity->transform.Position(x, y, z);
-    }
-
-    inline void PositionEntity(LPLIGHT light, float x, float y, float z)
-    {
-        light->transform.Position(x, y, z);
     }
 
     inline void MoveEntity(LPENTITY entity, float x, float y, float z)

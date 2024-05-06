@@ -12,7 +12,7 @@ void RenderManager::SetCamera(LPENTITY camera)
     m_currentCam = camera;
 }
 
-void RenderManager::SetDirectionalLight(LPLIGHT dirLight)
+void RenderManager::SetDirectionalLight(LPENTITY dirLight)
 {
     m_directionLight = dirLight;
 }
@@ -25,11 +25,6 @@ void RenderManager::RenderShadow(const DirectX::XMMATRIX view, const DirectX::XM
     {
         if (!mesh->surfaces->empty())
         {
-           //Debug::Log("      MESH: ", mesh);
-           //mesh->UpdateConstantBuffer(m_objectManager.m_device,
-           //    m_currentCam->cb.viewMatrix,
-           //    m_currentCam->cb.projectionMatrix);
-
             for (const auto& surface : *mesh->surfaces)
             {
                 Debug::Log("         SURFACE: ", surface);
@@ -54,7 +49,6 @@ void RenderManager::RenderScene()
 
             for (const auto& mesh : *(brush->meshes))
             {
-
                 mesh->Update(m_objectManager.m_device, &this->m_currentCam->matrixSet);
                 
                 for (const auto& surface : *(mesh->surfaces))
