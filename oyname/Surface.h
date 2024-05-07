@@ -10,7 +10,6 @@ public:
     Surface();
     ~Surface();
 
-public:
     void AddVertex(float x, float y, float z);
     void VertexNormal(unsigned int index, float x, float y, float z);
     void VertexColor(unsigned int index, float r, float g, float b);
@@ -65,17 +64,6 @@ public:
 
     void* pShader;
 
-    void* operator new(size_t size) {
-        // Ausrichtung auf 16 Bytes 
-        return _aligned_malloc(size, 16); 
-    }
-
-    void operator delete(void* p) noexcept {
-        // richtigen Speicherdeallokator
-        _aligned_free(p);
-    }
-
-public:
     float sizeX;
     float sizeY;
     float sizeZ;

@@ -21,11 +21,22 @@ private:
     DirectX::XMMATRIX translation;
     DirectX::XMMATRIX scaling;
 
+    DirectX::XMMATRIX* worldMatrix;
+
+    const DirectX::XMVECTOR forwardVector = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+    const DirectX::XMVECTOR upVector = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+    const DirectX::XMVECTOR rightVector = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
     float ExtractRoll(const DirectX::XMMATRIX* XMMatrix_p_Rotation);
+
+    DirectX::XMMATRIX GetLocalTransformationMatrix();
 
 public:
 
     Transform();
+
+    // Setter
+    void setWorldMatrix(DirectX::XMMATRIX* world) { worldMatrix = world; }
 
     // Getter
 
@@ -56,6 +67,8 @@ public:
     void Scale(float x, float y, float z);
 
     void LookAt(const DirectX::XMVECTOR& target, const DirectX::XMVECTOR& upVector);
+
+    void RotateTowardsVector(const DirectX::XMVECTOR& targetDirection, const DirectX::XMVECTOR& upVector);
 
     float Distance(const DirectX::XMVECTOR& target);
 };

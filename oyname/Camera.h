@@ -33,13 +33,6 @@ public:
 	void GenerateViewMatrix(XMVECTOR position, XMVECTOR lookAt, XMVECTOR up);
 	void GenerateProjectionMatrix(float fieldOfView, float screenAspect, float nearZ, float farZ);
 
-	DirectX::XMMATRIX const GetViewMatrix(XMMATRIX&) const {
-		return matrixSet.viewMatrix;
-	}
-	DirectX::XMMATRIX const GetProjectionMatrix(XMMATRIX&) const {
-		return matrixSet.projectionMatrix;
-	}
-
 private:
 };
 

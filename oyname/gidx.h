@@ -297,6 +297,11 @@ namespace Engine
         }
     }
 
+    inline void ScaleEntity(LPENTITY entity, float x, float y, float z)
+    {
+        entity->transform.Scale(x, y, z);
+    }
+
     inline HRESULT CreateTexture(LPLPTEXTURE texture, int width, int height)
     {
         *texture = new TEXTURE;
@@ -335,6 +340,11 @@ namespace Engine
     inline void LookAt(LPENTITY entity, float targetX, float targetY, float targetZ)
     {
         entity->transform.LookAt(DirectX::XMVectorSet(targetX, targetY, targetZ, 0.0f), DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+    }
+
+    inline void RotateTowardsVector(LPENTITY entity, float targetX, float targetY, float targetZ)
+    {
+        entity->transform.RotateTowardsVector(DirectX::XMVectorSet(targetX, targetY, targetZ, 0.0f), DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
     }
 
 } // End of namespace Engine

@@ -45,14 +45,14 @@ int main()
 
     LPENTITY cube;
     CreateCube(&cube);
-    Engine::EntityTexture(cube, texture1); // Die Textur wird zum Brush, dass zu cube gehört angehängt. In diesem Fall dem Standard-Brush
+    //Engine::EntityTexture(cube, texture1); // Die Textur wird zum Brush, dass zu cube gehört angehängt. In diesem Fall dem Standard-Brush
     
     cube->transform.Scale(1.0f, 3.0f, 1.0f);
 
     Engine::RotateEntity(cube, 0.0f, 0.0f, 0.0f);
  
     LPENTITY cube2;
-    CreateCube(&cube2, brush2);
+    CreateCube(&cube2);// , brush2);
     
     Engine::BrushTexture(brush2, texture2); // So kann man auch einem Brush eine Textur zuweisen
     
@@ -60,7 +60,7 @@ int main()
     Engine::RotateEntity(cube2, 0.0f, 0.0f, 0.0f);
     
     LPENTITY cube3;
-    CreateCube(&cube3, brush2);
+    CreateCube(&cube3, brush3);
     Engine::BrushTexture(brush3, texture3);
 
     std::vector<LPENTITY> cubesx;
@@ -75,13 +75,13 @@ int main()
         float y = static_cast<float>(rand() % 50 - 25); // Wert zwischen -10 und 10
     
         LPENTITY cubexx;
-        CreateCube(&cubexx, brush2);
+        CreateCube(&cubexx);// , brush2);
         Engine::PositionEntity(cubexx, x, y, z);
         cubesx.push_back(cubexx); // Füge den Würfel zum Vektor hinzu
     }
 
     Engine::PositionEntity(cube3, 4.0f, 0.0f, 0.0f);
-    cube3->transform.Rotate(0.0f, 0.0f, 0.0f);
+    Engine::ScaleEntity(cube3, 1.0f, 1.0f, 2.0f);
 
     LPENTITY floor;
     CreateCube(&floor);
@@ -98,7 +98,9 @@ int main()
 
     float speed = 30.0f;
 
-    //Engine::SetCamera(light);
+    //Engine::SetCamera(cube3);
+    
+    DirectX::XMVECTOR positionPrev = { 0,0,0,0 };
 
     while (gdx::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000)) // Main loop
     {
@@ -107,21 +109,35 @@ int main()
         Engine::TurnEntity(cube, 0.0, speed * Time.deltaTime, 0.0f);
         Engine::TurnEntity(cube2, -speed * Time.deltaTime, 0.0, speed * Time.deltaTime);
 
-       
         for (auto& cubes : cubesx) {
             Engine::TurnEntity(cubes, speed * Time.deltaTime, 0.0f, speed * Time.deltaTime);
         }
 
         angle += 0.5f * Time.deltaTime;
 
-        Engine::TurnEntity(light, speed * Time.deltaTime, 0, 0);
+        //Engine::TurnEntity(light, speed * Time.deltaTime, 0, 0);
 
-        MoveObjectInCircle(camera, 0.0f, 0.0f, 10.0f, angle);
-        Engine::LookAt(camera, DirectX::XMVectorGetX(cube2->transform.getPosition()), DirectX::XMVectorGetY(cube2->transform.getPosition()), DirectX::XMVectorGetZ(cube2->transform.getPosition()));
+        MoveObjectInCircle(cube, 0.0f, 0.0f, 35.0f, angle);
+        Engine::LookAt(camera, DirectX::XMVectorGetX(cube3->transform.getPosition()), DirectX::XMVectorGetY(cube3->transform.getPosition()), DirectX::XMVectorGetZ(cube3->transform.getPosition()));
+
+        //MoveObjectInCircle(cube3, 0.0f, 0.0f, 20.0f, angle);
+
+        Engine::TurnEntity(cube3, 0.0f, 60.0f * Time.deltaTime, 0.0f);
+        Engine::TurnEntity(cube3, 0.0f, 0.0f, 100.0f * Time.deltaTime, Space::World);      
 
 
-        MoveObjectInCircle(cube3, 0.0f, 0.0f, 5.0f, angle*4);
-       
+
+        Engine::MoveEntity(cube3, 0.0f, 0.0f, 5.0f * Time.deltaTime);
+        //Engine::MoveEntity(cube, 0.0f, 0.0f, 5.0f * Time.deltaTime);
+
+        float x = DirectX::XMVectorGetX(positionPrev);
+        float y = DirectX::XMVectorGetY(positionPrev);
+        float z = DirectX::XMVectorGetZ(positionPrev);
+
+        //positionPrev = cube3->transform.getPosition();
+     
+        // Setze die neue lokale Ausrichtung
+        Engine::LookAt(cube3, DirectX::XMVectorGetX(cube->transform.getPosition()), DirectX::XMVectorGetY(cube->transform.getPosition()), DirectX::XMVectorGetZ(cube->transform.getPosition()));
 
         Engine::UpdateWorld();
         Engine::RenderWorld();

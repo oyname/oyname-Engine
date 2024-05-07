@@ -7,7 +7,7 @@ Light::Light():lightBuffer(nullptr)
 	DirectX::XMStoreFloat4(&cbLight.lightPosition, DirectX::XMVECTOR{0.0f,0.0f,0.0f,0.0f});
 	DirectX::XMStoreFloat4(&cbLight.lightDirection, DirectX::XMVECTOR{0.0f,1.0f,0.0f,0.0f});
 
-	SetDiffuseColor(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	SetDiffuseColor(DirectX::XMFLOAT4(1.0f, 0.8f, 1.0f, 1.0f));
 }
 
 Light::~Light()

@@ -8,7 +8,7 @@ Mesh::Mesh() :
     pShader(nullptr),
     pBrush(nullptr)
 {
-
+    transform.setWorldMatrix(&this->matrixSet.worldMatrix);
 }
 
 Mesh::~Mesh() {
@@ -32,5 +32,4 @@ void Mesh::Update(const gdx::CDevice* device, MatrixSet* matrixSet)
 
     device->GetDeviceContext()->VSSetConstantBuffers(0, 1, &constantBuffer);
     device->GetDeviceContext()->PSSetConstantBuffers(0, 1, &constantBuffer);
-
 }

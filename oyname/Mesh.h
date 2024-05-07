@@ -31,7 +31,7 @@ public:
         // Ausrichtung auf 16 Bytes 
         return _aligned_malloc(size, 16);
     }
-
+    
     void operator delete(void* p) noexcept {
         // richtigen Speicherdeallokator
         _aligned_free(p);
