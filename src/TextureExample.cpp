@@ -14,7 +14,7 @@ static void UpdateBoxPointsEx(std::vector<DirectX::XMFLOAT3>& points, XMFLOAT3 m
 static void UpdateBox(LPENTITY mesh, unsigned int indexSurface, std::vector<DirectX::XMFLOAT3>& points, XMFLOAT3 minCorner, XMFLOAT3 maxCorner);
 static void CreateCollisionBox(LPSURFACE wuerfel, std::vector<DirectX::XMFLOAT3>& points);
 
-int main()
+int main6()
 {
     bool sw = true;
 

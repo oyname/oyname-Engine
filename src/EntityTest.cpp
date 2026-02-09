@@ -3,7 +3,7 @@
 // Function declaration
 static void CreateCube(LPENTITY* mesh, MATERIAL* material = nullptr);
 
-int main2()
+int main()
 {
     bool sw = true;
 
@@ -19,6 +19,9 @@ int main2()
     LPENTITY light = nullptr;
     Engine::CreateLight(&light, D3DLIGHT_DIRECTIONAL);  // Nutzt LightManager
     Engine::TurnEntity(light, 45, 0, 0);                // Funktioniert
+    Engine::LightColor(light, 1.0f, 1.0f, 1.0f);
+
+    Engine::SetAmbientColor(0.2f, 0.0f, 0.0f);
 
     // Camera erstellen
     LPENTITY camera = nullptr;
