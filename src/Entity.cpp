@@ -1,0 +1,72 @@
+﻿#include "Entity.h"
+#include "gdxdevice.h"
+#include "Memory.h"
+
+Entity::Entity() :
+    constantBuffer(nullptr),
+    isActive(true)
+{
+    transform.setWorldMatrix(&matrixSet.worldMatrix);
+
+    matrixSet.worldMatrix = DirectX::XMMatrixIdentity();
+    matrixSet.viewMatrix = DirectX::XMMatrixIdentity();
+    matrixSet.projectionMatrix = DirectX::XMMatrixIdentity();
+
+    viewport = { 0 };  // ← Initialisiere Viewport
+}
+
+Entity::~Entity() {
+    Memory::SafeRelease(constantBuffer);
+}
+
+void Entity::Update(const gdx::CDevice* device) {
+    if (!isActive) return;
+
+    HRESULT hr = S_OK;
+    D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+    matrixSet.worldMatrix = transform.getScaling() *
+        transform.getRotation() *
+        transform.getTranslation();
+
+    if (constantBuffer != nullptr) {
+        hr = device->GetDeviceContext()->Map(constantBuffer, 0,
+            D3D11_MAP_WRITE_DISCARD, 0,
+            &mappedResource);
+        if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+            return;
+        }
+
+        memcpy(mappedResource.pData, &matrixSet, sizeof(MatrixSet));
+        device->GetDeviceContext()->Unmap(constantBuffer, 0);
+        device->GetDeviceContext()->VSSetConstantBuffers(0, 1, &constantBuffer);
+        device->GetDeviceContext()->PSSetConstantBuffers(0, 1, &constantBuffer);
+    }
+}
+
+// ← NEU: Matrix-Generierung für alle Entities
+void Entity::GenerateViewMatrix(DirectX::XMVECTOR position,
+    DirectX::XMVECTOR lookAt,
+    DirectX::XMVECTOR up)
+{
+    this->matrixSet.viewMatrix = DirectX::XMMatrixLookAtLH(position, lookAt, up);
+}
+
+void Entity::GenerateProjectionMatrix(float fieldOfView, float screenAspect,
+    float nearZ, float farZ)
+{
+    this->matrixSet.projectionMatrix =
+        DirectX::XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, nearZ, farZ);
+}
+
+void Entity::GenerateViewport(float TopLeftX, float TopLeftY,
+    float Width, float Height,
+    float MinDepth, float MaxDepth)
+{
+    viewport.Width = Width;
+    viewport.Height = Height;
+    viewport.MinDepth = MinDepth;
+    viewport.MaxDepth = MaxDepth;
+    viewport.TopLeftX = TopLeftX;
+    viewport.TopLeftY = TopLeftY;
+}
