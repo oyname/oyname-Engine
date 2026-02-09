@@ -55,7 +55,7 @@ int main()
     // Creating light
     LPENTITY light;
     Engine::CreateLight(&light, D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL);
-    Engine::RotateEntity(light, 45.0f, 0.0f, 0.0f);
+    Engine::RotateEntity(light, -45.0f, 0.0f, 0.0f);
     Engine::MoveEntity(light, 0.0f, 0.0f, 0.0f);
     Engine::LightColor(light, 0.8f, 0.8f, 0.8f);
     Engine::SetAmbientColor(0.4f, 0.0f, 0.0f);
