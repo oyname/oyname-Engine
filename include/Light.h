@@ -20,6 +20,9 @@ public:
     Light();
     ~Light();
 
+    // Override Entity::Update() - berechnet lightDirection automatisch aus Transform-Rotation
+    virtual void Update(const gdx::CDevice* device) override;
+
     void UpdateLight(const gdx::CDevice* device, XMVECTOR position, XMVECTOR lookAt);
     void SetAmbientColor(const DirectX::XMFLOAT4& newColor);
     void SetDiffuseColor(const DirectX::XMFLOAT4& newColor);

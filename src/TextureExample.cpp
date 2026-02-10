@@ -14,7 +14,7 @@ static void UpdateBoxPointsEx(std::vector<DirectX::XMFLOAT3>& points, XMFLOAT3 m
 static void UpdateBox(LPENTITY mesh, unsigned int indexSurface, std::vector<DirectX::XMFLOAT3>& points, XMFLOAT3 minCorner, XMFLOAT3 maxCorner);
 static void CreateCollisionBox(LPSURFACE wuerfel, std::vector<DirectX::XMFLOAT3>& points);
 
-int main6()
+int main()
 {
     bool sw = true;
 
@@ -49,16 +49,22 @@ int main6()
     Engine::CreateCamera(&camera);
 
     // Positioning the camera
-    Engine::RotateEntity(camera, 0.0f, 0.0f, 0.0f);
+    Engine::RotateEntity(camera, 10.0f, 0.0f, 0.0f);
     Engine::PositionEntity(camera, 0.0f, 0.0f, -5.0f);
 
-    // Creating light
-    LPENTITY light;
-    Engine::CreateLight(&light, D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL);
-    Engine::RotateEntity(light, -45.0f, 0.0f, 0.0f);
-    Engine::MoveEntity(light, 0.0f, 0.0f, 0.0f);
-    Engine::LightColor(light, 0.8f, 0.8f, 0.8f);
-    Engine::SetAmbientColor(0.4f, 0.0f, 0.0f);
+    // Light erstellen
+    LPENTITY light = nullptr;
+    Engine::CreateLight(&light, D3DLIGHT_DIRECTIONAL);    // Nutzt LightManager
+    Engine::RotateEntity(light, -90, 0, 0);                // Funktioniert
+    Engine::LightColor(light, 1.0f, 0.0f, 0.0f);
+
+    LPENTITY light2 = nullptr;
+    Engine::CreateLight(&light2, D3DLIGHT_DIRECTIONAL);  // Nutzt LightManager
+    Engine::TurnEntity(light2, 90, 0, 0);                // Funktioniert
+    Engine::LightColor(light2, 0.0f, 0.0f, 1.0f);
+
+
+    //Engine::SetAmbientColor(0.4f, 0.0f, 0.0f);
 
     LPENTITY cube;
     CreateCube(&cube, material3);
@@ -116,7 +122,11 @@ int main6()
 
         if ((GetAsyncKeyState(VK_ADD) & 0x8000))
         {
-            Engine::MoveEntity(cube, 0.0f, 0.0f, 5 * dt);
+            Engine::MoveEntity(camera, 0.0f, 5 * dt, 0.0f);
+        }
+        if ((GetAsyncKeyState(VK_SUBTRACT) & 0x8000))
+        {
+            Engine::MoveEntity(camera, 0.0f, -5 * dt, 0.0f);
         }
         else
         {
@@ -148,11 +158,11 @@ int main6()
             DirectX::XMVectorGetZ(cube->transform.getPosition()));
 
         // DEBUG: Zeige die Kamera-Richtung
-        //DirectX::XMVECTOR camForward = camera->transform.getLookAt();
-        //Debug::Log("Camera Forward: ",
-        //    XMVectorGetX(camForward), ", ",
-        //    XMVectorGetY(camForward), ", ",
-        //    XMVectorGetZ(camForward));
+        //DirectX::XMVECTOR LightForward = light->transform.getLookAt();
+        //Debug::Log("LIGHT Forward: ",
+        //    XMVectorGetX(LightForward), ", ",
+        //    XMVectorGetY(LightForward), ", ",
+        //    XMVectorGetZ(LightForward));
 
 
         Engine::UpdateWorld();

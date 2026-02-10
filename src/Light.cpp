@@ -20,6 +20,24 @@ Light::~Light()
     // constantBuffer wird in Entity::~Entity() freigegeben
 }
 
+// ============================================================
+// WICHTIG: Update() überschreiben - berechnet lightDirection 
+// automatisch aus der Transform-Rotation
+// ============================================================
+void Light::Update(const gdx::CDevice* device)
+{
+    // Basis-Update aufrufen (Matrix-Berechnungen)
+    Entity::Update(device);
+
+    // lightDirection aus der aktuellen Transform-Rotation berechnen
+    // LookAt-Vektor ist die Forward-Richtung nach der Rotation
+    XMVECTOR direction = transform.getLookAt();
+    DirectX::XMStoreFloat4(&cbLight.lightDirection, direction);
+
+    // lightPosition bleibt unverändert (oder auf Position der Entity setzen)
+    // Falls positional Light: cbLight.lightPosition = transform.getPosition();
+}
+
 void Light::SetDiffuseColor(const DirectX::XMFLOAT4& Color)
 {
     cbLight.lightDiffuseColor = Color;
