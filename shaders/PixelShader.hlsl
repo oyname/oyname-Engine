@@ -3,18 +3,18 @@
 // Struktur für ein einzelnes Licht (muss mit C++ LightBufferData kompatibel sein!)
 struct LightData
 {
-    float4 lightPosition; // XYZ: Position
-    float4 lightDirection; // XYZ: Direction
-    float4 lightDiffuseColor; // RGB: Diffuse Farbe (war lightColor im Original)
-    float4 lightAmbientColor; // RGB: Ambient Farbe (nur für erstes Licht relevant)
+    float4 lightPosition;       // XYZ: Position
+    float4 lightDirection;      // XYZ: Direction
+    float4 lightDiffuseColor;   // RGB: Diffuse Farbe (war lightColor im Original)
+    float4 lightAmbientColor;   // RGB: Ambient Farbe (nur für erstes Licht relevant)
 };
 
 // Light-Array Buffer
 cbuffer LightBuffer : register(b1)
 {
-    LightData lights[32]; // Array von bis zu 32 Lichtern
-    uint lightCount; // Aktuelle Anzahl der Lichter
-    float3 lightPadding; // Padding für 16-Byte Alignment
+    LightData lights[32];       // Array von bis zu 32 Lichtern
+    uint lightCount;            // Aktuelle Anzahl der Lichter
+    float3 lightPadding;        // Padding für 16-Byte Alignment
 };
 
 cbuffer MaterialBuffer : register(b2)
@@ -34,9 +34,9 @@ struct PS_INPUT
     float4 color : COLOR;
     float2 texCoord : TEXCOORD0;
     float4 positionLightSpace : TEXCOORD1;
-    float4 lightPosition : TEXCOORD2; // Noch kompatibel, aber nicht mehr genutzt
-    float3 lightColor : TEXCOORD3; // Noch kompatibel, aber nicht mehr genutzt
-    float3 lightDirection : TEXCOORD4; // Noch kompatibel, aber nicht mehr genutzt
+    float4 lightPosition : TEXCOORD2;      // Noch kompatibel, aber nicht mehr genutzt
+    float3 lightColor : TEXCOORD3;         // Noch kompatibel, aber nicht mehr genutzt
+    float3 lightDirection : TEXCOORD4;     // Noch kompatibel, aber nicht mehr genutzt
 };
 
 // ==================== TEXTURES & SAMPLERS ====================

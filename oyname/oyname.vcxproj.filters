@@ -251,4 +251,9 @@
       <Filter>04_Shader</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\shaders\PixelShader_MultiLight_TEST.hlsl">
+      <Filter>04_Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>
