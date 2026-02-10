@@ -8,7 +8,7 @@
 // Simple Cube Creation
 void CreateSimpleCube(LPENTITY* mesh, MATERIAL* material = nullptr);
 
-int main()
+int main4()
 {
     // Fullscreen für bessere Performance
     Engine::Graphics(1200, 650, true);
@@ -77,6 +77,11 @@ int main()
                     static_cast<float>(rand() % 360),
                     static_cast<float>(rand() % 360),
                     static_cast<float>(rand() % 360));
+
+                Engine::RotateEntity(cube,
+                    0.0f,
+                    0.0f,
+                    0.0f);
 
                 cubes.push_back(cube);
             }
