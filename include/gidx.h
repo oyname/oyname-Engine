@@ -124,6 +124,15 @@ namespace Engine
         entity->transform.Position(x, y, z);
     }
 
+    inline void PositionEntity(LPENTITY entity, DirectX::XMVECTOR pos)
+    {
+        if (entity == nullptr) {
+            Debug::Log("ERROR: PositionEntity - entity is nullptr");
+            return;
+        }
+        entity->transform.SetPosition(pos);
+    }
+
     inline void MoveEntity(LPENTITY entity, float x, float y, float z, Space mode = Space::Local)
     {
         if (entity == nullptr) {
@@ -140,6 +149,15 @@ namespace Engine
             return;
         }
         entity->transform.Rotate(fRotateX, fRotateY, fRotateZ, mode);
+    }
+
+    inline void RotateEntity(LPENTITY entity, DirectX::XMVECTOR quaternion)
+    {
+        if (entity == nullptr) {
+            Debug::Log("ERROR: RotateEntity - entity is nullptr");
+            return;
+        }
+        entity->transform.SetRotationQuaternion(quaternion);
     }
 
     inline void TurnEntity(LPENTITY entity, float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local)
@@ -167,6 +185,16 @@ namespace Engine
             return;
         }
         DirectX::XMVECTOR target = DirectX::XMVectorSet(targetX, targetY, targetZ, 1.0f);
+        DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+        entity->transform.LookAt(target, up);
+    }
+
+    inline void LookAt(LPENTITY entity, DirectX::XMVECTOR target)
+    {
+        if (entity == nullptr) {
+            Debug::Log("ERROR: LookAt - entity is nullptr");
+            return;
+        }
         DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
         entity->transform.LookAt(target, up);
     }
@@ -217,6 +245,13 @@ namespace Engine
             return;
         }
         engine->SetCamera(camera);  // engine->SetCamera macht den Cast intern
+    }
+
+    inline void PositionLightAtCamera(Light* light, class Camera* camera,
+        DirectX::XMVECTOR offset = DirectX::XMVectorZero())
+    {
+        engine->GetLM().PositionLightAtCamera(light, camera, offset);
+        engine->GetLM().Update(&engine->m_device);  // GPU-Buffer aktualisieren
     }
 
     // ==================== LIGHT ====================

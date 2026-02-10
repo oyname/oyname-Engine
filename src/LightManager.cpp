@@ -1,5 +1,6 @@
 ﻿#include "LightManager.h"
 #include "gdxengine.h"
+#include "Camera.h"
 #include "Memory.h"
 
 LightManager::LightManager() : lightBuffer(nullptr)
@@ -26,6 +27,29 @@ Light* LightManager::createLight(D3DLIGHTTYPE type)
     light->SetLightType(type);
     m_lights.push_back(light);
     return light;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NEUE FUNKTION: Licht an Kamera synchronisieren
+// Kopiert POSITION und ROTATION von der Kamera!
+// ═══════════════════════════════════════════════════════════════════════════
+void LightManager::PositionLightAtCamera(Light* light, Camera* camera, DirectX::XMVECTOR offset)
+{
+    if (light == nullptr || camera == nullptr) {
+        Debug::Log("ERROR: PositionLightAtCamera - light or camera is nullptr");
+        return;
+    }
+
+    // 1. Position: Kamera-Position + Offset
+    DirectX::XMVECTOR camPos = camera->transform.getPosition();
+    DirectX::XMVECTOR lightPos = DirectX::XMVectorAdd(camPos, offset);
+
+    // 2. Rotation: Exakte Kopie der Kamera-Rotation (Quaternion)
+    DirectX::XMVECTOR camRotation = camera->transform.GetRotationQuaternion();
+
+    // 3. Setze Licht mit Position UND Rotation
+    light->transform.SetPosition(lightPos);
+    light->transform.SetRotationQuaternion(camRotation);
 }
 
 void LightManager::InitializeLightBuffer(const gdx::CDevice* device)

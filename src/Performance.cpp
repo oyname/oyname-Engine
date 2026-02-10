@@ -8,7 +8,7 @@
 // Simple Cube Creation
 void CreateSimpleCube(LPENTITY* mesh, MATERIAL* material = nullptr);
 
-int main4()
+int main()
 {
     // Fullscreen für bessere Performance
     Engine::Graphics(1200, 650, true);
@@ -20,19 +20,38 @@ int main4()
     // Kamera erstellen und positionieren
     LPENTITY camera;
     Engine::CreateCamera(&camera);
-    Engine::PositionEntity(camera, 0.0f, 50.0f, -150.0f);  // Von oben und hinten schauen
+    Engine::PositionEntity(camera, 0.0f, 60.0f, -100.0f);  // Von oben und hinten schauen
     Engine::RotateEntity(camera, 20.0f, 0.0f, 0.0f);       // Leicht nach unten geneigt
 
-    // Licht erstellen
-    LPENTITY light;
-    Engine::CreateLight(&light, D3DLIGHTTYPE::D3DLIGHT_DIRECTIONAL);
-    Engine::RotateEntity(light, -45.0f, 45.0f, 0.0f);
+    // Light erstellen
+    LPENTITY light = nullptr;
+    Engine::CreateLight(&light, D3DLIGHT_DIRECTIONAL);    // Nutzt LightManager
+    Engine::RotateEntity(light, -90, 0, 0);                // Funktioniert
+    Engine::LightColor(light, 2.0f, 0.0f, 0.0f);
+
+    LPENTITY light2 = nullptr;
+    Engine::CreateLight(&light2, D3DLIGHT_DIRECTIONAL);  // Nutzt LightManager
+    Engine::TurnEntity(light2, 90, 0, 0);                // Funktioniert
+    Engine::LightColor(light2, 0.0f, 0.0f, 2.0f);
+
+    LPENTITY light3 = nullptr;
+    Engine::CreateLight(&light3, D3DLIGHT_DIRECTIONAL);  // Nutzt LightManager
+    Engine::TurnEntity(light3, 0, 90, 0);                // Funktioniert
+    Engine::LightColor(light3, 0.0f, 1.0f, 1.0f);
+
+    LPENTITY light4 = nullptr;
+    Engine::CreateLight(&light4, D3DLIGHT_DIRECTIONAL);  // Nutzt LightManager
+    Engine::TurnEntity(light4, 0, -90, 0);                // Funktioniert
+    Engine::LightColor(light4, 5.0f, 0.0f, 0.0f);
+
+
+    Engine::SetAmbientColor(0.2f, 0.2f, 0.2f);
 
     // ==================== WÜRFEL ERSTELLEN ====================
-    const int CUBES_X = 50;  // 50 x 50 x 4 = 10.000 Würfel
-    const int CUBES_Y = 4;
-    const int CUBES_Z = 50;
-    const float SPACING = 2.0f;
+    const int CUBES_X = 25;  // 50 x 50 x 4 = 10.000 Würfel
+    const int CUBES_Y = 25;
+    const int CUBES_Z = 25;
+    const float SPACING = 2.5f;
 
     std::vector<LPENTITY> cubes;
     cubes.reserve(CUBES_X * CUBES_Y * CUBES_Z);
@@ -103,14 +122,26 @@ int main4()
 
         static bool spacePressed = false;
         // ==================== INPUT ====================
-        if ((GetAsyncKeyState(VK_SPACE) & 0x8000)) {
-            if (!spacePressed) {
-                rotationEnabled = !rotationEnabled;
-                spacePressed = true;
-            }
+        //if ((GetAsyncKeyState(VK_SPACE) & 0x8000)) {
+        //    if (!spacePressed) {
+        //        rotationEnabled = !rotationEnabled;
+        //        spacePressed = true;
+        //    }
+        //}
+        //else {
+        //    spacePressed = false;
+        //}
+
+        if ((GetAsyncKeyState(VK_SPACE) & 0x8000))
+        {
+            Engine::PositionEntity(light4, camera->transform.getPosition());
+            Engine::RotateEntity(light4, camera->transform.GetRotationQuaternion());
         }
-        else {
-            spacePressed = false;
+
+        if ((GetAsyncKeyState(VK_F1) & 0x8000))
+        {
+            Engine::PositionEntity(light3, camera->transform.getPosition());
+            Engine::LookAt(light3, camera->transform.getLookAt());
         }
 
         if ((GetAsyncKeyState(VK_UP) & 0x8000)) {
@@ -118,6 +149,12 @@ int main4()
         }
         if ((GetAsyncKeyState(VK_DOWN) & 0x8000)) {
             Engine::MoveEntity(camera, 0.0f, 0.0f, -50.0f * dt);
+        }
+        if ((GetAsyncKeyState(VK_RIGHT) & 0x8000)) {
+            Engine::MoveEntity(camera, 50.0f * dt, 0.0f, 0.0f);
+        }
+        if ((GetAsyncKeyState(VK_LEFT) & 0x8000)) {
+            Engine::MoveEntity(camera, -50.0f * dt, 0.0f, 0.0f);
         }
 
         // ==================== UPDATE CUBES ====================
@@ -198,40 +235,40 @@ void CreateSimpleCube(LPENTITY* mesh, MATERIAL* material)
 
     // 6 Seiten, 4 Vertices pro Seite = 24 Vertices
     // Front Face (Z-)
-    Engine::AddVertex(surface, vertices[0]); Engine::VertexNormal(surface, 0, 0, -1); Engine::VertexColor(surface, 255, 100, 100);
-    Engine::AddVertex(surface, vertices[1]); Engine::VertexNormal(surface, 0, 0, -1); Engine::VertexColor(surface, 255, 100, 100);
-    Engine::AddVertex(surface, vertices[2]); Engine::VertexNormal(surface, 0, 0, -1); Engine::VertexColor(surface, 255, 100, 100);
-    Engine::AddVertex(surface, vertices[3]); Engine::VertexNormal(surface, 0, 0, -1); Engine::VertexColor(surface, 255, 100, 100);
+    Engine::AddVertex(surface, vertices[0]); Engine::VertexNormal(surface, 0, 0, -1); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[1]); Engine::VertexNormal(surface, 0, 0, -1); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[2]); Engine::VertexNormal(surface, 0, 0, -1); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[3]); Engine::VertexNormal(surface, 0, 0, -1); Engine::VertexColor(surface, 255, 255, 255);
 
     // Back Face (Z+)  <-- Winding gedreht
-    Engine::AddVertex(surface, vertices[4]); Engine::VertexNormal(surface, 0, 0, 1); Engine::VertexColor(surface, 100, 255, 100);
-    Engine::AddVertex(surface, vertices[7]); Engine::VertexNormal(surface, 0, 0, 1); Engine::VertexColor(surface, 100, 255, 100);
-    Engine::AddVertex(surface, vertices[6]); Engine::VertexNormal(surface, 0, 0, 1); Engine::VertexColor(surface, 100, 255, 100);
-    Engine::AddVertex(surface, vertices[5]); Engine::VertexNormal(surface, 0, 0, 1); Engine::VertexColor(surface, 100, 255, 100);
+    Engine::AddVertex(surface, vertices[4]); Engine::VertexNormal(surface, 0, 0, 1); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[7]); Engine::VertexNormal(surface, 0, 0, 1); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[6]); Engine::VertexNormal(surface, 0, 0, 1); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[5]); Engine::VertexNormal(surface, 0, 0, 1); Engine::VertexColor(surface, 255, 255, 255);
 
     // Left Face (X-)
-    Engine::AddVertex(surface, vertices[0]); Engine::VertexNormal(surface, -1, 0, 0); Engine::VertexColor(surface, 100, 100, 255);
-    Engine::AddVertex(surface, vertices[4]); Engine::VertexNormal(surface, -1, 0, 0); Engine::VertexColor(surface, 100, 100, 255);
-    Engine::AddVertex(surface, vertices[5]); Engine::VertexNormal(surface, -1, 0, 0); Engine::VertexColor(surface, 100, 100, 255);
-    Engine::AddVertex(surface, vertices[1]); Engine::VertexNormal(surface, -1, 0, 0); Engine::VertexColor(surface, 100, 100, 255);
+    Engine::AddVertex(surface, vertices[0]); Engine::VertexNormal(surface, -1, 0, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[4]); Engine::VertexNormal(surface, -1, 0, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[5]); Engine::VertexNormal(surface, -1, 0, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[1]); Engine::VertexNormal(surface, -1, 0, 0); Engine::VertexColor(surface, 255, 255, 255);
 
     // Right Face (X+)
-    Engine::AddVertex(surface, vertices[3]); Engine::VertexNormal(surface, 1, 0, 0); Engine::VertexColor(surface, 255, 255, 100);
-    Engine::AddVertex(surface, vertices[2]); Engine::VertexNormal(surface, 1, 0, 0); Engine::VertexColor(surface, 255, 255, 100);
-    Engine::AddVertex(surface, vertices[6]); Engine::VertexNormal(surface, 1, 0, 0); Engine::VertexColor(surface, 255, 255, 100);
-    Engine::AddVertex(surface, vertices[7]); Engine::VertexNormal(surface, 1, 0, 0); Engine::VertexColor(surface, 255, 255, 100);
+    Engine::AddVertex(surface, vertices[3]); Engine::VertexNormal(surface, 1, 0, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[2]); Engine::VertexNormal(surface, 1, 0, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[6]); Engine::VertexNormal(surface, 1, 0, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[7]); Engine::VertexNormal(surface, 1, 0, 0); Engine::VertexColor(surface, 255, 255, 255);
 
     // Bottom Face (Y-)
-    Engine::AddVertex(surface, vertices[0]); Engine::VertexNormal(surface, 0, -1, 0); Engine::VertexColor(surface, 255, 100, 255);
-    Engine::AddVertex(surface, vertices[3]); Engine::VertexNormal(surface, 0, -1, 0); Engine::VertexColor(surface, 255, 100, 255);
-    Engine::AddVertex(surface, vertices[7]); Engine::VertexNormal(surface, 0, -1, 0); Engine::VertexColor(surface, 255, 100, 255);
-    Engine::AddVertex(surface, vertices[4]); Engine::VertexNormal(surface, 0, -1, 0); Engine::VertexColor(surface, 255, 100, 255);
+    Engine::AddVertex(surface, vertices[0]); Engine::VertexNormal(surface, 0, -1, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[3]); Engine::VertexNormal(surface, 0, -1, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[7]); Engine::VertexNormal(surface, 0, -1, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[4]); Engine::VertexNormal(surface, 0, -1, 0); Engine::VertexColor(surface, 255, 255, 255);
 
     // Top Face (Y+)
-    Engine::AddVertex(surface, vertices[1]); Engine::VertexNormal(surface, 0, 1, 0); Engine::VertexColor(surface, 100, 255, 255);
-    Engine::AddVertex(surface, vertices[5]); Engine::VertexNormal(surface, 0, 1, 0); Engine::VertexColor(surface, 100, 255, 255);
-    Engine::AddVertex(surface, vertices[6]); Engine::VertexNormal(surface, 0, 1, 0); Engine::VertexColor(surface, 100, 255, 255);
-    Engine::AddVertex(surface, vertices[2]); Engine::VertexNormal(surface, 0, 1, 0); Engine::VertexColor(surface, 100, 255, 255);
+    Engine::AddVertex(surface, vertices[1]); Engine::VertexNormal(surface, 0, 1, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[5]); Engine::VertexNormal(surface, 0, 1, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[6]); Engine::VertexNormal(surface, 0, 1, 0); Engine::VertexColor(surface, 255, 255, 255);
+    Engine::AddVertex(surface, vertices[2]); Engine::VertexNormal(surface, 0, 1, 0); Engine::VertexColor(surface, 255, 255, 255);
 
     // Indices für alle 6 Seiten (2 Triangles pro Seite)
     int offset = 0;
