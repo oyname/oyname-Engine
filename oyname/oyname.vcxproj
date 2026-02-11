@@ -49,6 +49,7 @@
     <ClCompile Include="..\src\TextureManager.cpp" />
     <ClCompile Include="..\src\Timer.cpp" />
     <ClCompile Include="..\src\Transform.cpp" />
+    <ClCompile Include="LightExamplescene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\BufferManager.h" />

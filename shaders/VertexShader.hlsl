@@ -1,3 +1,5 @@
+// ==================== CONSTANT BUFFERS ====================
+
 cbuffer ConstantBuffer : register(b0)
 {
     row_major float4x4 _viewMatrix;
@@ -5,12 +7,21 @@ cbuffer ConstantBuffer : register(b0)
     row_major float4x4 _worldMatrix;
 };
 
+// Struktur für ein einzelnes Licht (muss mit C++ LightBufferData kompatibel sein!)
+struct LightData
+{
+    float4 lightPosition; // XYZ: Position, W: 0 für direktional, 1 für positional
+    float4 lightDirection; // XYZ: Direction
+    float4 lightDiffuseColor; // RGB: Diffuse Farbe
+    float4 lightAmbientColor; // RGB: Ambient Farbe (nur für erstes Licht relevant)
+};
+
+// Light-Array Buffer (SYNCHRON mit Pixel-Shader)
 cbuffer LightBuffer : register(b1)
 {
-    float4 lightPosition;
-    float4 lightDirection;
-    float4 lightColor;
-    float4 lightAmbientColor;
+    LightData lights[32]; // Array von bis zu 32 Lichtern
+    uint lightCount; // Aktuelle Anzahl der Lichter
+    float3 lightPadding; // Padding für 16-Byte Alignment
 };
 
 cbuffer MaterialBuffer : register(b2)
@@ -21,6 +32,8 @@ cbuffer MaterialBuffer : register(b2)
     float transparency;
     float2 padding;
 };
+
+// ==================== INPUT / OUTPUT STRUCTURES ====================
 
 struct VS_INPUT
 {
@@ -33,38 +46,37 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
     float4 position : SV_POSITION; // Bildschirmraumposition
-    float3 normal : NORMAL; // Normale des Vertex im Welt-Raum
+    float3 normal : NORMAL; // Normale im Welt-Raum
+    float3 worldPosition : TEXCOORD1; // Position im Welt-Raum (für Point-Light-Berechnung)
     float4 color : COLOR; // Farbe des Vertex
-    float2 texCoord : TEXCOORD0; // Texturkoordinaten des Vertex
-    float4 positionLightSpace : TEXCOORD1; // Position des Vertex im Licht-Raum (für Shadow Mapping)
-    float4 lightPosition : TEXCOORD2; // Position des Lichts
-    float3 lightColor : TEXCOORD3; // Farbe des Lichts
-    float3 lightDirection : TEXCOORD4; // Richtung des Lichts
+    float2 texCoord : TEXCOORD0; // Texturkoordinaten
+    float4 positionLightSpace : TEXCOORD2; // Position im Licht-Raum (zukünftig für Shadow Mapping)
 };
 
-// Erster Vertex-Shader (main)
+// ==================== MAIN VERTEX SHADER ====================
+
 VS_OUTPUT main(VS_INPUT input)
 {
     VS_OUTPUT o;
 
-    // Transformiere die Position des Vertices mit der Worldmatrix, Viewmatrix und der Projektionsmatrix
+    // Transformiere die Position des Vertices mit World-, View- und Projektionsmatrix
     float4 tempPosition = float4(input.position, 1.0f);
-    o.position = mul(tempPosition, _worldMatrix);
-    o.position = mul(o.position, _viewMatrix);
+    float4 worldPos = mul(tempPosition, _worldMatrix);
+    o.worldPosition = worldPos.xyz; // Speichere Welt-Position für PS
+    
+    o.position = mul(worldPos, _viewMatrix);
     o.position = mul(o.position, _projectionMatrix);
 
-    o.lightPosition = lightPosition;
-    o.lightDirection = lightDirection.xyz;
-    o.lightColor = lightColor.rgb;
-    
     // Transformiere die Normale in den Welt-Raum
+    // gdxdevice.cpp: Correctly apply world matrix to normal (without translation)
     o.normal = normalize(mul(input.normal, (float3x3) _worldMatrix));
 
-    // Kopiere die Farbe einfach
+    // Kopiere Vertex-Attribute
     o.color = input.color;
-
-    // Kopiere die Texturkoordinaten
     o.texCoord = input.texCoord;
+    
+    // Placeholder für zukünftiges Shadow Mapping
+    o.positionLightSpace = float4(0.0f, 0.0f, 0.0f, 0.0f);
     
     return o;
 }

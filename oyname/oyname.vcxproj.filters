@@ -162,6 +162,9 @@
     <ClCompile Include="..\src\gidx.cpp">
       <Filter>02_DirectX\01 Common</Filter>
     </ClCompile>
+    <ClCompile Include="LightExamplescene.cpp">
+      <Filter>05_Example</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\third_party\stb_image.h">

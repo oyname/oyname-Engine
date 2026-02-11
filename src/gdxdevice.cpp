@@ -449,24 +449,41 @@ HRESULT CDevice::CreateShadowMapTexture(UINT width, UINT height)
 
     HRESULT hr = S_OK;
 
+    Debug::Log("Creating Shadow Map Texture: ", width, "x", height);
+
     D3D11_TEXTURE2D_DESC shadowMapDesc;
     ZeroMemory(&shadowMapDesc, sizeof(shadowMapDesc));
+
     shadowMapDesc.Width = width;
     shadowMapDesc.Height = height;
     shadowMapDesc.MipLevels = 1;
     shadowMapDesc.ArraySize = 1;
-    shadowMapDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;  // Match with DSV/SRV formats
+
+    // ← WICHTIG: Format für bessere Tiefengenauigkeit
+    // R24G8_TYPELESS: 24-bit Depth + 8-bit Stencil (Standard, gut genug)
+    // R32_TYPELESS: 32-bit Depth (noch besser, aber größer)
+    // Wir nutzen R32 für höhere Genauigkeit
+    shadowMapDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+
     shadowMapDesc.SampleDesc.Count = 1;
     shadowMapDesc.SampleDesc.Quality = 0;
     shadowMapDesc.Usage = D3D11_USAGE_DEFAULT;
+
+    // ← WICHTIG: Depth-Stencil + Shader Resource Flags
     shadowMapDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+
     shadowMapDesc.CPUAccessFlags = 0;
     shadowMapDesc.MiscFlags = 0;
 
     hr = m_pd3dDevice->CreateTexture2D(&shadowMapDesc, NULL, &m_pShadowMap);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
+    {
+        Debug::LogError("Failed to create Shadow Map Texture: ", hr);
+        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
+    }
 
+    Debug::Log("Shadow Map Texture created successfully");
     return hr;
 }
 
@@ -477,32 +494,61 @@ HRESULT CDevice::CreateResourceViews()
 
     HRESULT hr = S_OK;
 
-    // Create Depth-Stencil-View for shadow map
+    // ═══════════════════════════════════════════════════════════════════════════
+    // 1. DEPTH STENCIL VIEW - zum Rendern ZU der Shadow Map
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    Debug::Log("Creating Depth Stencil View for Shadow Map...");
+
     D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
     ZeroMemory(&dsvDesc, sizeof(dsvDesc));
-    dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;  // ← Match with texture format
+
+    // Format muss mit der Texture TYPELESS kompatibel sein
+    // Wenn Texture R32_TYPELESS ist → D32_FLOAT
+    // Wenn Texture R24G8_TYPELESS ist → D24_UNORM_S8_UINT
+    dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;  // ← Muss float sein für gute Genauigkeit!
+
     dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     dsvDesc.Texture2D.MipSlice = 0;
 
     hr = m_pd3dDevice->CreateDepthStencilView(m_pShadowMap, &dsvDesc, &m_pShadowMapDepthView);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
+    {
+        Debug::LogError("Failed to create Shadow Map DSV: ", hr);
+        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
+    }
 
-    // Create Shader Resource View for shadow map
+    Debug::Log("Depth Stencil View created successfully");
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // 2. SHADER RESOURCE VIEW - zum Samplen AUS der Shadow Map
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    Debug::Log("Creating Shader Resource View for Shadow Map...");
+
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
     ZeroMemory(&srvDesc, sizeof(srvDesc));
-    srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;  // ← Match with texture format
+
+    // Format muss mit der Texture TYPELESS kompatibel sein
+    // Wenn Texture R32_TYPELESS ist → R32_FLOAT
+    // Wenn Texture R24G8_TYPELESS ist → R24_UNORM_X8_TYPELESS
+    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;  // ← Muss float sein!
+
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MostDetailedMip = 0;
     srvDesc.Texture2D.MipLevels = 1;
 
     hr = m_pd3dDevice->CreateShaderResourceView(m_pShadowMap, &srvDesc, &m_pShadowMapSRView);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
+        Debug::LogError("Failed to create Shadow Map SRV: ", hr);
         Memory::SafeRelease(m_pShadowMapDepthView);
+        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
     }
 
+    Debug::Log("Shader Resource View created successfully");
     return hr;
 }
 
@@ -513,26 +559,47 @@ HRESULT CDevice::CreateComparisonStatus()
 
     HRESULT hr = S_OK;
 
+    Debug::Log("Creating Comparison Sampler for PCF...");
+
     D3D11_SAMPLER_DESC comparisonSamplerDesc;
     ZeroMemory(&comparisonSamplerDesc, sizeof(comparisonSamplerDesc));
-    comparisonSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-    comparisonSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-    comparisonSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+
+    // ← WICHTIG: COMPARISON Filter für PCF!
+    // POINT: Kein Filtering (schnell, aber qualitativ schlechter)
+    // LINEAR: Bilinear PCF (bessere Qualität, empfohlen)
+    comparisonSamplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+
+    // Texture Addressing: CLAMP damit außerhalb der Shadow Map = nicht im Schatten
+    comparisonSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    comparisonSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    comparisonSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+    // Wenn außerhalb: Border Color = 1.0 (hell, nicht im Schatten)
     comparisonSamplerDesc.BorderColor[0] = 1.0f;
     comparisonSamplerDesc.BorderColor[1] = 1.0f;
     comparisonSamplerDesc.BorderColor[2] = 1.0f;
     comparisonSamplerDesc.BorderColor[3] = 1.0f;
-    comparisonSamplerDesc.MinLOD = 0.f;
+
+    // LOD Settings
+    comparisonSamplerDesc.MinLOD = 0.0f;
     comparisonSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-    comparisonSamplerDesc.MipLODBias = 0.f;
-    comparisonSamplerDesc.MaxAnisotropy = 0;
-    comparisonSamplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
-    comparisonSamplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
+    comparisonSamplerDesc.MipLODBias = 0.0f;
+    comparisonSamplerDesc.MaxAnisotropy = 1;
+
+    // ← WICHTIG: Comparison Function
+    // LESS: Wenn Depth < Sample dann im Licht (Standard)
+    // LESS_EQUAL: Leichte Variante
+    comparisonSamplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
 
     hr = m_pd3dDevice->CreateSamplerState(&comparisonSamplerDesc, &m_pComparisonSampler_point);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
+    {
+        Debug::LogError("Failed to create Comparison Sampler: ", hr);
+        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
+    }
 
+    Debug::Log("Comparison Sampler created successfully (PCF enabled)");
     return hr;
 }
 
@@ -543,16 +610,39 @@ HRESULT CDevice::CreateRenderStats()
 
     HRESULT hr = S_OK;
 
+    Debug::Log("Creating Rasterizer State for Shadow Pass...");
+
     D3D11_RASTERIZER_DESC shadowRenderStateDesc;
     ZeroMemory(&shadowRenderStateDesc, sizeof(shadowRenderStateDesc));
-    shadowRenderStateDesc.CullMode = D3D11_CULL_FRONT;
+
+    // Fill Mode
     shadowRenderStateDesc.FillMode = D3D11_FILL_SOLID;
-    shadowRenderStateDesc.DepthClipEnable = true;
+
+    // ← WICHTIG: FRONT CULLING, nicht BACK!
+    // Das verhindert Self-Shadowing und ist wichtig für Shadow Mapping
+    shadowRenderStateDesc.CullMode = D3D11_CULL_FRONT;
+
     shadowRenderStateDesc.FrontCounterClockwise = FALSE;
 
-    hr = m_pd3dDevice->CreateRasterizerState(&shadowRenderStateDesc, &m_pShadowRenderState);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
-        return hr;
+    // ← OPTIONAL: Depth Bias zur Shadow Acne Vermeidung
+    // Alternativ: Bias im Shader berechnen (mehr Kontrolle)
+    shadowRenderStateDesc.DepthBias = 0;  // Oder: 100000
+    shadowRenderStateDesc.DepthBiasClamp = 0.0f;
+    shadowRenderStateDesc.SlopeScaledDepthBias = 1.5f;  // Wichtig!
 
+    shadowRenderStateDesc.DepthClipEnable = TRUE;
+    shadowRenderStateDesc.ScissorEnable = FALSE;
+    shadowRenderStateDesc.MultisampleEnable = FALSE;
+    shadowRenderStateDesc.AntialiasedLineEnable = FALSE;
+
+    hr = m_pd3dDevice->CreateRasterizerState(&shadowRenderStateDesc, &m_pShadowRenderState);
+    if (FAILED(hr))
+    {
+        Debug::LogError("Failed to create Shadow Rasterizer State: ", hr);
+        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
+        return hr;
+    }
+
+    Debug::Log("Shadow Rasterizer State created successfully (Front Face Culling enabled)");
     return hr;
 }

@@ -14,7 +14,7 @@ static void UpdateBoxPointsEx(std::vector<DirectX::XMFLOAT3>& points, XMFLOAT3 m
 static void UpdateBox(LPENTITY mesh, unsigned int indexSurface, std::vector<DirectX::XMFLOAT3>& points, XMFLOAT3 minCorner, XMFLOAT3 maxCorner);
 static void CreateCollisionBox(LPSURFACE wuerfel, std::vector<DirectX::XMFLOAT3>& points);
 
-int main()
+int main6()
 {
     bool sw = true;
 
@@ -55,12 +55,14 @@ int main()
     // Light erstellen
     LPENTITY light = nullptr;
     Engine::CreateLight(&light, D3DLIGHT_DIRECTIONAL);    // Nutzt LightManager
+    Engine::PositionEntity(light, 0.0f, 0.0f, -20.0f);
     Engine::RotateEntity(light, -90, 0, 0);                // Funktioniert
     Engine::LightColor(light, 1.0f, 0.0f, 0.0f);
 
     LPENTITY light2 = nullptr;
     Engine::CreateLight(&light2, D3DLIGHT_DIRECTIONAL);  // Nutzt LightManager
-    Engine::TurnEntity(light2, 90, 0, 0);                // Funktioniert
+    Engine::PositionEntity(light, 0.0f, 0.0f, 20.0f);
+    Engine::TurnEntity(light2, 0, 0, 0);                // Funktioniert
     Engine::LightColor(light2, 0.0f, 0.0f, 1.0f);
 
 
@@ -68,14 +70,15 @@ int main()
 
     LPENTITY cube;
     CreateCube(&cube, material3);
-    Engine::PositionEntity(cube, 0.0f, 0.0f, 5.0f);
+    Engine::PositionEntity(cube, 0.0f, 2.0f, 10.0f);
     Engine::RotateEntity(cube, 0.0f, 0.0f, 0.0f);
     Engine::ScaleEntity(cube, 1.0f, 1.0f, 1.0f);
     Engine::EntityCollisionMode(cube, COLLISION::BOX);
 
     LPENTITY cube2;
     CreateCube(&cube2, material2);
-    Engine::PositionEntity(cube2, 0.0f, 2.5f, 10.0f);
+    Engine::PositionEntity(cube2, 0.0f, -4.0f, 10.0f);
+    Engine::ScaleEntity(cube2, 5.0f, 0.2f, 5.0f);
     Engine::RotateEntity(cube2, 0.0f, 0.0f, 0.0f);
     Engine::EntityCollisionMode(cube2, COLLISION::BOX);
 

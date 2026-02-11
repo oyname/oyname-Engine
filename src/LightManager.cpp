@@ -17,26 +17,50 @@ LightManager::~LightManager()
     Memory::SafeRelease(lightBuffer);
 }
 
+// Konvertiere D3DLIGHTTYPE zu LightType (für Rückwärtskompatibilität)
+static LightType ConvertD3DLightTypeToLightType(D3DLIGHTTYPE d3dType)
+{
+    // D3DLIGHT_DIRECTIONAL = 1, D3DLIGHT_POINT = 2, D3DLIGHT_SPOT = 3
+    if (d3dType == D3DLIGHT_POINT) {
+        return LightType::Point;
+    }
+    // Alles andere ist Directional (DEFAULT)
+    return LightType::Directional;
+}
+
+// Alte Signatur für Rückwärtskompatibilität (falls noch irgendwo genutzt)
 Light* LightManager::createLight(D3DLIGHTTYPE type)
 {
+    // Konvertiere alte API zu neuer API
+    LightType lightType = ConvertD3DLightTypeToLightType(type);
+    return createLight(lightType);
+}
+
+Light* LightManager::createLight(LightType type)
+{
     if (m_lights.size() >= MAX_LIGHTS) {
-        return nullptr;  // Max Lichter erreicht
+        Debug::Log("LightManager.cpp: WARNING - Max light count (32) reached, cannot create new light");
+        return nullptr;
     }
 
     Light* light = new Light;
     light->SetLightType(type);
+
+    // Setze Default-Radius für Point-Lichter
+    if (type == LightType::Point) {
+        light->SetRadius(100.0f);  // 100 Einheiten Standard-Reichweite
+    }
+
     m_lights.push_back(light);
+    Debug::Log("LightManager.cpp: Light created successfully (Total lights: ", static_cast<int>(m_lights.size()), ")");
     return light;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// NEUE FUNKTION: Licht an Kamera synchronisieren
-// Kopiert POSITION und ROTATION von der Kamera!
-// ═══════════════════════════════════════════════════════════════════════════
+// Licht an Kamera synchronisieren
 void LightManager::PositionLightAtCamera(Light* light, Camera* camera, DirectX::XMVECTOR offset)
 {
     if (light == nullptr || camera == nullptr) {
-        Debug::Log("ERROR: PositionLightAtCamera - light or camera is nullptr");
+        Debug::Log("LightManager.cpp: ERROR - PositionLightAtCamera received nullptr for light or camera");
         return;
     }
 
@@ -50,6 +74,9 @@ void LightManager::PositionLightAtCamera(Light* light, Camera* camera, DirectX::
     // 3. Setze Licht mit Position UND Rotation
     light->transform.SetPosition(lightPos);
     light->transform.SetRotationQuaternion(camRotation);
+
+    Debug::Log("LightManager.cpp: Light positioned at camera (Type: ",
+        (light->GetLightType() == LightType::Directional ? "Directional" : "Point"), ")");
 }
 
 void LightManager::InitializeLightBuffer(const gdx::CDevice* device)
@@ -63,12 +90,15 @@ void LightManager::InitializeLightBuffer(const gdx::CDevice* device)
     bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
     bufferDesc.ByteWidth = sizeof(LightArrayBuffer);
     bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;  // ← KORRIGIERT: war D3D11_ACCESS_WRITE
 
     HRESULT hr = device->GetDevice()->CreateBuffer(&bufferDesc, nullptr, &lightBuffer);
     if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+        Debug::Log("LightManager.cpp: ERROR - Failed to create light constant buffer");
         return;
     }
+
+    Debug::Log("LightManager.cpp: Light buffer initialized successfully (Capacity: 32 lights)");
 }
 
 void LightManager::Update(const gdx::CDevice* device)
@@ -78,12 +108,10 @@ void LightManager::Update(const gdx::CDevice* device)
         InitializeLightBuffer(device);
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
     // WICHTIG: Erst ALLE Lichter aktualisieren! 
-    // Das berechnet lightDirection aus der Transform-Rotation
-    // ═══════════════════════════════════════════════════════════════════════════
+    // Das berechnet lightDirection aus der Transform-Rotation und setzt lightPosition.w korrekt
     for (auto& light : m_lights) {
-        light->Update(device);  // ← KRITISCH! Synchronisiert Transform → lightDirection
+        light->Update(device);
     }
 
     // Hole globales Ambient von der Engine
@@ -101,10 +129,9 @@ void LightManager::Update(const gdx::CDevice* device)
         DirectX::XMFLOAT4 ambient = (i == 0) ? globalAmbient : DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
         // Lichter-Daten direkt in den Array eintragen
-        // Jetzt mit AKTUALISIERTEN Werten (von Update() berechnet)
-        lightCBData.lights[i].lightPosition = light->cbLight.lightPosition;
-        lightCBData.lights[i].lightDirection = light->cbLight.lightDirection;  // ← Jetzt aktualisiert!
-        lightCBData.lights[i].lightDiffuseColor = light->cbLight.lightDiffuseColor;
+        lightCBData.lights[i].lightPosition = light->cbLight.lightPosition;     // W ist jetzt korrekt gesetzt
+        lightCBData.lights[i].lightDirection = light->cbLight.lightDirection;
+        lightCBData.lights[i].lightDiffuseColor = light->cbLight.lightDiffuseColor;  // A ist jetzt Radius
         lightCBData.lights[i].lightAmbientColor = ambient;
     }
 
@@ -117,6 +144,7 @@ void LightManager::Update(const gdx::CDevice* device)
         D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
     if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+        Debug::Log("LightManager.cpp: ERROR - Failed to map light constant buffer");
         return;
     }
 

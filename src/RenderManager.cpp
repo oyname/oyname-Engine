@@ -45,10 +45,7 @@ void RenderManager::RenderScene()
         return;
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
     // WICHTIG: Lichter ZUERST aktualisieren!
-    // Das synchronisiert alle Light-Rotationen mit der GPU
-    // ═══════════════════════════════════════════════════════════════════════════
     m_lightManager.Update(m_objectManager.m_device);
 
     for (const auto& shader : m_objectManager.m_shaders)
