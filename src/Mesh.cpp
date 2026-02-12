@@ -3,7 +3,6 @@
 
 Mesh::Mesh() :
     Entity(),
-    pShader(nullptr),
     pMaterial(nullptr),
     collisionType(COLLISION::NONE)
 {

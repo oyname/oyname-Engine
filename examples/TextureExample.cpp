@@ -14,11 +14,18 @@ static void UpdateBoxPointsEx(std::vector<DirectX::XMFLOAT3>& points, XMFLOAT3 m
 static void UpdateBox(LPENTITY mesh, unsigned int indexSurface, std::vector<DirectX::XMFLOAT3>& points, XMFLOAT3 minCorner, XMFLOAT3 maxCorner);
 static void CreateCollisionBox(LPSURFACE wuerfel, std::vector<DirectX::XMFLOAT3>& points);
 
-int main8()
+static     LPSHADER g_shadertest;
+
+int main()
 {
     bool sw = true;
 
     sw == true ? Engine::Graphics(1200, 650) : Engine::Graphics(1980, 1080, false);
+
+
+    g_shadertest = nullptr;
+    Engine::CreateShader(&g_shadertest, L"..\\shaders\\VertexShaderRot.hlsl", "main", L"..\\shaders\\PixelShaderRot.hlsl", "main", Engine::CreateVertexFlags(true, false, false, false, false));
+
 
 
     // Texturen erstellen
@@ -40,7 +47,7 @@ int main8()
     Engine::MaterialTexture(material2, texture1);
 
     LPMATERIAL material3;
-    Engine::CreateMaterial(&material3);
+    Engine::CreateMaterial(&material3, g_shadertest);
     // So kann man auch einem Material eine Textur zuweisen
     Engine::MaterialTexture(material3, texture2);
 
@@ -55,15 +62,15 @@ int main8()
     // Light erstellen
     LPENTITY light = nullptr;
     Engine::CreateLight(&light, D3DLIGHT_DIRECTIONAL);    // Nutzt LightManager
-    Engine::PositionEntity(light, 0.0f, 0.0f, -20.0f);
+    Engine::PositionEntity(light, 0.0f, 0.0f, 0.0f);
     Engine::RotateEntity(light, -90, 0, 0);                // Funktioniert
-    Engine::LightColor(light, 1.0f, 0.0f, 0.0f);
+    Engine::LightColor(light, 0.0f, 0.0f, 1.0f);
 
     LPENTITY light2 = nullptr;
     Engine::CreateLight(&light2, D3DLIGHT_DIRECTIONAL);  // Nutzt LightManager
-    Engine::PositionEntity(light, 0.0f, 0.0f, 20.0f);
-    Engine::TurnEntity(light2, 0, 0, 0);                // Funktioniert
-    Engine::LightColor(light2, 0.0f, 0.0f, 1.0f);
+    Engine::PositionEntity(light, 0.0f, 0.0f, 0.0f);
+    Engine::RotateEntity(light2, 90, 0, 0);                // Funktioniert
+    Engine::LightColor(light2, 1.0f, 0.0f, 0.0f);
 
 
     //Engine::SetAmbientColor(0.4f, 0.0f, 0.0f);
@@ -82,10 +89,14 @@ int main8()
     Engine::RotateEntity(cube2, 0.0f, 0.0f, 0.0f);
     Engine::EntityCollisionMode(cube2, COLLISION::BOX);
 
+    Engine::EntityTexture(cube, texture2);
+
+    Engine::engine->GetOM().addMeshToMaterial(material2, dynamic_cast<Mesh*>(cube2));
+    Engine::engine->GetOM().addMeshToMaterial(material3, dynamic_cast<Mesh*>(cube));
+
     // Winkel inkrementieren, um das Objekt im Kreis zu bewegen
     double angle = 0.0;
     float speed = 100.0f;
-
 
     std::vector<DirectX::XMFLOAT3> points;
     InitializeBoxPoints(points, Engine::EntitySurface(cube, 0)->minPoint, Engine::EntitySurface(cube, 0)->maxPoint);
@@ -142,10 +153,10 @@ int main8()
         }
 
 
-        if (Engine::EntityCollision(cube, cube2))
-            Debug::Log("Kollision");
-        else
-            Debug::Log("Keine Kollision");
+        //if (Engine::EntityCollision(cube, cube2))
+        //    Debug::Log("Kollision");
+        //else
+        //    Debug::Log("Keine Kollision");
 
         // Extrahiere OBB Corners und visualisiere
         DirectX::XMFLOAT3 corners[8];

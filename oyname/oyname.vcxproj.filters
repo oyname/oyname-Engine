@@ -256,5 +256,11 @@
     <Text Include="..\shaders\PixelShader.hlsl">
       <Filter>04_Shader</Filter>
     </Text>
+    <Text Include="..\shaders\PixelShaderRot.hlsl">
+      <Filter>04_Shader</Filter>
+    </Text>
+    <Text Include="..\shaders\VertexShaderRot.hlsl">
+      <Filter>04_Shader</Filter>
+    </Text>
   </ItemGroup>
 </Project>

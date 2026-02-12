@@ -559,17 +559,10 @@ namespace Engine
         if (!surface) { Debug::Log("ERROR: FillBuffer - surface is nullptr"); return; }
 
         Shader* shader = nullptr;
-
-        // Neuer Weg: Surface -> Mesh -> Material -> Shader
         if (surface->pMesh && surface->pMesh->pMaterial)
-        {
-            Material* material = static_cast<Material*>(surface->pMesh->pMaterial);
-            shader = material ? material->pRenderShader : nullptr;
-        }
+            shader = surface->pMesh->pMaterial->pRenderShader;
 
-        // Fallback: alter Weg über surface->pShader
-        if (!shader && surface->pShader)
-            shader = static_cast<Shader*>(surface->pShader);
+        if (!shader) { Debug::Log("ERROR: FillBuffer - cannot resolve shader"); return; }
 
         if (!shader) { Debug::Log("ERROR: FillBuffer - cannot resolve shader"); return; }
 
@@ -800,6 +793,14 @@ namespace Engine
         material->UpdateConstantBuffer(engine->m_device.GetDeviceContext());
     }
 
+    inline void EntityMaterial(LPENTITY entity, LPMATERIAL material)
+    {
+        Mesh* mesh = dynamic_cast<Mesh*>(entity);
+        if (!mesh) { Debug::Log("EntityMaterial - Entity ist kein Mesh"); return; }
+        if (!material) { Debug::Log("EntityMaterial - material nullptr"); return; }
+        engine->GetOM().addMeshToMaterial(material, mesh);
+    }
+
     inline void EntityTexture(LPENTITY entity, LPTEXTURE texture)
     {
         if (entity == nullptr) {
@@ -821,7 +822,7 @@ namespace Engine
 
         if (mesh->pMaterial != nullptr)
         {
-            LPMATERIAL material = static_cast<LPMATERIAL>(mesh->pMaterial);
+            Material* material = mesh->pMaterial;
             material->SetTexture(texture->m_texture, texture->m_textureView, texture->m_imageSamplerState);
         }
         else {

@@ -33,7 +33,7 @@ public:
     void addSurfaceToMesh(Mesh* mesh, Surface* surface);
     void addMeshToMaterial(Material* material, Mesh* mesh);
 
-    // Correct semantic name: assigns a shader to a material (and keeps buckets in sync)
+    // Assign shader to material and keep buckets in sync
     void assignShaderToMaterial(Shader* shader, Material* material);
 
     // Backwards compatibility (old name used by gidx.h)
@@ -62,9 +62,9 @@ public:
     void processMesh();
     Surface* getSurface(Mesh* mesh);
     Material* getStandardMaterial() const;
-    void* getShader(Surface surface) const;
-    void* getShader(Mesh mesh) const;
-    void* getShader(Material material) const;
+    Shader* getShader(const Surface& surface) const;
+    Shader* getShader(const Mesh& mesh) const;
+    Shader* getShader(const Material& material) const;
 
 private:
     gdx::CDevice* m_device;
@@ -75,3 +75,4 @@ private:
     std::vector<Material*> m_materials;
     std::vector<Shader*> m_shaders;
 };
+

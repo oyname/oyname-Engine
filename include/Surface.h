@@ -2,12 +2,12 @@
 #include <vector>
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include "gdxutil.h" 
+#include "gdxutil.h"
 #include "gdxdevice.h"
 
 using namespace DirectX;
 
-class Mesh; // forward
+class Mesh;    // forward
 
 class Surface {
 public:
@@ -19,7 +19,7 @@ public:
     void VertexColor(unsigned int index, float r, float g, float b);
     void VertexTexCoords(unsigned int index, float u, float v);
     void AddIndex(UINT index);
-    
+
     void Draw(const gdx::CDevice* m_device, const DWORD flags);
 
     // Getter
@@ -39,7 +39,7 @@ public:
     std::vector<XMFLOAT3> normal;
     unsigned int size_normal;
     unsigned int size_listNormal;
-    
+
     std::vector<XMFLOAT4> color;
     unsigned int size_color;
     unsigned int size_listColor;
@@ -62,16 +62,13 @@ public:
     ID3D11Buffer* uv2Buffer;
     ID3D11Buffer* indexBuffer;
 
-    Mesh* pMesh = nullptr; // owner back-reference
-    void* pShader;
-
+    Mesh* pMesh = nullptr;               
     XMFLOAT3 minPoint;
     XMFLOAT3 maxPoint;
-    
+
 public:
     // ist dafür gemacht um Linien zu rendern!
     bool test;
-
 };
 
 typedef Surface* LPSURFACE;

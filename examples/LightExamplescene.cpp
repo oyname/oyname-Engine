@@ -8,7 +8,7 @@ LPENTITY g_blueLight = nullptr;
 
 void CreateCube(LPENTITY* mesh, MATERIAL* material);
 
-int main()
+int main4()
 {
     Engine::Graphics(1200, 720);
           

@@ -7,6 +7,8 @@
 #include "gdxutil.h"
 #include "Surface.h"
 
+class Material;
+
 enum COLLISION {
     NONE = 0,
     BOX = 1,
@@ -42,8 +44,7 @@ public:
 
 public:
     std::vector<Surface*> surfaces;
-    void* pShader;
-    void* pMaterial;
+    Material* pMaterial;
     DirectX::BoundingOrientedBox obb;
 
 private:

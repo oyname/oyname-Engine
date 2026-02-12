@@ -13,7 +13,6 @@ Surface::Surface() :
     colorBuffer(nullptr),
     indexBuffer(nullptr),
     normalBuffer(nullptr),
-    pShader(nullptr),
     uv1Buffer(nullptr),
     uv2Buffer(nullptr),
     size_listUV1(0),
@@ -31,7 +30,7 @@ Surface::~Surface() {
     Memory::SafeRelease(indexBuffer);
     Memory::SafeRelease(normalBuffer);      
     Memory::SafeRelease(uv1Buffer);         
-    Memory::SafeRelease(uv2Buffer);         
+    Memory::SafeRelease(uv2Buffer);
 }
 
 float Surface::getVertexX(unsigned int index) const
