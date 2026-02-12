@@ -19,18 +19,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Adapter.cpp" />
+    <ClCompile Include="..\examples\Adapter.cpp" />
+    <ClCompile Include="..\examples\EntityTest.cpp" />
+    <ClCompile Include="..\examples\GridWave.cpp" />
+    <ClCompile Include="..\examples\LightExamplescene.cpp" />
+    <ClCompile Include="..\examples\Multitextur.cpp" />
+    <ClCompile Include="..\examples\Performance.cpp" />
+    <ClCompile Include="..\examples\Simple.cpp" />
+    <ClCompile Include="..\examples\TextureExample.cpp" />
     <ClCompile Include="..\src\BufferManager.cpp" />
     <ClCompile Include="..\src\Camera.cpp" />
     <ClCompile Include="..\src\CameraManager.cpp" />
     <ClCompile Include="..\src\Entity.cpp" />
-    <ClCompile Include="..\src\EntityTest.cpp" />
     <ClCompile Include="..\src\gdxdevice.cpp" />
     <ClCompile Include="..\src\gdxengine.cpp" />
     <ClCompile Include="..\src\gdxinterface.cpp" />
     <ClCompile Include="..\src\gidx.cpp" />
     <ClCompile Include="..\src\gidxwin.cpp" />
-    <ClCompile Include="..\src\GridWave.cpp" />
     <ClCompile Include="..\src\InputLayoutManager.cpp" />
     <ClCompile Include="..\src\Light.cpp" />
     <ClCompile Include="..\src\LightManager.cpp" />
@@ -38,18 +43,14 @@
     <ClCompile Include="..\src\Material.cpp" />
     <ClCompile Include="..\src\Mesh.cpp" />
     <ClCompile Include="..\src\ObjectManager.cpp" />
-    <ClCompile Include="..\src\Performance.cpp" />
     <ClCompile Include="..\src\RenderManager.cpp" />
     <ClCompile Include="..\src\Shader.cpp" />
     <ClCompile Include="..\src\ShaderManager.cpp" />
-    <ClCompile Include="..\src\Simple.cpp" />
     <ClCompile Include="..\src\Surface.cpp" />
     <ClCompile Include="..\src\Texture.cpp" />
-    <ClCompile Include="..\src\TextureExample.cpp" />
     <ClCompile Include="..\src\TextureManager.cpp" />
     <ClCompile Include="..\src\Timer.cpp" />
     <ClCompile Include="..\src\Transform.cpp" />
-    <ClCompile Include="LightExamplescene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\BufferManager.h" />

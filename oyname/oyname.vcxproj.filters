@@ -123,21 +123,6 @@
     <ClCompile Include="..\src\Texture.cpp">
       <Filter>03_Engine\02 Manager\00 Objects</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\GridWave.cpp">
-      <Filter>05_Example</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\TextureExample.cpp">
-      <Filter>05_Example</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Performance.cpp">
-      <Filter>05_Example</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Simple.cpp">
-      <Filter>05_Example</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\EntityTest.cpp">
-      <Filter>05_Example</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\gdxdevice.cpp">
       <Filter>02_DirectX\02 Device</Filter>
     </ClCompile>
@@ -156,13 +141,31 @@
     <ClCompile Include="..\src\gdxengine.cpp">
       <Filter>03_Engine\01 Engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Adapter.cpp">
-      <Filter>05_Example</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\gidx.cpp">
       <Filter>02_DirectX\01 Common</Filter>
     </ClCompile>
-    <ClCompile Include="LightExamplescene.cpp">
+    <ClCompile Include="..\examples\Adapter.cpp">
+      <Filter>05_Example</Filter>
+    </ClCompile>
+    <ClCompile Include="..\examples\EntityTest.cpp">
+      <Filter>05_Example</Filter>
+    </ClCompile>
+    <ClCompile Include="..\examples\GridWave.cpp">
+      <Filter>05_Example</Filter>
+    </ClCompile>
+    <ClCompile Include="..\examples\LightExamplescene.cpp">
+      <Filter>05_Example</Filter>
+    </ClCompile>
+    <ClCompile Include="..\examples\Multitextur.cpp">
+      <Filter>05_Example</Filter>
+    </ClCompile>
+    <ClCompile Include="..\examples\Performance.cpp">
+      <Filter>05_Example</Filter>
+    </ClCompile>
+    <ClCompile Include="..\examples\Simple.cpp">
+      <Filter>05_Example</Filter>
+    </ClCompile>
+    <ClCompile Include="..\examples\TextureExample.cpp">
       <Filter>05_Example</Filter>
     </ClCompile>
   </ItemGroup>

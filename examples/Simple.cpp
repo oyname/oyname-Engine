@@ -5,7 +5,7 @@
 // A simple example demonstrating the basic usage of the oyname Engine
 // It creates a DirectX window and clears the background with a predefined color in a loop.
 
-int main5()
+int main7()
 {
     Engine::Graphics(1024, 768);
 

@@ -51,10 +51,19 @@ int main()
     Engine::PositionEntity(g_blueLight, -20.0f, 15.0f, 0.0f);
     Engine::LightColor(g_blueLight, 0.3f, 0.3f, 1.0f);
 
+    // ← NEU: Erstelle ein DIRECTIONALES LICHT für Shadow Mapping!
+    LPENTITY g_directionalLight = nullptr;
+    Engine::CreateLight(&g_directionalLight, D3DLIGHT_DIRECTIONAL);  // ← DIRECTIONAL!
+    Engine::PositionEntity(g_directionalLight, 0.0f, 150.0f, 0.0f);
+    Engine::RotateEntity(g_directionalLight, -90.0f, 0.0f, 0.0f);
+    Engine::LightColor(g_directionalLight, 1.0f, 1.0f, 1.0f);
+
+    // ← WICHTIG: Setze das Directional Light für Schatten!
     Engine::SetAmbientColor(0.2f, 0.2f, 0.2f);
 
     float speed = 100.0f;
-
+    //Engine::PositionEntity(g_camera, 0.0f, 150.0f, 0.0f);
+    //Engine::RotateEntity(  g_camera, 90.0f, 0.0f, 0.0f);
     Timer::SetTimeMode(Timer::TimeMode::VSYNC_ONLY);
     Engine::SetVSync(Engine::VSync::ON);
 
