@@ -505,7 +505,7 @@ namespace Engine
             return;
         }
 
-        engine->GetOM().assignShaderToMaterial(shader, *material);
+        engine->GetOM().addMaterialToShader(shader, *material);
     }
 
     inline void CreateSurface(LPSURFACE* surface, LPENTITY entity)
@@ -556,44 +556,48 @@ namespace Engine
 
     inline void FillBuffer(LPSURFACE surface)
     {
-        if (surface == nullptr) {
-            Debug::Log("ERROR: FillBuffer - surface is nullptr");
-            return;
+        if (!surface) { Debug::Log("ERROR: FillBuffer - surface is nullptr"); return; }
+
+        Shader* shader = nullptr;
+
+        // Neuer Weg: Surface -> Mesh -> Material -> Shader
+        if (surface->pMesh && surface->pMesh->pMaterial)
+        {
+            Material* material = static_cast<Material*>(surface->pMesh->pMaterial);
+            shader = material ? material->pRenderShader : nullptr;
         }
 
-        if (surface->pShader == nullptr) {
-            Debug::Log("ERROR: FillBuffer - surface has no shader");
-            return;
-        }
+        // Fallback: alter Weg über surface->pShader
+        if (!shader && surface->pShader)
+            shader = static_cast<Shader*>(surface->pShader);
 
-        LPSHADER shader = static_cast<LPSHADER>(surface->pShader);
+        if (!shader) { Debug::Log("ERROR: FillBuffer - cannot resolve shader"); return; }
 
         // Vertexbuffer
         if (shader->flagsVertex & D3DVERTEX_POSITION) {
             engine->GetBM().CreateBuffer(surface->position.data(), surface->size_position,
-                surface->size_listPosition, D3D11_BIND_VERTEX_BUFFER,
-                &surface->positionBuffer);
+                surface->size_listPosition, D3D11_BIND_VERTEX_BUFFER, &surface->positionBuffer);
         }
         if (shader->flagsVertex & D3DVERTEX_NORMAL) {
             engine->GetBM().CreateBuffer(surface->normal.data(), surface->size_normal,
-                surface->size_listNormal, D3D11_BIND_VERTEX_BUFFER,
-                &surface->normalBuffer);
+                surface->size_listNormal, D3D11_BIND_VERTEX_BUFFER, &surface->normalBuffer);
         }
         if (shader->flagsVertex & D3DVERTEX_COLOR) {
             engine->GetBM().CreateBuffer(surface->color.data(), surface->size_color,
-                surface->size_listColor, D3D11_BIND_VERTEX_BUFFER,
-                &surface->colorBuffer);
+                surface->size_listColor, D3D11_BIND_VERTEX_BUFFER, &surface->colorBuffer);
         }
         if (shader->flagsVertex & D3DVERTEX_TEX1) {
             engine->GetBM().CreateBuffer(surface->uv1.data(), surface->size_uv1,
-                surface->size_listUV1, D3D11_BIND_VERTEX_BUFFER,
-                &surface->uv1Buffer);
+                surface->size_listUV1, D3D11_BIND_VERTEX_BUFFER, &surface->uv1Buffer);
+        }
+        if (shader->flagsVertex & D3DVERTEX_TEX2) {
+            engine->GetBM().CreateBuffer(surface->uv2.data(), surface->size_uv2,
+                surface->size_listUV2, D3D11_BIND_VERTEX_BUFFER, &surface->uv2Buffer);
         }
 
-        // Indexbuffer befüllen
+        // Indexbuffer
         engine->GetBM().CreateBuffer(surface->indices.data(), sizeof(UINT),
-            surface->size_listIndex, D3D11_BIND_INDEX_BUFFER,
-            &surface->indexBuffer);
+            surface->size_listIndex, D3D11_BIND_INDEX_BUFFER, &surface->indexBuffer);
     }
 
     inline void UpdateColorBuffer(LPSURFACE surface)

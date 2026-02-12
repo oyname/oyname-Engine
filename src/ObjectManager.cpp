@@ -85,9 +85,20 @@ Shader* ObjectManager::createShader() {
     return shader;
 }
 
-void ObjectManager::addSurfaceToMesh(Mesh* mesh, Surface* surface) {
-    surface->pShader = (Shader*)mesh->pShader;
+//void ObjectManager::addSurfaceToMesh(Mesh* mesh, Surface* surface) {
+//    surface->pShader = (Shader*)mesh->pShader;
+//    mesh->AddSurfaceToMesh(surface);
+//}
+
+void ObjectManager::addSurfaceToMesh(Mesh* mesh, Surface* surface)
+{
+    if (!mesh || !surface) return;
+
+    surface->pMesh = mesh; // wichtig
     mesh->AddSurfaceToMesh(surface);
+
+    // optional (Übergang): surface->pShader weiter setzen, bis alles umgebaut ist
+    // surface->pShader = mesh->pShader;
 }
 
 void ObjectManager::addMeshToMaterial(Material* material, Mesh* mesh) {
@@ -158,19 +169,21 @@ void ObjectManager::deleteCamera(Camera* camera) {
     }
 }
 
-void ObjectManager::deleteMaterial(Material* material) {
-    for (auto& shader : m_shaders) {
-        auto& materials = shader->materials;
-        for (auto it = materials.begin(); it != materials.end(); ++it) {
-            if (*it == material) {
-                materials.erase(it);
-                break;
-            }
-        }
+void ObjectManager::deleteMaterial(Material* material)
+{
+    if (!material) return;
+
+    // aus dem zugewiesenen Bucket raus (und sicherheitshalber Duplikate killen)
+    Shader* sh = material->pRenderShader;
+    if (sh)
+    {
+        auto& v = sh->materials;
+        v.erase(std::remove(v.begin(), v.end(), material), v.end());
     }
 
     auto it = std::find(m_materials.begin(), m_materials.end(), material);
-    if (it != m_materials.end()) {
+    if (it != m_materials.end())
+    {
         material->meshes.clear();
         m_materials.erase(it);
         Memory::SafeDelete(material);
@@ -307,13 +320,11 @@ void ObjectManager::processMesh()
     }
 }
 
-void ObjectManager::deleteShader(Shader* shader) {
-    if (shader == nullptr) {
-        Debug::Log("WARNING: ObjectManager::deleteShader - shader is nullptr");
-        return;
-    }
+void ObjectManager::deleteShader(Shader* shader)
+{
+    if (!shader) return;
 
-    // Unassign shader from all materials that reference it
+    // Alle Materialien, die im Bucket hängen, vom Shader lösen
     for (auto* mat : shader->materials)
     {
         if (mat && mat->pRenderShader == shader)
@@ -322,48 +333,44 @@ void ObjectManager::deleteShader(Shader* shader) {
     shader->materials.clear();
 
     auto it = std::find(m_shaders.begin(), m_shaders.end(), shader);
-    if (it != m_shaders.end()) {
+    if (it != m_shaders.end())
+    {
         m_shaders.erase(it);
         Memory::SafeDelete(shader);
     }
-    else {
-        Debug::Log("WARNING: ObjectManager::deleteShader - Shader not found in manager");
-    }
 }
+
 
 void ObjectManager::assignShaderToMaterial(Shader* shader, Material* material)
 {
-    if (!material) {
-        Debug::Log("WARNING: ObjectManager::assignShaderToMaterial - material is nullptr");
-        return;
-    }
+    if (!material) return;
 
-    // Remove from old shader bucket
-    Shader* oldShader = material->pRenderShader;
-    if (oldShader && oldShader != shader)
+    // 1) Aus altem Bucket raus
+    Shader* old = material->pRenderShader;
+    if (old && old != shader)
     {
-        auto& oldList = oldShader->materials;
-        oldList.erase(std::remove(oldList.begin(), oldList.end(), material), oldList.end());
+        auto& v = old->materials;
+        v.erase(std::remove(v.begin(), v.end(), material), v.end()); // entfernt ALLE Duplikate
     }
 
-    // Assign new shader
+    // 2) Wahrheit setzen
     material->pRenderShader = shader;
 
-    // Add to new shader bucket
+    // 3) In neuen Bucket rein (ohne Duplikate)
     if (shader)
     {
-        auto& newList = shader->materials;
-        if (std::find(newList.begin(), newList.end(), material) == newList.end())
-            newList.push_back(material);
+        auto& v = shader->materials;
+        if (std::find(v.begin(), v.end(), material) == v.end())
+            v.push_back(material);
     }
 
-    // Keep legacy fields in sync (Mesh/Surface still store pShader as void*)
+    // optional legacy sync (nur wenn du es noch brauchst)
     for (auto* mesh : material->meshes)
     {
         if (!mesh) continue;
-        mesh->pShader = (void*)shader;
+        mesh->pShader = shader;
         for (auto* surface : mesh->surfaces)
-            if (surface) surface->pShader = (void*)shader;
+            if (surface) surface->pShader = shader;
     }
 }
 

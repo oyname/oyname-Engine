@@ -7,6 +7,8 @@
 
 using namespace DirectX;
 
+class Mesh; // forward
+
 class Surface {
 public:
     Surface();
@@ -60,6 +62,7 @@ public:
     ID3D11Buffer* uv2Buffer;
     ID3D11Buffer* indexBuffer;
 
+    Mesh* pMesh = nullptr; // owner back-reference
     void* pShader;
 
     XMFLOAT3 minPoint;

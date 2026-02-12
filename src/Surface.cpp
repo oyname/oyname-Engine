@@ -20,6 +20,7 @@ Surface::Surface() :
     size_listUV2(0),
     size_uv1(0),
     size_uv2(0),
+    pMesh(nullptr),
     test(false)
 {
 }
