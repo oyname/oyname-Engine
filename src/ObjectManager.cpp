@@ -33,7 +33,6 @@ ObjectManager::~ObjectManager()
     }
     m_cameras.clear();
 
-
     for (auto& material : m_materials) {
         Memory::SafeDelete(material);
     }
@@ -92,14 +91,15 @@ void ObjectManager::addSurfaceToMesh(Mesh* mesh, Surface* surface) {
 }
 
 void ObjectManager::addMeshToMaterial(Material* material, Mesh* mesh) {
-    mesh->pShader = material->pRenderShader;
+    mesh->pShader = (void*)material->pRenderShader;
     mesh->pMaterial = material;
     material->meshes.push_back(mesh);
 }
 
-void ObjectManager::addMaterialToShader(Shader* shader, Material* material) {
-    material->pRenderShader = shader;
-    shader->materials.push_back(material);
+void ObjectManager::addMaterialToShader(Shader* shader, Material* material)
+{
+    // Backwards compatibility wrapper for gidx.h
+    assignShaderToMaterial(shader, material);
 }
 
 void ObjectManager::deleteSurface(Surface* surface) {
@@ -313,23 +313,16 @@ void ObjectManager::deleteShader(Shader* shader) {
         return;
     }
 
-    for (auto& material : m_materials) {
-        auto& materials = shader->materials;
-        for (auto it = materials.begin(); it != materials.end(); ++it) {
-            if (*it == material) {
-                materials.erase(it);
-                break;
-            }
-        }
-
-        if (material->pRenderShader == shader) {
-            material->pRenderShader = nullptr;
-        }
+    // Unassign shader from all materials that reference it
+    for (auto* mat : shader->materials)
+    {
+        if (mat && mat->pRenderShader == shader)
+            mat->pRenderShader = nullptr;
     }
+    shader->materials.clear();
 
     auto it = std::find(m_shaders.begin(), m_shaders.end(), shader);
     if (it != m_shaders.end()) {
-        shader->materials.clear();
         m_shaders.erase(it);
         Memory::SafeDelete(shader);
     }
@@ -337,3 +330,40 @@ void ObjectManager::deleteShader(Shader* shader) {
         Debug::Log("WARNING: ObjectManager::deleteShader - Shader not found in manager");
     }
 }
+
+void ObjectManager::assignShaderToMaterial(Shader* shader, Material* material)
+{
+    if (!material) {
+        Debug::Log("WARNING: ObjectManager::assignShaderToMaterial - material is nullptr");
+        return;
+    }
+
+    // Remove from old shader bucket
+    Shader* oldShader = material->pRenderShader;
+    if (oldShader && oldShader != shader)
+    {
+        auto& oldList = oldShader->materials;
+        oldList.erase(std::remove(oldList.begin(), oldList.end(), material), oldList.end());
+    }
+
+    // Assign new shader
+    material->pRenderShader = shader;
+
+    // Add to new shader bucket
+    if (shader)
+    {
+        auto& newList = shader->materials;
+        if (std::find(newList.begin(), newList.end(), material) == newList.end())
+            newList.push_back(material);
+    }
+
+    // Keep legacy fields in sync (Mesh/Surface still store pShader as void*)
+    for (auto* mesh : material->meshes)
+    {
+        if (!mesh) continue;
+        mesh->pShader = (void*)shader;
+        for (auto* surface : mesh->surfaces)
+            if (surface) surface->pShader = (void*)shader;
+    }
+}
+

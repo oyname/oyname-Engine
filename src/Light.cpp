@@ -25,6 +25,79 @@ Light::~Light()
     Memory::SafeRelease(lightBuffer);
 }
 
+// ==================== SHADOW MAPPING HELPERS ====================
+// Robust "up" handling: if direction is almost parallel to (0,1,0), use (0,0,1).
+static DirectX::XMVECTOR ChooseSafeUp(DirectX::XMVECTOR dir)
+{
+    using namespace DirectX;
+    dir = XMVector3Normalize(dir);
+    XMVECTOR upY = XMVectorSet(0, 1, 0, 0);
+    float d = fabsf(XMVectorGetX(XMVector3Dot(dir, upY)));
+    if (d > 0.98f) {
+        return XMVectorSet(0, 0, 1, 0);
+    }
+    return upY;
+}
+
+DirectX::XMMATRIX Light::GetLightViewMatrix() const
+{
+    using namespace DirectX;
+
+    // Position comes from cbLight (kept in Update())
+    XMVECTOR pos = XMLoadFloat4(&cbLight.lightPosition);
+    pos = XMVectorSetW(pos, 1.0f);
+
+    // Direction comes from cbLight.lightDirection (set in Update/UpdateLight)
+    XMVECTOR dir = XMLoadFloat4(&cbLight.lightDirection);
+    dir = XMVectorSetW(dir, 0.0f);
+    dir = XMVector3Normalize(dir);
+    if (XMVector3Equal(dir, XMVectorZero())) {
+        dir = XMVectorSet(0, -1, 0, 0);
+    }
+
+    XMVECTOR up = ChooseSafeUp(dir);
+
+    // LookTo is the natural fit here (pos + direction)
+    return XMMatrixLookToLH(pos, dir, up);
+}
+
+DirectX::XMMATRIX Light::GetLightProjectionMatrix() const
+{
+    using namespace DirectX;
+
+    if (lightType == LightType::Directional) {
+        // Square orthographic frustum: width=height=m_shadowOrthoSize
+        return XMMatrixOrthographicLH(m_shadowOrthoSize, m_shadowOrthoSize, m_shadowNear, m_shadowFar);
+    }
+
+    // Point/Spot style: square aspect for shadow map
+    return XMMatrixPerspectiveFovLH(m_shadowFov, 1.0f, m_shadowNear, m_shadowFar);
+}
+
+void Light::SetShadowOrthoSize(float size)
+{
+    m_shadowOrthoSize = (size < 0.01f) ? 0.01f : size;
+}
+
+void Light::SetShadowPlanes(float nearPlane, float farPlane)
+{
+    // Basic sanity; avoid invalid projection.
+    if (nearPlane < 0.001f) nearPlane = 0.001f;
+    if (farPlane <= nearPlane + 0.001f) farPlane = nearPlane + 0.001f;
+    m_shadowNear = nearPlane;
+    m_shadowFar = farPlane;
+}
+
+void Light::SetShadowFov(float fovRadians)
+{
+    // Clamp to a reasonable range: ~5° .. ~170°
+    const float minFov = DirectX::XMConvertToRadians(5.0f);
+    const float maxFov = DirectX::XMConvertToRadians(170.0f);
+    if (fovRadians < minFov) fovRadians = minFov;
+    if (fovRadians > maxFov) fovRadians = maxFov;
+    m_shadowFov = fovRadians;
+}
+
 // WICHTIG: Update() überschreiben - berechnet lightDirection 
 // automatisch aus der Transform-Rotation
 void Light::Update(const gdx::CDevice* device)
@@ -119,7 +192,8 @@ void Light::UpdateLight(const gdx::CDevice* device, XMVECTOR position, XMVECTOR 
         D3D11_MAP_WRITE_DISCARD, 0,
         &mappedResource);
 
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+    if (FAILED(hr)) {
+        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         Debug::Log("Light.cpp: Failed to map light buffer");
         return;
     }

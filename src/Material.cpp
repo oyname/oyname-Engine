@@ -8,24 +8,23 @@ Material::Material() :
     materialBuffer(nullptr),
     pRenderShader(nullptr)
 {
-    // Initialisiere MaterialData Struct mit vernünftigen Defaults
-    properties.diffuseColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);    // ← WEISS
-    properties.specularColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);   // ← WEISS
-    properties.shininess = 32.0f;    // ← Anständiger Glanzgrad
-    properties.transparency = 1.0f;  // ← Vollständig opak
+    // Defaults
+    properties.diffuseColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    properties.specularColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    properties.shininess = 32.0f;
+    properties.transparency = 1.0f;
 
-    // meshes ist ein vector - keine Initialisierung nötig
+    // Shadow flags default
+    castShadows = true;
+    receiveShadows = true;
+    properties.receiveShadows = 1.0f;
 }
 
 Material::~Material() {
-    // Release GPU-Ressourcen
     Memory::SafeRelease(m_texture);
     Memory::SafeRelease(m_textureView);
     Memory::SafeRelease(m_imageSamplerState);
     Memory::SafeRelease(materialBuffer);
-
-    // meshes Vector wird automatisch aufgeräumt
-    // Die Mesh-Objekte selbst werden vom ObjectManager verwaltet, nicht hier löschen!
     meshes.clear();
 }
 

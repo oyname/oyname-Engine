@@ -18,7 +18,8 @@ m_pRasterizerState(nullptr),
 m_pShadowMap(nullptr),
 m_pShadowMapSRView(nullptr),
 m_pShadowMapDepthView(nullptr),
-m_pShadowTargetView(nullptr)
+m_pShadowTargetView(nullptr),
+m_shadowMatrixBuffer(nullptr)
 {
 }
 
@@ -48,6 +49,7 @@ void CDevice::Release()
         Memory::SafeRelease(m_pRasterizerState);
         Memory::SafeRelease(m_pShadowRenderState);
         Memory::SafeRelease(m_pComparisonSampler_point);
+        Memory::SafeRelease(m_shadowMatrixBuffer);
     }
 
     m_bInitialized = false;
@@ -646,3 +648,35 @@ HRESULT CDevice::CreateRenderStats()
     Debug::Log("Shadow Rasterizer State created successfully (Front Face Culling enabled)");
     return hr;
 }
+
+
+HRESULT CDevice::CreateShadowMatrixBuffer()
+{
+    if (!m_pd3dDevice)
+        return E_INVALIDARG;
+
+    // Two matrices (view + projection) = 2 * 64 bytes = 128 bytes (16-byte aligned)
+    D3D11_BUFFER_DESC bd{};
+    bd.Usage = D3D11_USAGE_DYNAMIC;
+    bd.ByteWidth = 128;
+    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    // Wichtig: auf nullptr setzen oder vorher releasen
+    if (m_shadowMatrixBuffer) {
+        m_shadowMatrixBuffer->Release();
+        m_shadowMatrixBuffer = nullptr;
+    }
+
+    HRESULT hr = m_pd3dDevice->CreateBuffer(&bd, nullptr, &m_shadowMatrixBuffer);
+    if (FAILED(hr))
+    {
+        Debug::LogError("Failed to create Shadow Matrix constant buffer: ", hr);
+        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
+        return hr;
+    }
+
+    Debug::Log("Shadow Matrix constant buffer created successfully (b3)");
+    return S_OK;
+}
+

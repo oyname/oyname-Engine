@@ -90,6 +90,7 @@ namespace gdx
 		ID3D11RenderTargetView* m_pShadowTargetView;
 		ID3D11RasterizerState* m_pShadowRenderState;
 		ID3D11SamplerState* m_pComparisonSampler_point;
+		ID3D11Buffer* m_shadowMatrixBuffer;
 
 		// Private initialization methods
 		HRESULT EnumerateSystemDevices();
@@ -105,6 +106,7 @@ namespace gdx
 		HRESULT CreateResourceViews();
 		HRESULT CreateComparisonStatus();
 		HRESULT CreateRenderStats();
+		HRESULT CreateShadowMatrixBuffer();
 
 		// Window management
 		void ResizeWindow(HWND hwnd, unsigned int x, unsigned int y, bool windowed);
@@ -153,6 +155,11 @@ namespace gdx
 			return m_pd3dDevice;
 		}
 
+		ID3D11RasterizerState* GetRasterizerState() const 
+		{ 
+			return m_pRasterizerState; 
+		}
+
 		ID3D11DeviceContext* GetDeviceContext() const
 		{
 			return m_pContext;
@@ -184,6 +191,11 @@ namespace gdx
 			return m_depthStencilView;
 		}
 
+		ID3D11DepthStencilView* GetShadowMapDepthView() const
+		{
+			return m_pShadowMapDepthView;
+		}
+
 		ID3D11ShaderResourceView* GetShadowMapSRV() const
 		{
 			return m_pShadowMapSRView;
@@ -192,6 +204,29 @@ namespace gdx
 		ID3D11SamplerState* GetComparisonSampler() const
 		{
 			return m_pComparisonSampler_point;
+		}
+
+		ID3D11RasterizerState* GetShadowRasterState() const
+		{
+			return m_pShadowRenderState;
+		}
+
+		ID3D11Buffer* GetShadowMatrixBuffer() const
+		{
+			return m_shadowMatrixBuffer;
+		}
+
+		// Shadow map dimensions (queried from the texture).
+		// Returns (0,0) if the shadow map is not created.
+		void GetShadowMapSize(UINT& outWidth, UINT& outHeight) const
+		{
+			outWidth = 0;
+			outHeight = 0;
+			if (!m_pShadowMap) return;
+			D3D11_TEXTURE2D_DESC desc{};
+			m_pShadowMap->GetDesc(&desc);
+			outWidth = desc.Width;
+			outHeight = desc.Height;
 		}
 
 		bool IsInitialized() const

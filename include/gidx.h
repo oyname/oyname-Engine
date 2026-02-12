@@ -505,7 +505,7 @@ namespace Engine
             return;
         }
 
-        engine->GetOM().addMaterialToShader(shader, *material);
+        engine->GetOM().assignShaderToMaterial(shader, *material);
     }
 
     inline void CreateSurface(LPSURFACE* surface, LPENTITY entity)

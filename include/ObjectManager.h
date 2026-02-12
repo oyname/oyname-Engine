@@ -22,40 +22,43 @@ public:
     ~ObjectManager();
     void Init(gdx::CDevice* device);
 
-    // ==================== CREATE ====================
+    // CREATE
     Camera* createCamera();
-    // Light* createLight();  // ← ENTFERNT: LightManager macht das
     Shader* createShader();
     Material* createMaterial();
     Mesh* createMesh();
     Surface* createSurface();
 
-    // ==================== ADD ====================
+    // ADD
     void addSurfaceToMesh(Mesh* mesh, Surface* surface);
     void addMeshToMaterial(Material* material, Mesh* mesh);
+
+    // Correct semantic name: assigns a shader to a material (and keeps buckets in sync)
+    void assignShaderToMaterial(Shader* shader, Material* material);
+
+    // Backwards compatibility (old name used by gidx.h)
     void addMaterialToShader(Shader* shader, Material* material);
 
-    // ==================== DELETE ====================
+    // DELETE
     void deleteSurface(Surface* surface);
     void deleteMesh(Mesh* mesh);
     void deleteCamera(Camera* camera);
-    // void deleteLight(Light* light);  // ← ENTFERNT
     void deleteMaterial(Material* material);
     void deleteShader(Shader* shader);
 
-    // ==================== REMOVE ====================
+    // REMOVE
     void removeSurfaceFromMesh(Mesh* mesh, Surface* surface);
     void removeMeshFromMaterial(Material* material, Mesh* mesh);
     void removeMaterialFromShader(Shader* shader, Material* material);
 
-    // ==================== GET PREVIOUS ====================
+    // GET PREVIOUS
     Surface* getPreviousSurface(Surface* currentSurface);
     Mesh* getPreviousMesh(Mesh* currentMesh);
     Camera* getPreviousCamera(Camera* currentCamera);
     Material* getPreviousMaterial(Material* currentMaterial);
     Shader* getPreviousShader(Shader* currentShader);
 
-    // ==================== GET ====================
+    // GET
     void processMesh();
     Surface* getSurface(Mesh* mesh);
     Material* getStandardMaterial() const;
@@ -65,11 +68,10 @@ public:
 
 private:
     gdx::CDevice* m_device;
-    std::vector<Entity*> m_entities;     // Alle Entities (Mesh + Camera)
+    std::vector<Entity*> m_entities;
     std::vector<Surface*> m_surfaces;
     std::vector<Mesh*> m_meshes;
     std::vector<Camera*> m_cameras;
-    // std::vector<Light*> m_lights;     // ← ENTFERNT: In LightManager
     std::vector<Material*> m_materials;
     std::vector<Shader*> m_shaders;
 };

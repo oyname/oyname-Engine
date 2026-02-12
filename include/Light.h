@@ -45,10 +45,28 @@ public:
     LightType GetLightType() const { return lightType; }
     float GetRadius() const { return cbLight.lightDiffuseColor.w; }
 
+    // ==================== SHADOW MAPPING HELPERS ====================
+    // View/Projection Matrizen für Shadow Mapping.
+    // Directional -> Orthographic, Point -> Perspective.
+    XMMATRIX GetLightViewMatrix() const;
+    XMMATRIX GetLightProjectionMatrix() const;
+
+    // Optional: Parameter für Shadow-Frustum
+    void SetShadowOrthoSize(float size);
+    void SetShadowPlanes(float nearPlane, float farPlane);
+    void SetShadowFov(float fovRadians);
+
 public:
     ID3D11Buffer* lightBuffer;
     LightBufferData cbLight;
     LightType lightType;
+
+private:
+    // Shadow-Frustum defaults (tuned for your shadow pass: square map, aspect = 1)
+    float m_shadowOrthoSize = 50.0f;
+    float m_shadowNear = 0.1f;
+    float m_shadowFar = 200.0f;
+    float m_shadowFov = DirectX::XM_PIDIV2; // 90° for point/spot style shadow projections
 };
 
 typedef Light* LPLIGHT;

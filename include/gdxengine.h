@@ -94,7 +94,7 @@ namespace gdx {
 		// Setter-Funktionen fÃ¼r private Variablen
 		void SetAdapter(unsigned int index);
 		void SetOutput(unsigned int index);
-		// Ambient-Farbe
+		void SetDirectionalLight(LPENTITY entity);
 		void SetGlobalAmbient(const DirectX::XMFLOAT4& ambient) { m_globalAmbient = ambient; }
 		DirectX::XMFLOAT4 GetGlobalAmbient() const { return m_globalAmbient; }
 

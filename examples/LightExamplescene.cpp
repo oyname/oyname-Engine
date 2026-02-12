@@ -58,8 +58,7 @@ int main()
     Engine::RotateEntity(g_directionalLight, -90.0f, 0.0f, 0.0f);
     Engine::LightColor(g_directionalLight, 1.0f, 1.0f, 1.0f);
 
-    // ← WICHTIG: Setze das Directional Light für Schatten!
-    Engine::SetAmbientColor(0.2f, 0.2f, 0.2f);
+    //Engine::SetAmbientColor(0.2f, 0.2f, 0.2f);
 
     float speed = 100.0f;
     //Engine::PositionEntity(g_camera, 0.0f, 150.0f, 0.0f);

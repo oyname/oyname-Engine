@@ -142,7 +142,7 @@ namespace gdx
 			return hr;
 		}
 
-		hr = m_device.CreateShadowBuffer(width, height);
+		hr = m_device.CreateShadowBuffer(2048, 2048);
 		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
 			return hr;
 		}
@@ -212,9 +212,8 @@ namespace gdx
 	{
 		HRESULT hr = S_OK;
 
-		Timer::GetInstance()->Update();  // Timer aktualisieren
+		Timer::GetInstance()->Update();
 
-		// Device Context abrufen
 		auto* pContext = this->m_device.GetDeviceContext();
 		if (!pContext)
 		{
@@ -222,14 +221,6 @@ namespace gdx
 			return E_FAIL;
 		}
 
-		// Prüfen, ob die notwendigen Render-Targets und Depth-Stencil-View existieren
-		if (!this->m_device.m_depthStencilView || !this->m_device.m_pRenderTargetView)
-		{
-			Debug::Log("RenderWorld: RenderTargetView or DepthStencilView is null.");
-			return E_POINTER;
-		}
-
-		// Prüfen, ob eine gültige Kamera existiert
 		auto* pCamera = m_cameraManager.GetCurrentCam();
 		if (!pCamera)
 		{
@@ -237,12 +228,17 @@ namespace gdx
 			return E_FAIL;
 		}
 
-		// Preparing
-		pContext->ClearDepthStencilView(this->m_device.m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		pContext->OMSetRenderTargets(1, &this->m_device.m_pRenderTargetView, this->m_device.m_depthStencilView);
-		pContext->RSSetState(this->m_device.m_pRasterizerState);
-		pContext->RSSetViewports(1, &pCamera->viewport);
+		// Clear (kann im Engine bleiben; Owner der Pipeline-States ist trotzdem RenderManager)
+		ID3D11DepthStencilView* dsv = this->m_device.GetDepthStencilView();
+		if (!dsv)
+			return E_POINTER;
 
+		pContext->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+		// Wichtig: RenderManager bekommt deterministisch die Camera
+		m_renderManager.SetCamera(pCamera);
+
+		// RenderManager setzt OM/RS/Viewport pro Pass selbst
 		m_renderManager.RenderScene();
 
 		return hr;
@@ -408,5 +404,23 @@ namespace gdx
 
 		GetCam().SetCamera(camera);         // ← Camera* an CameraManager
 		m_renderManager.SetCamera(entity);  // ← Entity* an RenderManager (OK)
+	}
+
+	void CGIDX::SetDirectionalLight(LPENTITY entity)
+	{
+		if (entity == nullptr) {
+			Debug::Log("ERROR: SetDirectionalLight - entity is nullptr");
+			return;
+		}
+
+		// Type-Check mit dynamic_cast
+		Light* light = dynamic_cast<Light*>(entity);
+		if (light == nullptr) {
+			Debug::Log("ERROR: SetDirectionalLight - Entity is not a Light!");
+			return;
+		}
+
+		m_renderManager.SetDirectionalLight(entity);
+		Debug::Log("gdxengine.cpp: SetDirectionalLight - Directional Light set for Shadow Mapping");
 	}
 }

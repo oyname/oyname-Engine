@@ -33,6 +33,14 @@ cbuffer MaterialBuffer : register(b2)
     float2 padding;
 };
 
+// ==================== PHASE 2: SHADOW MAPPING BUFFER ====================
+
+cbuffer ShadowMatrixBuffer : register(b3)
+{
+    row_major float4x4 lightViewMatrix;
+    row_major float4x4 lightProjectionMatrix;
+};
+
 // ==================== INPUT / OUTPUT STRUCTURES ====================
 
 struct VS_INPUT
@@ -50,7 +58,7 @@ struct VS_OUTPUT
     float3 worldPosition : TEXCOORD1; // Position im Welt-Raum (für Point-Light-Berechnung)
     float4 color : COLOR; // Farbe des Vertex
     float2 texCoord : TEXCOORD0; // Texturkoordinaten
-    float4 positionLightSpace : TEXCOORD2; // Position im Licht-Raum (zukünftig für Shadow Mapping)
+    float4 positionLightSpace : TEXCOORD2; // Position im Licht-Raum (PHASE 2: Shadow Mapping)
 };
 
 // ==================== MAIN VERTEX SHADER ====================
@@ -75,8 +83,10 @@ VS_OUTPUT main(VS_INPUT input)
     o.color = input.color;
     o.texCoord = input.texCoord;
     
-    // Placeholder für zukünftiges Shadow Mapping
-    o.positionLightSpace = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    // ==================== PHASE 2: BERECHNE LIGHT SPACE POSITION ====================
+    // Transformiere Welt-Position in Light-Space für Shadow Mapping
+    float4 lightViewPos = mul(worldPos, lightViewMatrix);
+    o.positionLightSpace = mul(lightViewPos, lightProjectionMatrix);
     
     return o;
 }

@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// Shader.h
+#pragma once
 #include <vector>
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -18,6 +19,14 @@
 /// 2. InputLayout wird mit Blobs erstellt
 /// 3. UpdateShader() setzt den Shader als aktiv
 /// </summary>
+
+// Pass-aware Binding (Vorbereitung für Multi-Pass: Shadow/Depth, GBuffer, etc.)
+enum class ShaderBindMode
+{
+    VS_PS,   // Standard: Vertex + Pixel
+    VS_ONLY  // Depth/Shadow: nur Vertex, PixelShader wird auf nullptr gesetzt
+};
+
 class Shader {
 public:
     // ==================== KONSTRUKTOR / DESTRUKTOR ====================
@@ -75,16 +84,15 @@ public:
 
     // ==================== ÖFFENTLICHE METHODEN ====================
     /// <summary>
-    /// Setzt diesen Shader als aktiv (Input Layout, VS, PS)
+    /// Setzt diesen Shader als aktiv (Input Layout, VS, optional PS)
     /// 
-    /// Setzt folgende DirectX States:
-    /// - Input Layout
-    /// - Vertex Shader
-    /// - Pixel Shader
+    /// mode:
+    /// - VS_PS: InputLayout + VS + PS
+    /// - VS_ONLY: InputLayout + VS, PS wird auf nullptr gesetzt (Depth/Shadow Pass)
     /// 
     /// ⚠️ Fehlerbehandlung: Prüft auf nullptr Pointers
     /// </summary>
-    void UpdateShader(const gdx::CDevice* device);
+    void UpdateShader(const gdx::CDevice* device, ShaderBindMode mode = ShaderBindMode::VS_PS);
 
     // ==================== HILFSMETHODEN ====================
     /// <summary>
@@ -101,14 +109,37 @@ public:
     inline SIZE_T GetVertexBytecodeSize() const {
         return blobVS ? blobVS->GetBufferSize() : 0;
     }
+
     /// <summary>
-    /// Gibt an ob dieser Shader vollständig initialisiert ist
+    /// Gibt an ob dieser Shader vollständig initialisiert ist – abhängig vom Bind-Mode
+    /// </summary>
+    inline bool IsValid(ShaderBindMode mode) const
+    {
+        // Grundanforderungen: Layout + VS müssen immer da sein
+        if (vertexShader == nullptr || inputlayoutVertex == nullptr)
+            return false;
+
+        // Optional: Wenn du blobVS zwingend brauchst, hier prüfen
+        // if (blobVS == nullptr) return false;
+
+        if (mode == ShaderBindMode::VS_PS)
+        {
+            if (pixelShader == nullptr)
+                return false;
+            // Optional: blobPS checken, wenn du es wirklich brauchst
+            // if (blobPS == nullptr) return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Backwards compatible: "vollständig" = normaler Renderpass (VS+PS)
     /// </summary>
     inline bool IsValid() const {
-        return vertexShader != nullptr && pixelShader != nullptr && inputlayoutVertex != nullptr;
+        return IsValid(ShaderBindMode::VS_PS);
     }
 };
 
 typedef Shader* LPSHADER;
 typedef Shader SHADER;
-
