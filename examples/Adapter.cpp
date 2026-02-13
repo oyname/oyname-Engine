@@ -12,7 +12,7 @@ int grafikmodus();
 void directxversion();
 int grafikformats();
 
-int main1()
+int main()
 {
     grafikformats();
     directxversion();

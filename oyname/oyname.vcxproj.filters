@@ -168,6 +168,9 @@
     <ClCompile Include="..\examples\TextureExample.cpp">
       <Filter>05_Example</Filter>
     </ClCompile>
+    <ClCompile Include="..\examples\ShaderExample.cpp">
+      <Filter>05_Example</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\third_party\stb_image.h">

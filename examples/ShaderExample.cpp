@@ -1,59 +1,89 @@
 ﻿#include "gidx.h"
 
-// Function declaration
-static void CreateCube(LPENTITY* mesh, MATERIAL* material = nullptr);
+static void CreateCube(LPENTITY* mesh, MATERIAL* material);
+
+// Beispiel mit einem zweiten Shader. Der zweite Shader stellt das Objekt nur in Rot
 
 int main()
 {
-    bool sw = true;
+    bool windowed = true;
+    windowed == true ? Engine::Graphics(1200, 650) : Engine::Graphics(1980, 1080, false);
 
-    sw == true ? Engine::Graphics(1200, 650) : Engine::Graphics(1980, 1080, false);
+    // Neue Shader
+    LPSHADER shader = nullptr;
+    Engine::CreateShader(&shader, L"..\\shaders\\VertexShaderRot.hlsl", "main", L"..\\shaders\\PixelShaderRot.hlsl", "main", Engine::CreateVertexFlags(true, false, false, false, false));
 
-    LPTEXTURE texture = nullptr;
-    Engine::LoadTexture(&texture, L"..\\media\\face.bmp");
-    LPMATERIAL material;
-    Engine::CreateMaterial(&material);
-    Engine::MaterialTexture(material, texture);
+    // Textur laden
+    LPTEXTURE face = nullptr;
+    Engine::LoadTexture(&face, L"..\\media\\face.bmp");
 
-    // Light erstellen
-    LPENTITY light = nullptr;
-    Engine::CreateLight(&light, D3DLIGHT_DIRECTIONAL);  // Nutzt LightManager
-    Engine::TurnEntity(light, 45, 0, 0);                // Funktioniert
-    Engine::LightColor(light, 1.0f, 1.0f, 1.0f);
-
-    LPENTITY light2 = nullptr;
-    Engine::CreateLight(&light2, D3DLIGHT_DIRECTIONAL);  // Nutzt LightManager
-    Engine::TurnEntity(light2, -45, 0, 0);                // Funktioniert
-    Engine::LightColor(light2, 0.0f, 0.0f, 1.0f);
-
-    Engine::SetAmbientColor(0.0f, 0.3f, 0.3f);
-
-    // Camera erstellen
+    // Kamera erstellen
     LPENTITY camera = nullptr;
-    Engine::CreateCamera(&camera);                      // Nutzt ObjectManager
-    Engine::PositionEntity(camera, 0, 0, -5);           // Funktioniert
+    Engine::CreateCamera(&camera);
+    Engine::PositionEntity(camera, 0.0f, 0.0f, -5.0f);
+    Engine::RotateEntity(camera, 0.0f, 0.0f, 0.0f);
 
-    // Mesh erstellen und rendern
-    LPENTITY cube = nullptr;
-    Engine::CreateMesh(&cube);                          // Nutzt ObjectManager
+    // Material 1 mit Textur Standard-Shader
+    LPMATERIAL material1 = nullptr;
+    Engine::CreateMaterial(&material1);
+    Engine::MaterialTexture(material1, face);
 
-    CreateCube(&cube, material);
-    Engine::PositionEntity(cube, 0.0f, 0.0f, 5.0f);
-    Engine::RotateEntity(cube, 45.0f, 45.0f, 0.0f);
-    Engine::ScaleEntity(cube, 1.0f, 1.0f, 1.0f);
+    // Material 2 mit dem neuen Shader
+    LPMATERIAL material2 = nullptr;
+    Engine::CreateMaterial(&material2, shader);
 
+    // Qube erstellen
+    LPENTITY Mesh1 = nullptr;
+    Engine::CreateMesh(&Mesh1);
+    CreateCube(&Mesh1, material1);
+    Engine::PositionEntity(Mesh1, -2.0f, 0.0f, 0.0f);
+    Engine::ScaleEntity(Mesh1, 10.0f, 10.0f, 1.0f);
 
-    while (Windows::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000)) // Main loop
+    // Zweiten Qube erstellen
+    LPENTITY Mesh2 = nullptr;
+    Engine::CreateMesh(&Mesh2);
+    CreateCube(&Mesh2, material2);
+    Engine::PositionEntity(Mesh2, 2.0f, 0.0f, 0.0f);
+
+    // LICHT
+    LPENTITY directionalLight = nullptr;
+    Engine::CreateLight(&directionalLight, D3DLIGHT_POINT); 
+    Engine::PositionEntity(directionalLight, 0.0f, 0.0f, -10.0f);
+    Engine::RotateEntity(directionalLight, 90.0f, 20.0f, 0.0f);
+    Engine::LightColor(directionalLight, 1.0f, 1.0f, 1.0f);
+
+    // 
+    Timer::SetTimeMode(Timer::TimeMode::VSYNC_ONLY);
+    Engine::SetVSync(Engine::VSync::ON);
+
+    while (Windows::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000))
     {
+        double dt = Timer::GetDeltaTime();
+
+        if ((GetAsyncKeyState(VK_UP) & 0x8000))
+        {
+            Engine::MoveEntity(Mesh1, 0.0f, 0.0f, 5.0f * dt);
+        }
+        if ((GetAsyncKeyState(VK_DOWN) & 0x8000))
+        {
+            Engine::MoveEntity(Mesh1, 0.0f, 0.0f, -5.0f * dt);
+        }
+        if ((GetAsyncKeyState(VK_RIGHT) & 0x8000))
+        {
+            Engine::MoveEntity(Mesh1, 5.0f * dt, 0.0f, 0.0f);
+        }
+        if ((GetAsyncKeyState(VK_LEFT) & 0x8000))
+        {
+            Engine::MoveEntity(Mesh1, -5.0f * dt, 0.0f, 0.0f);
+        }
+
+        // Rendering
         Engine::Cls(0, 64, 128);
-
-
         Engine::UpdateWorld();
         Engine::RenderWorld();
         Engine::Flip();
     }
 
-    // Shutdown the engine
     return Windows::ShutDown();
 }
 

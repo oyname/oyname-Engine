@@ -8,7 +8,7 @@
 // Simple Cube Creation
 void CreateSimpleCube(LPENTITY* mesh, MATERIAL* material = nullptr);
 
-int main6()
+int main()
 {
     // Fullscreen für bessere Performance
     Engine::Graphics(1200, 650, true);

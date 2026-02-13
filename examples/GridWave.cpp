@@ -151,7 +151,7 @@ static void UpdateGridRadialWave(LPENTITY mesh,
     Engine::UpdateVertexBuffer(surface);
 }
 
-int main3()
+int main()
 {
     Engine::Graphics(1280, 1024, true);
 

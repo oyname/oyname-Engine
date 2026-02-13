@@ -5,7 +5,7 @@ LPENTITY quad_camera = nullptr;
 
 void CreateQuad(LPENTITY* mesh, MATERIAL* material);
 
-int main5()
+int main()
 {
     bool windowed = true;
 
