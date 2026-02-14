@@ -299,8 +299,9 @@ namespace Engine
             &l->lightBuffer
         );
 
-        if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
-            Debug::Log("ERROR: CreateLight - Failed to create light buffer");
+        if (FAILED(hr))
+        {
+            Debug::LogHr(__FILE__, __LINE__, hr);
             return;
         }
 
@@ -312,8 +313,9 @@ namespace Engine
             D3D11_BIND_CONSTANT_BUFFER,
             &l->constantBuffer
         );
-        if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
-            Debug::Log("ERROR: CreateLight - Failed to create constant buffer");
+        if (FAILED(hr))
+        {
+            Debug::LogHr(__FILE__, __LINE__, hr);
             return;
         }
 
@@ -372,8 +374,9 @@ namespace Engine
             D3D11_BIND_CONSTANT_BUFFER,
             &m->constantBuffer
         );
-        if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
-            Debug::Log("ERROR: CreateMesh - Failed to create constant buffer");
+        if (FAILED(hr))
+        {
+            Debug::LogHr(__FILE__, __LINE__, hr);
             engine->GetOM().deleteMesh(m);
             return;
         }
@@ -390,7 +393,7 @@ namespace Engine
         const std::string& pixelEntryPoint,
         DWORD flags)
     {
-        HRESULT result = S_OK;
+        HRESULT hr = S_OK;
 
         // 1. Validiere Input-Parameter
         if (shader == nullptr) {
@@ -416,39 +419,34 @@ namespace Engine
         }
 
         // 3. Compiliere Vertex und Pixel Shader
-        result = engine->GetSM().CreateShader(*shader,
+        hr = engine->GetSM().CreateShader(*shader,
             vertexShaderFile,
             vertexEntryPoint,
             pixelShaderFile,
             pixelEntryPoint);
-        if (FAILED(result)) {
-            Debug::Log("ERROR: Engine::CreateShader - Shader compilation failed");
-            Debug::Log("  Vertex Shader: ", vertexShaderFile.c_str());
-            Debug::Log("  Pixel Shader: ", pixelShaderFile.c_str());
-            Debug::GetErrorMessage(__FILE__, __LINE__, result);
+        
+        if (FAILED(hr))
+        {
+            Debug::LogHr(__FILE__, __LINE__, hr);
 
             engine->GetOM().deleteShader(*shader);
-            return result;
+            return hr;
         }
 
         // 4. Setze Vertex Format Flags
         (*shader)->flagsVertex = flags;
 
         // 5. Erstelle Input Layout
-        result = engine->GetILM().CreateInputLayoutVertex(
+        hr = engine->GetILM().CreateInputLayoutVertex(
             &(*shader)->inputlayoutVertex,
             *shader,
             (*shader)->flagsVertex,
             flags
         );
-        if (FAILED(result)) {
-            Debug::Log("ERROR: Engine::CreateShader - Input layout creation failed");
-            Debug::GetErrorMessage(__FILE__, __LINE__, result);
-
-            if ((*shader)->vertexShader) (*shader)->vertexShader->Release();
-            if ((*shader)->pixelShader) (*shader)->pixelShader->Release();
-            engine->GetOM().deleteShader(*shader);
-            return result;
+        if (FAILED(hr))
+        {
+            Debug::LogHr(__FILE__, __LINE__, hr);
+            return hr;
         }
 
         // 6. Freigeben der Blobs nach Input Layout Creation
@@ -773,7 +771,6 @@ namespace Engine
 
         if (FAILED(hr)) {
             Debug::Log("ERROR: Failed to load texture");
-            Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         }
     }
 
@@ -830,7 +827,7 @@ namespace Engine
         }
     }
 
-    inline HRESULT CreateTexture(LPLPTEXTURE texture, int width, int height)
+    inline HRESULT  CreateTexture(LPLPTEXTURE texture, int width, int height)
     {
         if (texture == nullptr) {
             Debug::Log("ERROR: CreateTexture - texture pointer is nullptr");

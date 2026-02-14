@@ -10,7 +10,7 @@ void CreateCube(LPENTITY* mesh, MATERIAL* material);
 
 int main()
 {
-    Engine::Graphics(1200, 720);
+    Engine::Graphics(1920, 1080);
           
     LPTEXTURE brick = nullptr;
     Engine::LoadTexture(&brick, L"..\\media\\dx.bmp");
@@ -57,6 +57,7 @@ int main()
     Engine::PositionEntity(g_directionalLight, 0.0f, 150.0f, 0.0f);
     Engine::RotateEntity(g_directionalLight, -90.0f, 0.0f, 0.0f);
     Engine::LightColor(g_directionalLight, 1.0f, 1.0f, 1.0f);
+
 
     //Engine::SetAmbientColor(0.2f, 0.2f, 0.2f);
 

@@ -85,7 +85,6 @@ HRESULT CDevice::EnumerateSystemDevices()
     hr = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&factory));
     if (FAILED(hr))
     {
-        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
     }
 
@@ -130,10 +129,6 @@ HRESULT CDevice::EnumerateSystemDevices()
             // Release test device immediately
             Memory::SafeRelease(testDevice);
         }
-        else
-        {
-            Debug::GetErrorMessage(__FILE__, __LINE__, hr);
-        }
 
         Memory::SafeRelease(adapter);
     }
@@ -164,9 +159,10 @@ HRESULT CDevice::InitializeDirectX(IDXGIAdapter* adapter, D3D_FEATURE_LEVEL* fea
         nullptr,
         &m_pContext);
 
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
-        return hr;
+        Debug::LogHr(__FILE__, __LINE__, hr);
+        return hr;   
     }
 
     return hr;
@@ -202,8 +198,9 @@ HRESULT CDevice::CreateSwapChain(IDXGIFactory* pDXGIFactory, HWND hWnd,
 
     // Create Swap Chain
     hr = pDXGIFactory->CreateSwapChain(m_pd3dDevice, &swapChainDesc, &m_pSwapChain);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         return hr;
     }
 
@@ -224,16 +221,17 @@ HRESULT CDevice::CreateRenderTarget(unsigned int width, unsigned int height)
 
     // Get back-buffer from Swap Chain
     hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&m_pBackBuffer);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         return hr;
     }
 
     // Create render target view
     hr = m_pd3dDevice->CreateRenderTargetView(m_pBackBuffer, NULL, &m_pRenderTargetView);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
-        Memory::SafeRelease(m_pBackBuffer);
+        Debug::LogHr(__FILE__, __LINE__, hr);
         return hr;
     }
 
@@ -383,8 +381,11 @@ HRESULT CDevice::CreateDepthTexture(unsigned int width, unsigned int height)
     depthBufferDesc.MiscFlags = 0;
 
     HRESULT hr = m_pd3dDevice->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
+    {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         return hr;
+    }
 
     return hr;
 }
@@ -401,8 +402,11 @@ HRESULT CDevice::CreateDepthStencilView()
     depthStencilViewDesc.Texture2D.MipSlice = 0;
 
     HRESULT hr = m_pd3dDevice->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
+    {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         return hr;
+    }
 
     return hr;
 }
@@ -420,8 +424,11 @@ HRESULT CDevice::CreateRasterizerState()
     rasterizerDesc.DepthClipEnable = TRUE;
 
     HRESULT hr = m_pd3dDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerState);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
+    {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         return hr;
+    }
 
     return hr;
 }
@@ -438,8 +445,11 @@ HRESULT CDevice::CreateDepthStencilState()
     depthStencilDesc.StencilEnable = false;
 
     HRESULT hr = m_pd3dDevice->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
+    {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         return hr;
+    }
 
     return hr;
 }
@@ -481,7 +491,6 @@ HRESULT CDevice::CreateShadowMapTexture(UINT width, UINT height)
     if (FAILED(hr))
     {
         Debug::LogError("Failed to create Shadow Map Texture: ", hr);
-        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
     }
 
@@ -517,7 +526,6 @@ HRESULT CDevice::CreateResourceViews()
     if (FAILED(hr))
     {
         Debug::LogError("Failed to create Shadow Map DSV: ", hr);
-        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
     }
 
@@ -546,7 +554,6 @@ HRESULT CDevice::CreateResourceViews()
     {
         Debug::LogError("Failed to create Shadow Map SRV: ", hr);
         Memory::SafeRelease(m_pShadowMapDepthView);
-        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
     }
 
@@ -597,7 +604,6 @@ HRESULT CDevice::CreateComparisonStatus()
     if (FAILED(hr))
     {
         Debug::LogError("Failed to create Comparison Sampler: ", hr);
-        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
     }
 
@@ -641,7 +647,6 @@ HRESULT CDevice::CreateRenderStats()
     if (FAILED(hr))
     {
         Debug::LogError("Failed to create Shadow Rasterizer State: ", hr);
-        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
     }
 
@@ -672,7 +677,6 @@ HRESULT CDevice::CreateShadowMatrixBuffer()
     if (FAILED(hr))
     {
         Debug::LogError("Failed to create Shadow Matrix constant buffer: ", hr);
-        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
     }
 

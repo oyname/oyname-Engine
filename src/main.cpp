@@ -1,110 +1,99 @@
-#include"main.h"
-#include <ole2.h>
+#include "main.h"
+#include "gidxwin.h"
 
-// Verknüpfung mit Ole32.lib
+#include <objbase.h>   // CoInitialize / CoUninitialize
+#include <thread>
+#include <atomic>
+
+// Link Ole32 for COM
 #pragma comment(lib, "Ole32.lib")
 
-INT APIENTRY WinMain(HINSTANCE hInst,
-	HINSTANCE hPrevInst,
-	LPSTR pCmdLine,
-	int nCmdShow)
+INT APIENTRY WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 {
-	HWND hwnd;
-	MSG msg;
+    // COM init (needed if you use COM APIs anywhere; safe to keep)
+    HRESULT hr = CoInitialize(nullptr);
+    if (FAILED(hr))
+        return -1;
 
-	HRESULT hr = CoInitialize(nullptr);
-	if (FAILED(hr)) {
-		// Fehlerbehandlung, wenn CoInitialize fehlschlägt
-		return -1;
-	}
+    MSG msg{};
+    Windows::CWindow win;
 
-	Windows::CWindow win;
+    // 1) Create window (must happen before engine init)
+    HWND hwnd = win.Init(WindowProc, hInst, L"gidx", L"", 101);
+    if (!hwnd)
+    {
+        MessageBox(nullptr, L"Fatal: Window init failed.", L"ERROR", MB_OK);
+        CoUninitialize();
+        return 0;
+    }
 
-	hwnd = win.Init(WindowProc, hInst, L"gidx", L"", 101);
+    // 2) Create engine
+    const int bpp = (int)win.GetColorRes();
+    const int w = GetSystemMetrics(SM_CXSCREEN);
+    const int h = GetSystemMetrics(SM_CYSCREEN);
 
-	if (hwnd == NULL)
-	{
-		MessageBox(NULL, L" A fatal error occurred while initializing giDX². (GIDX_WIN) ", L"ERROR!", MB_OK);
-		return 0;
-	}
+    int rc = Windows::CreateGidx(hwnd, hInst, bpp, w, h);
+    if (rc != 0)
+    {
+        MessageBox(nullptr, L"Fatal: Engine init failed.", L"ERROR", MB_OK);
+        Windows::Release();
+        CoUninitialize();
+        return 0;
+    }
 
-	Windows::CreateGidx(reinterpret_cast<int>(hwnd), reinterpret_cast<int>(hInst), win.GetColorRes(), GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) );
+    // 3) Run engine/game loop on separate thread (your existing design)
+    std::atomic_bool threadFinished{ false };
+    std::thread mainThread([&]()
+        {
+            main(reinterpret_cast<LPVOID>(hwnd));
+            threadFinished = true;
+        });
 
-	// Thread mit std::thread erstellen
-	std::thread mainThread(main, reinterpret_cast<LPVOID>(hwnd));
+    // 4) Message loop (main thread)
+    while (GetMessage(&msg, nullptr, 0, 0))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
 
-	if (!mainThread.joinable())
-	{
-		MessageBox(NULL, L" Error starting the Main-Thread ", L"ERROR!", MB_OK);
-		return 1;
-	}
+    // 5) Ensure thread exits (your main() should stop when window closes)
+    // If your main() doesn’t check a flag yet, add one later.
+    if (mainThread.joinable())
+        mainThread.join();
 
-	// Nachrichtenschleife
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	// Auf das Beenden des Threads warten
-	mainThread.join();
-
-	Windows::Release();
-
-	// Beende COM
-	CoUninitialize();
-
-	return msg.wParam;
+    // 6) Cleanup
+    Windows::Release();
+    CoUninitialize();
+    return (int)msg.wParam;
 }
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	switch (msg)
-	{
-	case WM_KEYDOWN:
-		switch (wParam)
-		{
-		case VK_ESCAPE:
-			
-			break;
+    switch (msg)
+    {
+    case WM_KEYDOWN:
+        if (wParam == VK_ESCAPE)
+        {
+            PostMessage(hWnd, WM_CLOSE, 0, 0);
+            return 0;
+        }
+        break;
 
-		default:
-			break;
-		}
-		break;
-	case WM_CREATE:
-		Windows::SetWindowBackgroundColor(0, 0, 0, hWnd);
+    case WM_CLOSE:
+        Windows::MainLoop(false);
 
-		break;
-	case WM_APP + 1:
-		Sleep(100);
-		PostMessage(hWnd, WM_QUIT, 0, 0);
-		
-		break;
-	case WM_DESTROY:
-	case WM_CLOSE:
-	case WM_QUIT:
-		Windows::MainLoop(false);
+        // Fenster wirklich schließen
+        DestroyWindow(hWnd);
+        return 0;
 
-		return 0;
-	default:
-		return ::DefWindowProc(hWnd, msg, wParam, lParam);
-	}
+    case WM_DESTROY:
+        Windows::MainLoop(false);
 
-	return 0;
+        // Message-Loop beenden
+        PostQuitMessage(0);
+        return 0;
+    }
+
+    return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-// Define the function with clear parameter names
-void Windows::SetWindowBackgroundColor(int red, int green, int blue, HWND windowHandle) {
-	// Create a solid brush with the specified color
-	HBRUSH backgroundBrush = CreateSolidBrush(RGB(red, green, blue));
-
-	// Ensure the brush creation was successful
-	if (backgroundBrush != NULL) {
-		// Set the background brush for the window class
-		SetClassLongPtr(windowHandle, GCLP_HBRBACKGROUND, (LONG_PTR)backgroundBrush);
-
-		// Invalidate the entire window area to trigger a redraw
-		InvalidateRect(windowHandle, NULL, TRUE);
-	}
-}

@@ -60,8 +60,9 @@ HRESULT Texture::AddTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 
     // Textur erstellen
     HRESULT hr = device->CreateTexture2D(&m_desc, &subresourceData, &m_texture);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         stbi_image_free(imageData); 
         return hr; 
     }
@@ -73,8 +74,9 @@ HRESULT Texture::AddTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
     srvDesc.Texture2D.MipLevels = 1;
 
     hr = device->CreateShaderResourceView(m_texture, &srvDesc, &m_textureView);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         Memory::SafeRelease(m_texture); 
         stbi_image_free(imageData); 
         return hr; 
@@ -97,8 +99,9 @@ HRESULT Texture::AddTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
     ImageSamplerDesc.MaxLOD = FLT_MAX;
 
     hr = device->CreateSamplerState(&ImageSamplerDesc, &m_imageSamplerState);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         Memory::SafeRelease(m_texture);
         stbi_image_free(imageData); 
         return hr; 
@@ -150,8 +153,9 @@ HRESULT Texture::CreateTexture(ID3D11Device* device, int width, int height)
     srvDesc.Texture2D.MipLevels = 1;
 
     hr = device->CreateShaderResourceView(m_texture, &srvDesc, &m_textureView);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         Memory::SafeRelease(m_texture);
         return hr;
     }
@@ -173,8 +177,9 @@ HRESULT Texture::CreateTexture(ID3D11Device* device, int width, int height)
     ImageSamplerDesc.MaxLOD = FLT_MAX;
 
     hr = device->CreateSamplerState(&ImageSamplerDesc, &m_imageSamplerState);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         Memory::SafeRelease(m_texture);
         return hr;
     }
@@ -220,8 +225,9 @@ HRESULT Texture::LockBuffer(ID3D11DeviceContext* deviceContext)
     // Daten der Textur sperren
     D3D11_MAPPED_SUBRESOURCE mappedResource;
     hr = deviceContext->Map(m_texture, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         return hr;
     }
 

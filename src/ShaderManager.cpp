@@ -24,14 +24,18 @@ HRESULT ShaderManager::CreateShader(SHADER* shader, const std::wstring& vertexSh
 
     // Create the vertex shader
     hr = m_device->CreateVertexShader(blobVS->GetBufferPointer(), blobVS->GetBufferSize(), nullptr, &shader->vertexShader);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+    if (FAILED(hr))
+    {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         Memory::SafeRelease(blobVS);
         return hr;
     }
 
     // Load and compile the pixel shader
     hr = CompileShaderFromFile(pixelShaderFile, pixelEntryPoint, "ps_5_0", &blobPS);
-    if (FAILED(hr)) {
+    if (FAILED(hr))
+    {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         Memory::SafeRelease(blobVS);
         Memory::SafeRelease(shader->vertexShader);
         return hr;
@@ -39,7 +43,9 @@ HRESULT ShaderManager::CreateShader(SHADER* shader, const std::wstring& vertexSh
 
     // Create the pixel shader
     hr = m_device->CreatePixelShader(blobPS->GetBufferPointer(), blobPS->GetBufferSize(), nullptr, &shader->pixelShader);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+    if (FAILED(hr))
+    {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         Memory::SafeRelease(blobVS);
         Memory::SafeRelease(blobPS);
         Memory::SafeRelease(shader->vertexShader);
@@ -81,7 +87,7 @@ HRESULT ShaderManager::CompileShaderFromFile(const std::wstring& filename, const
             Debug::Log("Shader Compilation Error: ", (const char*)errorBlob->GetBufferPointer());
             Memory::SafeRelease(errorBlob);
         }
-        return Debug::GetErrorMessage(__FILE__, __LINE__, hr);
+        return 0;
     }
 
     return hr;

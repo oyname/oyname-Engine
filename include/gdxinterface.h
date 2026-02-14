@@ -160,11 +160,7 @@ namespace gdx {
         
         std::string GetGfxDriverName(int adapterindex)
         {
-            wchar_t* descriptionWChar = this->Adapters[adapterindex].Desc.Description;
-
-            /// Conversion from wchar_t* to std::string
-            std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
-            return converter.to_bytes(descriptionWChar);
+            return GXUTIL::WideToUtf8(this->Adapters[adapterindex].Desc.Description);
         }
         
         const GXADAPTER& GetAdapter(size_t index) const

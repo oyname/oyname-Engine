@@ -93,8 +93,9 @@ void LightManager::InitializeLightBuffer(const gdx::CDevice* device)
     bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;  // ← KORRIGIERT: war D3D11_ACCESS_WRITE
 
     HRESULT hr = device->GetDevice()->CreateBuffer(&bufferDesc, nullptr, &lightBuffer);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
-        Debug::Log("LightManager.cpp: ERROR - Failed to create light constant buffer");
+    if (FAILED(hr))
+    {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         return;
     }
 
@@ -143,8 +144,9 @@ void LightManager::Update(const gdx::CDevice* device)
     HRESULT hr = device->GetDeviceContext()->Map(lightBuffer, 0,
         D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
-        Debug::Log("LightManager.cpp: ERROR - Failed to map light constant buffer");
+    if (FAILED(hr))
+    {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         return;
     }
 

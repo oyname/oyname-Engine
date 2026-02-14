@@ -33,7 +33,9 @@ void Entity::Update(const gdx::CDevice* device) {
         hr = device->GetDeviceContext()->Map(constantBuffer, 0,
             D3D11_MAP_WRITE_DISCARD, 0,
             &mappedResource);
-        if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+        if (FAILED(hr))
+        {
+            Debug::LogHr(__FILE__, __LINE__, hr);
             return;
         }
 

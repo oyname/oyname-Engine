@@ -1,33 +1,18 @@
 #pragma once
+#include <windows.h>
 
-// Inkludiere erforderliche Headerdateien
-#include "gidxwin.h"
-#include <thread>
-#include <future>
-#include <Windows.h>
-
-// Deklariere eine Handle-Variablendie für einen Thread verwendet wird
-HANDLE hThread;
-
-// Deklariere die Fensterprozedur
-LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
-
-// Deklariere die Funktion, die als Einstiegspunkt für einen Thread verwendet wird
-DWORD main(LPVOID pvoid);
-
-// Deklariere den Namespace gdx und seine Funktionen
 namespace Windows
 {
-    // Funktion zur Erstellung eines GIDX-Fensters
-    int CreateGidx(int, int, int, int, int);
+    int  CreateGidx(HWND hwnd, HINSTANCE hInst, int bpp, int width, int height);
+    void Release();
 
-    // Funktion zum Herunterfahren des GIDX-Fensters
-    void MainLoop(bool);
+    void MainLoop(bool running);
+    bool MainLoop();
 
-    // Funktion zum Freigeben von Ressourcen
-    void Release(void);
-
-    // Funktion zum Einfärben des Hintergrunds
-    void SetWindowBackgroundColor(int r, int g, int b, HWND hwnd);
+    int  ShutDown();
 }
+
+// Your window proc + your engine/game thread entry
+LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+int main(LPVOID hwnd);
 

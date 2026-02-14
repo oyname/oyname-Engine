@@ -108,13 +108,17 @@ namespace gdx
 
 		// Create adapter with current index
 		hr = m_interface.GetFactory()->EnumAdapters(index, &adapter);
-		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+		if (FAILED(hr))
+		{
+			Debug::LogHr(__FILE__, __LINE__, hr);
 			return hr;
 		}
 
 		// Create device
 		hr = m_device.InitializeDirectX(adapter, &featureLevel);
-		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+		if (FAILED(hr))
+		{
+			Debug::LogHr(__FILE__, __LINE__, hr);
 			return hr;
 		}
 
@@ -126,24 +130,32 @@ namespace gdx
 
 		// Create the SwapChain
 		hr = m_device.CreateSwapChain(m_interface.GetFactory(), GetHWND(), width, height, m_interface.interfaceManager.GetDXGI_Format(), numerator, denominator, windowed);
-		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+		if (FAILED(hr))
+		{
+			Debug::LogHr(__FILE__, __LINE__, hr);
 			return hr;
 		}
 
 		// Create Backbuffer
 		hr = m_device.CreateRenderTarget(width, height);
-		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+		if (FAILED(hr))
+		{
+			Debug::LogHr(__FILE__, __LINE__, hr);
 			return hr;
 		}
 
 		// Initialization of the Depth-Stencil buffer and views
 		hr = m_device.CreateDepthBuffer(width, height);
-		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+		if (FAILED(hr))
+		{
+			Debug::LogHr(__FILE__, __LINE__, hr);
 			return hr;
 		}
 
 		hr = m_device.CreateShadowBuffer(2048, 2048);
-		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+		if (FAILED(hr))
+		{
+			Debug::LogHr(__FILE__, __LINE__, hr);
 			return hr;
 		}
 
@@ -166,10 +178,9 @@ namespace gdx
 
 		// ...and load - VERWENDE DIE DYNAMISCHEN PFADE!
 		hr = GetSM().CreateShader(GetSM().GetShader(), vs.c_str(), "main", ps.c_str(), "main");
-		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
-			Debug::Log("ERROR: Failed to load shaders from:");
-			Debug::Log("  Vertex Shader: ", vs.c_str());
-			Debug::Log("  Pixel Shader: ", ps.c_str());
+		if (FAILED(hr))
+		{
+			Debug::LogHr(__FILE__, __LINE__, hr);
 			return hr;
 		}
 
@@ -187,8 +198,9 @@ namespace gdx
 			&standardMaterial->materialBuffer
 		);
 
-		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
-			Debug::Log("ERROR: Failed to create material constant buffer");
+		if (FAILED(hr))
+		{
+			Debug::LogHr(__FILE__, __LINE__, hr);
 			return hr;
 		}
 
@@ -198,7 +210,9 @@ namespace gdx
 			GetSM().GetShader()->flagsVertex,											// Store the flag
 			D3DVERTEX_POSITION | D3DVERTEX_COLOR | D3DVERTEX_NORMAL | D3DVERTEX_TEX1);
 
-		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
+		if (FAILED(hr))
+		{
+			Debug::LogHr(__FILE__, __LINE__, hr);
 			return hr;
 		}
 
@@ -274,8 +288,9 @@ namespace gdx
 		m_device.GetDeviceContext()->ClearRenderTargetView(m_device.GetTargetView(), color);
 
 		hr = m_device.GetDevice()->GetDeviceRemovedReason(); // Check for device error
-		if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+		if (FAILED(hr))
 		{
+			Debug::LogHr(__FILE__, __LINE__, hr);
 			return hr;
 		}
 

@@ -29,6 +29,9 @@ public:
     Mesh* createMesh();
     Surface* createSurface();
 
+    void RegisterRenderable(Mesh* mesh);
+    void UnregisterRenderable(Mesh* mesh);
+
     // ADD
     void addSurfaceToMesh(Mesh* mesh, Surface* surface);
     void addMeshToMaterial(Material* material, Mesh* mesh);
@@ -71,6 +74,7 @@ private:
     std::vector<Entity*> m_entities;
     std::vector<Surface*> m_surfaces;
     std::vector<Mesh*> m_meshes;
+    std::vector<Mesh*> m_renderMeshes;
     std::vector<Camera*> m_cameras;
     std::vector<Material*> m_materials;
     std::vector<Shader*> m_shaders;

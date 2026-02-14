@@ -105,21 +105,40 @@ namespace Windows
 
     void CWindow::CreateConsole()
     {
-        AllocConsole();
+        static bool s_consoleCreated = false;
+        if (s_consoleCreated)
+            return;
+
+        if (!AllocConsole())
+            return;
+
+        s_consoleCreated = true;
+
         SetConsoleTitle(L"Engine Console...");
 
-        FILE* new_stdout;
-        freopen_s(&new_stdout, "CONOUT$", "w", stdout);
+        FILE* fpOut = nullptr;
+        freopen_s(&fpOut, "CONOUT$", "w", stdout);
+
+        FILE* fpErr = nullptr;
+        freopen_s(&fpErr, "CONOUT$", "w", stderr);
+
+        // Optional:
+        // FILE* fpIn = nullptr;
+        // freopen_s(&fpIn, "CONIN$", "r", stdin);
 
         HWND consoleWindow = GetConsoleWindow();
-        RECT desktopRect;
+        if (!consoleWindow)
+            return;
+
+        RECT desktopRect{};
         GetWindowRect(GetDesktopWindow(), &desktopRect);
 
-        int consoleWidth = desktopRect.right;
+        int consoleWidth = desktopRect.right - desktopRect.left;
         int consoleHeight = 230;
         int consoleX = 0;
         int consoleY = desktopRect.bottom - consoleHeight;
 
-        SetWindowPos(consoleWindow, HWND_TOP, consoleX, consoleY, consoleWidth, consoleHeight, SWP_SHOWWINDOW);
+        SetWindowPos(consoleWindow, HWND_TOP, consoleX, consoleY,
+            consoleWidth, consoleHeight, SWP_SHOWWINDOW);
     }
 }

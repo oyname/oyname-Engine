@@ -398,4 +398,19 @@ void ObjectManager::assignShaderToMaterial(Shader* shader, Material* material)
     }
 }
 
+void ObjectManager::RegisterRenderable(Mesh* mesh)
+{
+    if (!mesh) return;
+    m_renderMeshes.push_back(mesh);
+}
+
+void ObjectManager::UnregisterRenderable(Mesh* mesh)
+{
+    if (!mesh) return;
+    m_renderMeshes.erase(
+        std::remove(m_renderMeshes.begin(), m_renderMeshes.end(), mesh),
+        m_renderMeshes.end()
+    );
+}
+
 

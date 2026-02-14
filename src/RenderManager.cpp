@@ -134,8 +134,12 @@ void RenderManager::RenderShadowPass()
             {
                 if (!mesh) continue;
 
-                // world/view/proj setzen (light matrices)
-                // mesh->Update(...)
+                MatrixSet ms = m_currentCam->matrixSet; // nur als Container
+                ms.viewMatrix = lightViewMatrix;
+                ms.projectionMatrix = lightProjMatrix;
+                ms.worldMatrix = mesh->transform.GetLocalTransformationMatrix();
+
+                mesh->Update(m_objectManager.m_device, &ms);
 
                 for (Surface* s : mesh->surfaces)
                     if (s) s->Draw(m_objectManager.m_device, shader->flagsVertex);

@@ -55,8 +55,9 @@ HRESULT InputLayoutManager::CreateInputLayoutVertex(ID3D11InputLayout** layout, 
     unsigned int size = (unsigned int)shader->blobVS->GetBufferSize();
 
     HRESULT hr = m_device->CreateInputLayout(layoutElements.data(), (unsigned int)layoutElements.size(), bytecode, size, layout);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr))) {
-
+    if (FAILED(hr))
+    {
+        Debug::LogHr(__FILE__, __LINE__, hr);
         return hr;
     }
 

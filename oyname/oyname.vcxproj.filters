@@ -171,6 +171,9 @@
     <ClCompile Include="..\examples\ShaderExample.cpp">
       <Filter>05_Example</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\gdxutil.cpp">
+      <Filter>02_DirectX\01 Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\third_party\stb_image.h">
@@ -250,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="..\include\gidx.h">
       <Filter>02_DirectX\01 Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\RenderQueue.h">
+      <Filter>03_Engine\02 Manager\04 RenderManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

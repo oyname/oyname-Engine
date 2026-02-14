@@ -193,7 +193,6 @@ void Light::UpdateLight(const gdx::CDevice* device, XMVECTOR position, XMVECTOR 
         &mappedResource);
 
     if (FAILED(hr)) {
-        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         Debug::Log("Light.cpp: Failed to map light buffer");
         return;
     }

@@ -154,7 +154,7 @@ int main()
 
 
         //if (Engine::EntityCollision(cube, cube2))
-        //    Debug::Log("Kollision");
+           Debug::Log("Kollision");
         //else
         //    Debug::Log("Keine Kollision");
 

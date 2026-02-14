@@ -61,7 +61,6 @@ HRESULT BufferManager::UpdateConstantBuffer(ID3D11Buffer* buffer, const void* da
     D3D11_MAPPED_SUBRESOURCE mappedResource;
     HRESULT hr = m_context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
     if (FAILED(hr)) {
-        Debug::GetErrorMessage(__FILE__, __LINE__, hr); // nur Logging
         return hr; // gibt echten Fehler zurück
     }
     

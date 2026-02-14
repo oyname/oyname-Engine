@@ -15,6 +15,8 @@ enum COLLISION {
     SPHERE = 2,
 };
 
+enum class RenderQueueType { Opaque, AlphaTest, Transparent, Additive };
+
 class Mesh : public Entity
 {
 public:
@@ -44,7 +46,7 @@ public:
 
 public:
     std::vector<Surface*> surfaces;
-    Material* pMaterial;
+    Material* pMaterial = nullptr;
     DirectX::BoundingOrientedBox obb;
 
 private:

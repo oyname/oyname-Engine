@@ -23,9 +23,10 @@ HRESULT CInterface::Init(unsigned int bpp)
 
     // Create Factory
     hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&m_factory);
-    if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+    if (FAILED(hr))
     {
-        return hr;
+        Debug::LogHr(__FILE__, __LINE__, hr);
+        return hr;   // wenn Funktion HRESULT zurückgibt
     }
 
     // Enumerate system information
@@ -76,8 +77,9 @@ HRESULT CInterface::GetSystemInfo()
 
         // Get adapter description
         hr = adapter->GetDesc(&gxAdapter.Desc);
-        if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+        if (FAILED(hr))
         {
+            Debug::LogHr(__FILE__, __LINE__, hr);
             Memory::SafeRelease(adapter);
             return hr;
         }
@@ -86,6 +88,7 @@ HRESULT CInterface::GetSystemInfo()
         hr = EnumerateAdapterOutputs(adapter, gxAdapter);
         if (FAILED(hr))
         {
+            Debug::LogHr(__FILE__, __LINE__, hr);
             Memory::SafeRelease(adapter);
             return hr;
         }
@@ -116,8 +119,9 @@ HRESULT CInterface::EnumerateAdapterOutputs(IDXGIAdapter* adapter, GXADAPTER& gx
 
         // Get output description
         hr = output->GetDesc(&gxOutput.OutputDesc);
-        if (FAILED(Debug::GetErrorMessage(__FILE__, __LINE__, hr)))
+        if (FAILED(hr))
         {
+            Debug::LogHr(__FILE__, __LINE__, hr);
             Memory::SafeRelease(output);
             return hr;
         }
@@ -153,7 +157,6 @@ HRESULT CInterface::EnumerateDisplayModes(IDXGIOutput* output, GXOUTPUT& gxOutpu
 
     if (FAILED(hr) || numModes == 0)
     {
-        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
     }
 
@@ -163,7 +166,6 @@ HRESULT CInterface::EnumerateDisplayModes(IDXGIOutput* output, GXOUTPUT& gxOutpu
 
     if (FAILED(hr))
     {
-        Debug::GetErrorMessage(__FILE__, __LINE__, hr);
         return hr;
     }
 
