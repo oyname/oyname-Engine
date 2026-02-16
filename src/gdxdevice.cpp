@@ -62,81 +62,95 @@ HRESULT CDevice::Init()
 
 HRESULT CDevice::EnumerateSystemDevices()
 {
-    HRESULT hr = S_OK;
+    Debug::Log("EnumerateSystemDevices START...");
 
-    D3D_FEATURE_LEVEL featureLevels[] =
+    ComPtr<IDXGIFactory> factory;
+    HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)factory.GetAddressOf());
+    if (FAILED(hr))
     {
-        D3D_FEATURE_LEVEL_12_1,
-        D3D_FEATURE_LEVEL_12_0,
+        Debug::LogError("CreateDXGIFactory failed: 0x", std::hex, hr);
+        return hr;
+    }
+
+    deviceManager.GetDevices().clear();
+
+    const D3D_FEATURE_LEVEL featureLevels[] =
+    {
         D3D_FEATURE_LEVEL_11_1,
         D3D_FEATURE_LEVEL_11_0,
         D3D_FEATURE_LEVEL_10_1,
         D3D_FEATURE_LEVEL_10_0,
         D3D_FEATURE_LEVEL_9_3,
         D3D_FEATURE_LEVEL_9_2,
-        D3D_FEATURE_LEVEL_9_1,
+        D3D_FEATURE_LEVEL_9_1
     };
 
-    UINT numFeatureLevels = ARRAYSIZE(featureLevels);
+    int deviceCount = 0;
 
-    IDXGIFactory* factory = nullptr;
-    IDXGIAdapter* adapter = nullptr;
-
-    hr = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&factory));
-    if (FAILED(hr))
+    for (UINT i = 0; ; ++i)
     {
-        return hr;
-    }
-
-    // Enumerate adapters and test device creation
-    for (UINT i = 0; factory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND; ++i)
-    {
-        if (!adapter)
+        ComPtr<IDXGIAdapter> adapter;
+        hr = factory->EnumAdapters(i, adapter.GetAddressOf());
+        if (hr == DXGI_ERROR_NOT_FOUND)
+            break;
+        if (FAILED(hr) || !adapter)
             continue;
 
-        // Skip Windows renderer
-        if (GXUTIL::isWindowsRenderer(adapter))
+        if (GXUTIL::isWindowsRenderer(adapter.Get()))
         {
-            Memory::SafeRelease(adapter);
+            Debug::LogWarning("Skipping Windows Basic Renderer");
             continue;
         }
 
-        // Test device creation
-        ID3D11Device* testDevice = nullptr;
-        D3D_FEATURE_LEVEL achievedFeatureLevel;
+        ComPtr<ID3D11Device> testDevice;
+        D3D_FEATURE_LEVEL achieved = D3D_FEATURE_LEVEL_9_1;
 
         hr = D3D11CreateDevice(
-            adapter,
+            adapter.Get(),
             D3D_DRIVER_TYPE_UNKNOWN,
             nullptr,
             0,
             featureLevels,
-            numFeatureLevels,
+            (UINT)ARRAYSIZE(featureLevels),
             D3D11_SDK_VERSION,
-            &testDevice,
-            &achievedFeatureLevel,
-            nullptr);
+            testDevice.GetAddressOf(),
+            &achieved,
+            nullptr
+        );
 
         if (SUCCEEDED(hr) && testDevice)
         {
             GXDEVICE gxDevice = {};
-            gxDevice.featureLevel = achievedFeatureLevel;
-            gxDevice.supportedFormat = GXUTIL::GetSupportedFormats(achievedFeatureLevel);
-            gxDevice.directxVersion = GXUTIL::GetDirectXVersion(gxDevice.featureLevel);
+            gxDevice.featureLevel = achieved;
+            gxDevice.supportedFormat = GXUTIL::GetSupportedFormats(achieved);
+            gxDevice.directxVersion = GXUTIL::GetDirectXVersion(achieved);
 
             deviceManager.GetDevices().push_back(gxDevice);
 
-            // Release test device immediately
-            Memory::SafeRelease(testDevice);
-        }
+            Debug::Log("Device ", i, " added - FeatureLevel: ",
+                GXUTIL::GetFeatureLevelName(achieved));
 
-        Memory::SafeRelease(adapter);
+            ++deviceCount;
+        }
+        else
+        {
+            Debug::LogWarning("Adapter ", i, " - D3D11CreateDevice failed (hr=0x",
+                std::hex, hr, std::dec, ")");
+        }
     }
 
-    Memory::SafeRelease(factory);
+    if (deviceCount == 0)
+    {
+        Debug::LogError("CRITICAL: No suitable Direct3D devices found!");
+        m_bInitialized = false;
+        return E_FAIL;
+    }
 
-    m_bInitialized = SUCCEEDED(hr);
-    return hr;
+    Debug::Log("EnumerateSystemDevices completed - ", deviceCount, " device(s) found");
+    Debug::Log("...EnumerateSystemDevices END");
+
+    m_bInitialized = true;
+    return S_OK;
 }
 
 HRESULT CDevice::InitializeDirectX(IDXGIAdapter* adapter, D3D_FEATURE_LEVEL* featureLevel)
@@ -152,8 +166,8 @@ HRESULT CDevice::InitializeDirectX(IDXGIAdapter* adapter, D3D_FEATURE_LEVEL* fea
         D3D_DRIVER_TYPE_UNKNOWN,
         nullptr,
         0,
-        featureLevel,   // ← Pass pointer to feature level array
-        1,              // ← Count is 1
+        featureLevel,   
+        1,              
         D3D11_SDK_VERSION,
         &m_pd3dDevice,
         nullptr,
@@ -162,7 +176,7 @@ HRESULT CDevice::InitializeDirectX(IDXGIAdapter* adapter, D3D_FEATURE_LEVEL* fea
     if (FAILED(hr))
     {
         Debug::LogHr(__FILE__, __LINE__, hr);
-        return hr;   
+        return hr;
     }
 
     return hr;
@@ -213,7 +227,6 @@ HRESULT CDevice::CreateRenderTarget(unsigned int width, unsigned int height)
 {
     // Width and height are determined by the swap chain, 
     // these parameters are kept for backward compatibility but not used
-
     if (!m_pSwapChain || !m_pd3dDevice)
         return E_INVALIDARG;
 
@@ -350,6 +363,12 @@ HRESULT CDevice::CreateShadowBuffer(unsigned int width, unsigned int height)
     if (FAILED(hr))
         goto cleanup;
 
+    // Create shadow matrix constant buffer (b3)
+    hr = CreateShadowMatrixBuffer();
+    if (FAILED(hr))
+        goto cleanup;
+
+    Debug::Log("gdxdevice.cpp: Shadow Buffer complete (Texture + DSV + SRV + Sampler + RasterState + MatrixBuffer)");
     return hr;
 
 cleanup:
@@ -358,6 +377,7 @@ cleanup:
     Memory::SafeRelease(m_pShadowMapSRView);
     Memory::SafeRelease(m_pComparisonSampler_point);
     Memory::SafeRelease(m_pShadowRenderState);
+    Memory::SafeRelease(m_shadowMatrixBuffer);
     return hr;
 }
 
@@ -461,7 +481,7 @@ HRESULT CDevice::CreateShadowMapTexture(UINT width, UINT height)
 
     HRESULT hr = S_OK;
 
-    Debug::Log("Creating Shadow Map Texture: ", width, "x", height);
+    Debug::Log("gdxdevice.cpp: Creating Shadow Map Texture: ", width, "x", height);
 
     D3D11_TEXTURE2D_DESC shadowMapDesc;
     ZeroMemory(&shadowMapDesc, sizeof(shadowMapDesc));
@@ -471,7 +491,7 @@ HRESULT CDevice::CreateShadowMapTexture(UINT width, UINT height)
     shadowMapDesc.MipLevels = 1;
     shadowMapDesc.ArraySize = 1;
 
-    // ← WICHTIG: Format für bessere Tiefengenauigkeit
+    // WICHTIG: Format für bessere Tiefengenauigkeit
     // R24G8_TYPELESS: 24-bit Depth + 8-bit Stencil (Standard, gut genug)
     // R32_TYPELESS: 32-bit Depth (noch besser, aber größer)
     // Wir nutzen R32 für höhere Genauigkeit
@@ -494,7 +514,7 @@ HRESULT CDevice::CreateShadowMapTexture(UINT width, UINT height)
         return hr;
     }
 
-    Debug::Log("Shadow Map Texture created successfully");
+    Debug::Log("gdxdevice.cpp: Shadow Map Texture created successfully");
     return hr;
 }
 
@@ -505,11 +525,7 @@ HRESULT CDevice::CreateResourceViews()
 
     HRESULT hr = S_OK;
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // 1. DEPTH STENCIL VIEW - zum Rendern ZU der Shadow Map
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    Debug::Log("Creating Depth Stencil View for Shadow Map...");
+    Debug::Log("gdxdevice.cpp: Creating Depth Stencil View for Shadow Map...");
 
     D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
     ZeroMemory(&dsvDesc, sizeof(dsvDesc));
@@ -529,13 +545,9 @@ HRESULT CDevice::CreateResourceViews()
         return hr;
     }
 
-    Debug::Log("Depth Stencil View created successfully");
+    Debug::Log("gdxdevice.cpp: Depth Stencil View created successfully");
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // 2. SHADER RESOURCE VIEW - zum Samplen AUS der Shadow Map
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    Debug::Log("Creating Shader Resource View for Shadow Map...");
+    Debug::Log("gdxdevice.cpp: Creating Shader Resource View for Shadow Map...");
 
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
     ZeroMemory(&srvDesc, sizeof(srvDesc));
@@ -557,7 +569,7 @@ HRESULT CDevice::CreateResourceViews()
         return hr;
     }
 
-    Debug::Log("Shader Resource View created successfully");
+    Debug::Log("gdxdevice.cpp: Shader Resource View created successfully");
     return hr;
 }
 
@@ -568,7 +580,7 @@ HRESULT CDevice::CreateComparisonStatus()
 
     HRESULT hr = S_OK;
 
-    Debug::Log("Creating Comparison Sampler for PCF...");
+    Debug::Log("gdxdevice.cpp: Creating Comparison Sampler for PCF...");
 
     D3D11_SAMPLER_DESC comparisonSamplerDesc;
     ZeroMemory(&comparisonSamplerDesc, sizeof(comparisonSamplerDesc));
@@ -607,7 +619,7 @@ HRESULT CDevice::CreateComparisonStatus()
         return hr;
     }
 
-    Debug::Log("Comparison Sampler created successfully (PCF enabled)");
+    Debug::Log("gdxdevice.cpp: Comparison Sampler created successfully (PCF enabled)");
     return hr;
 }
 
@@ -618,7 +630,7 @@ HRESULT CDevice::CreateRenderStats()
 
     HRESULT hr = S_OK;
 
-    Debug::Log("Creating Rasterizer State for Shadow Pass...");
+    Debug::Log("gdxdevice.cpp: Creating Rasterizer State for Shadow Pass...");
 
     D3D11_RASTERIZER_DESC shadowRenderStateDesc;
     ZeroMemory(&shadowRenderStateDesc, sizeof(shadowRenderStateDesc));
@@ -650,7 +662,7 @@ HRESULT CDevice::CreateRenderStats()
         return hr;
     }
 
-    Debug::Log("Shadow Rasterizer State created successfully (Front Face Culling enabled)");
+    Debug::Log("gdxdevice.cpp: Shadow Rasterizer State created successfully (Front Face Culling enabled)");
     return hr;
 }
 
@@ -680,7 +692,6 @@ HRESULT CDevice::CreateShadowMatrixBuffer()
         return hr;
     }
 
-    Debug::Log("Shadow Matrix constant buffer created successfully (b3)");
+    Debug::Log("gdxdevice.cpp: Shadow Matrix constant buffer created successfully (b3)");
     return S_OK;
 }
-

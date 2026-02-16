@@ -204,8 +204,6 @@ int main()
     auto lastFPSLog = std::chrono::high_resolution_clock::now();
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
 
-    Engine::SetVSync(Engine::VSync::OFF);
-
     Debug::Log("========================================");
     Debug::Log("Starting render loop...");
     Debug::Log("Press ESC to exit");

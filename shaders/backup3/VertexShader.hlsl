@@ -1,7 +1,5 @@
 // VertexShader.hlsl - giDX Engine
 // Registers: b0 (Matrices), b1 (Lights), b2 (Material), b3 (Shadow Matrices)
-// VertexShader.hlsl - giDX Engine
-// Registers: b0 (Matrices), b1 (Lights), b2 (Material), b3 (Shadow Matrices)
 
 // ==================== CONSTANT BUFFERS ====================
 
@@ -15,8 +13,8 @@ cbuffer ConstantBuffer : register(b0)
 // Struktur fuer ein einzelnes Licht (muss mit C++ LightBufferData kompatibel sein!)
 struct LightData
 {
-    float4 lightPosition; // XYZ: Position, W: 0 fuer direktional, 1 fuer positional
-    float4 lightDirection; // XYZ: Direction
+    float4 lightPosition;     // XYZ: Position, W: 0 fuer direktional, 1 fuer positional
+    float4 lightDirection;    // XYZ: Direction
     float4 lightDiffuseColor; // RGB: Diffuse Farbe
     float4 lightAmbientColor; // RGB: Ambient Farbe (nur fuer erstes Licht relevant)
 };
@@ -24,9 +22,9 @@ struct LightData
 // Light-Array Buffer (SYNCHRON mit Pixel-Shader)
 cbuffer LightBuffer : register(b1)
 {
-    LightData lights[32]; // Array von bis zu 32 Lichtern
-    uint lightCount; // Aktuelle Anzahl der Lichter
-    float3 lightPadding; // Padding fuer 16-Byte Alignment
+    LightData lights[32];  // Array von bis zu 32 Lichtern
+    uint lightCount;       // Aktuelle Anzahl der Lichter
+    float3 lightPadding;   // Padding fuer 16-Byte Alignment
 };
 
 cbuffer MaterialBuffer : register(b2)
@@ -51,20 +49,20 @@ cbuffer ShadowMatrixBuffer : register(b3)
 struct VS_INPUT
 {
     float3 position : POSITION;
-    float3 normal : NORMAL;
-    float4 color : COLOR;
+    float3 normal   : NORMAL;
+    float4 color    : COLOR;
     float2 texCoord : TEXCOORD0;
 };
 
 struct VS_OUTPUT
 {
-    float4 position : SV_POSITION; // Clip-Space Position
-    float3 normal : NORMAL; // Normale im Welt-Raum
-    float3 worldPosition : TEXCOORD1; // Position im Welt-Raum
-    float4 color : COLOR; // Vertex-Farbe
-    float2 texCoord : TEXCOORD0; // Texturkoordinaten
-    float4 positionLightSpace : TEXCOORD2; // Shadow Mapping: Position im Licht-Raum
-    float3 viewDirection : TEXCOORD3; // Richtung zur Kamera (fuer Specular)
+    float4 position           : SV_POSITION;  // Clip-Space Position
+    float3 normal             : NORMAL;        // Normale im Welt-Raum
+    float3 worldPosition      : TEXCOORD1;     // Position im Welt-Raum
+    float4 color              : COLOR;         // Vertex-Farbe
+    float2 texCoord           : TEXCOORD0;     // Texturkoordinaten
+    float4 positionLightSpace : TEXCOORD2;     // Shadow Mapping: Position im Licht-Raum
+    float3 viewDirection      : TEXCOORD3;     // Richtung zur Kamera (fuer Specular)
 };
 
 // ==================== MAIN VERTEX SHADER ====================
@@ -107,4 +105,3 @@ VS_OUTPUT main(VS_INPUT input)
 
     return o;
 }
-

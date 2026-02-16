@@ -1,4 +1,4 @@
-#include "gdxutil.h"
+﻿#include "gdxutil.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -102,9 +102,17 @@ namespace GXUTIL
         return supported;
     }
 
-    // Deine alte Mapping-Logik (1..7) beibehalten
+    //
     int GetDirectXVersion(D3D_FEATURE_LEVEL featureLevel)
     {
+        // ← ZUSÄTZLICHER FIX: Falls noch Byte-Swap-Fehler durchkommen
+        if (featureLevel == 0xC100) featureLevel = D3D_FEATURE_LEVEL_12_1;
+        if (featureLevel == 0xC000) featureLevel = D3D_FEATURE_LEVEL_12_0;
+        if (featureLevel == 0xB100) featureLevel = D3D_FEATURE_LEVEL_11_1;
+        if (featureLevel == 0xB000) featureLevel = D3D_FEATURE_LEVEL_11_0;
+        if (featureLevel == 0xA100) featureLevel = D3D_FEATURE_LEVEL_10_1;
+        if (featureLevel == 0xA000) featureLevel = D3D_FEATURE_LEVEL_10_0;
+
         switch (featureLevel)
         {
         case D3D_FEATURE_LEVEL_9_1:
@@ -136,6 +144,23 @@ namespace GXUTIL
         case 6: return D3D_FEATURE_LEVEL_12_0;
         case 7: return D3D_FEATURE_LEVEL_12_1;
         default: return D3D_FEATURE_LEVEL_9_1;
+        }
+    }
+
+    std::wstring GetFeatureLevelName(D3D_FEATURE_LEVEL featureLevel)
+    {
+        switch (featureLevel)
+        {
+        case D3D_FEATURE_LEVEL_9_1:  return L"Direct3D 9.1";
+        case D3D_FEATURE_LEVEL_9_2:  return L"Direct3D 9.2";
+        case D3D_FEATURE_LEVEL_9_3:  return L"Direct3D 9.3";
+        case D3D_FEATURE_LEVEL_10_0: return L"Direct3D 10.0";
+        case D3D_FEATURE_LEVEL_10_1: return L"Direct3D 10.1";
+        case D3D_FEATURE_LEVEL_11_0: return L"Direct3D 11.0";
+        case D3D_FEATURE_LEVEL_11_1: return L"Direct3D 11.1";
+        case D3D_FEATURE_LEVEL_12_0: return L"Direct3D 12.0";
+        case D3D_FEATURE_LEVEL_12_1: return L"Direct3D 12.1";
+        default: return L"Unknown";
         }
     }
 } // namespace GXUTIL

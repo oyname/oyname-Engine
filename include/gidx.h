@@ -10,15 +10,6 @@ extern Timer Time;
 
 namespace Engine
 {
-    extern gdx::CGIDX* engine;
-
-    // VSync-Modus
-    enum class VSync {
-        OFF = 0,
-        ON = 1
-    };
-    static Engine::VSync vSyncMode = Engine::VSync::ON;
-
     struct Color
     {
         unsigned int r; // Rot
@@ -342,6 +333,25 @@ namespace Engine
         }
 
         l->SetDiffuseColor(DirectX::XMFLOAT4(r, g, b, a));
+    }
+
+    // Setzt das Directional Light fuer Shadow Mapping.
+    // Muss nach CreateLight aufgerufen werden.
+    // Nur EIN Directional Light kann Schatten werfen.
+    inline void SetDirectionalLight(LPENTITY light)
+    {
+        if (light == nullptr) {
+            Debug::Log("gidx.h: ERROR - SetDirectionalLight - light is nullptr");
+            return;
+        }
+
+        Light* l = dynamic_cast<Light*>(light);
+        if (l == nullptr) {
+            Debug::Log("gidx.h: ERROR - SetDirectionalLight - Entity is not a Light!");
+            return;
+        }
+
+        engine->SetDirectionalLight(light);
     }
 
     inline void CreateMesh(LPENTITY* mesh, MATERIAL* material = nullptr)
@@ -720,17 +730,18 @@ namespace Engine
 
     inline int Flip()
     {
-        return static_cast<int>(engine->m_device.Flip(static_cast<int>(vSyncMode)));
+        // nutzt direkt das Interval 0/1
+        return static_cast<int>(engine->m_device.Flip(engine->GetVSyncInterval()));
     }
 
-    inline void SetVSync(VSync mode)
+    inline void SetVSync(int interval)
     {
-        vSyncMode = mode;
+        if (engine) engine->SetVSyncInterval(interval);
     }
 
-    inline Engine::VSync GetVSync()
+    inline int GetVSync()
     {
-        return vSyncMode;
+        return engine ? engine->GetVSyncInterval() : 1;
     }
 
     inline unsigned int Graphics(unsigned int width, unsigned int height, bool windowed = true)

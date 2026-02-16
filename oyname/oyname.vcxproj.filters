@@ -70,6 +70,18 @@
     <Filter Include="03_Engine\02 Manager\06 InputLayoutManager">
       <UniqueIdentifier>{b12912a0-da6c-40b7-a781-9dec879f936e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01 core">
+      <UniqueIdentifier>{d67d75aa-d10d-44d1-8204-fda36803c457}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02 renderer">
+      <UniqueIdentifier>{1b4c3ab4-922b-49ef-b182-43d1c517fb1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03 scene">
+      <UniqueIdentifier>{1ba73dbc-c660-4cc6-8956-d8049f641518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04 resource">
+      <UniqueIdentifier>{ba3d151a-70c7-4389-8ab9-31c8187a07c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -108,7 +120,7 @@
     <ClCompile Include="..\src\Transform.cpp">
       <Filter>03_Engine\05 Transform</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Timer.cpp">
+    <ClCompile Include="..\src\timer.cpp">
       <Filter>03_Engine\07 Timer</Filter>
     </ClCompile>
     <ClCompile Include="..\src\ShaderManager.cpp">
@@ -129,7 +141,7 @@
     <ClCompile Include="..\src\gdxinterface.cpp">
       <Filter>02_DirectX\03 Interface</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\gidxwin.cpp">
+    <ClCompile Include="..\src\gdxwin.cpp">
       <Filter>01_Windows</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main.cpp">
@@ -174,6 +186,12 @@
     <ClCompile Include="..\src\gdxutil.cpp">
       <Filter>02_DirectX\01 Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\core.cpp">
+      <Filter>01 core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\examples\game.cpp">
+      <Filter>05_Example</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\third_party\stb_image.h">
@@ -206,7 +224,7 @@
     <ClInclude Include="..\include\gdxutil.h">
       <Filter>02_DirectX\01 Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\gidxwin.h">
+    <ClInclude Include="..\include\gdxwin.h">
       <Filter>01_Windows</Filter>
     </ClInclude>
     <ClInclude Include="..\include\InputLayoutManager.h">
@@ -245,7 +263,7 @@
     <ClInclude Include="..\include\TextureManager.h">
       <Filter>03_Engine\02 Manager\05 TexturManager</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Timer.h">
+    <ClInclude Include="..\include\timer.h">
       <Filter>03_Engine\07 Timer</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Transform.h">
@@ -256,6 +274,9 @@
     </ClInclude>
     <ClInclude Include="..\include\RenderQueue.h">
       <Filter>03_Engine\02 Manager\04 RenderManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core.h">
+      <Filter>01 core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

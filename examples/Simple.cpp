@@ -1,36 +1,36 @@
+// game.cpp
 #include "gidx.h"
+#include "core.h"
 
-// OYNAME Engine
-// 
-// A simple example demonstrating the basic usage of the oyname Engine
-// It creates a DirectX window and clears the background with a predefined color in a loop.
-
-int main()
+int main(LPVOID /*hwnd*/)
 {
+    // Engine ist schon initialisiert (WinMain hat Core::Init + Core::CreateEngine aufgerufen).
+    // Hier nur noch Graphics-Modus setzen:
     Engine::Graphics(1024, 768);
 
-    // Creating camera object
-    LPENTITY camera;
+    LPENTITY camera = nullptr;
     Engine::CreateCamera(&camera);
 
-    while (Windows::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000)) // Main loop
-    {   
-        // Clear Screen
+    while (Windows::MainLoop())
+    {
+        Core::BeginFrame(); // liefert DeltaTime/FPS/FrameCount über Core
+
+        // Clear Screen (deine Engine erwartet floats 0..1 oder 0..255 je nach Implementierung)
+        // In deinem Code nutzt du ints -> bleibt so, wenn Engine::Cls das so will:
         Engine::Cls(0, 64, 128);
 
-        //
         Engine::UpdateWorld();
 
-        //
-        if(FAILED(Engine::RenderWorld()))
-            Debug::Log("FEHLER");
+        HRESULT hr = Engine::RenderWorld();
+        if (FAILED(hr))
+            Debug::Log("FEHLER: RenderWorld");
 
-        // Show
-        if (FAILED(Engine::Flip()))
-            Debug::Log("FEHLER");
+        hr = Engine::Flip();
+        if (FAILED(hr))
+            Debug::Log("FEHLER: Flip");
+
+        Core::EndFrame();
     }
-    
-    // Shutdown the engine
-    return Windows::ShutDown();
-}
 
+    return 0;
+}

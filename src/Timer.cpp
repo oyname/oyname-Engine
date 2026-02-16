@@ -1,79 +1,106 @@
 #include "Timer.h"
-#include <thread>
-#include <algorithm>
-
-Timer* Timer::s_instance = nullptr;
+#include <algorithm> // std::min
+#include <cmath>     // std::floor
 
 Timer::Timer()
-    : timeMode(TimeMode::FIXED_TIMESTEP),
-    deltaTime(0.0),
-    accumulator(0.0),
-    lastFrameTime(std::chrono::high_resolution_clock::now())
+    : lastFrameTime(std::chrono::high_resolution_clock::now())
 {
+
 }
 
-Timer::~Timer() {
+Timer* Timer::GetInstance()
+{
+    static Timer instance; // kein new/delete
+    return &instance;
 }
 
-Timer* Timer::GetInstance() {
-    if (s_instance == nullptr) {
-        s_instance = new Timer();
-    }
-    return s_instance;
+void Timer::Init()
+{
+    (void)GetInstance();
 }
 
-void Timer::Initialize() {
-    GetInstance();
+void Timer::Shutdown()
+{
+    // absichtlich leer: statischer Singleton räumt sich automatisch auf
 }
 
-void Timer::Shutdown() {
-    if (s_instance != nullptr) {
-        delete s_instance;
-        s_instance = nullptr;
-    }
+void Timer::Tick()
+{
+    GetInstance()->Update();
 }
 
-void Timer::Update() {
+void Timer::Update()
+{
     auto currentTime = std::chrono::high_resolution_clock::now();
     double rawDeltaTime = std::chrono::duration<double>(currentTime - lastFrameTime).count();
     lastFrameTime = currentTime;
 
-    // Cap gegen massive Stutters
-    rawDeltaTime = std::min(rawDeltaTime, 0.1);
+    // Clamp gegen massive Stutters (Alt-Tab, Breakpoints, Window drag)
+    rawDeltaTime = std::min(rawDeltaTime, MAX_DELTA_CLAMP);
 
-    if (timeMode == TimeMode::FIXED_TIMESTEP) {
+    fixedSteps = 0;
+
+    if (timeMode == TimeMode::FIXED_TIMESTEP)
+    {
         accumulator += rawDeltaTime;
 
-        if (accumulator >= FIXED_TIMESTEP) {
-            deltaTime = FIXED_TIMESTEP;
-            accumulator -= FIXED_TIMESTEP;
+        // Wie viele fixed steps sind abzuarbeiten?
+        int steps = static_cast<int>(std::floor(accumulator / FIXED_TIMESTEP_SEC));
+
+        // Spiral-of-death Schutz
+        if (steps > MAX_FIXED_STEPS_PER_FRAME)
+            steps = MAX_FIXED_STEPS_PER_FRAME;
+
+        if (steps > 0)
+        {
+            fixedSteps = steps;
+            accumulator -= static_cast<double>(steps) * FIXED_TIMESTEP_SEC;
+
+            // deltaTime ist im FIXED Mode immer fixedStep (nicht raw!)
+            deltaTime = FIXED_TIMESTEP_SEC;
         }
-        else {
+        else
+        {
+            // Kein Step fällig -> deltaTime = 0 (aber steps=0 ist der wichtige Indikator)
             deltaTime = 0.0;
         }
-
-        // Frame-Rate-Limiting
-        double targetFrameTime = 1.0 / TARGET_FPS;
-        if (rawDeltaTime < targetFrameTime) {
-            std::this_thread::sleep_for(
-                std::chrono::duration<double>(targetFrameTime - rawDeltaTime)
-            );
-        }
     }
-    else if (timeMode == TimeMode::VSYNC_ONLY) {
+    else
+    {
+        // VARIABLE (aka VSYNC_ONLY): einfach raw dt
         deltaTime = rawDeltaTime;
     }
 }
 
-void Timer::Reset() {
-    GetInstance()->deltaTime = 0.0;
-    GetInstance()->accumulator = 0.0;
-    GetInstance()->lastFrameTime = std::chrono::high_resolution_clock::now();
+bool Timer::ConsumeFixedStep()
+{
+    Timer* t = GetInstance();
+    if (t->fixedSteps > 0)
+    {
+        --t->fixedSteps;
+        // deltaTime bleibt FIXED_TIMESTEP_SEC während Steps > 0, das passt so.
+        return true;
+    }
+    return false;
 }
 
-double Timer::GetFPS() {
-    if (GetInstance()->deltaTime > 0.0) {
-        return 1.0 / GetInstance()->deltaTime;
-    }
-    return TARGET_FPS;
+void Timer::Reset()
+{
+    Timer* t = GetInstance();
+    t->deltaTime = 0.0;
+    t->accumulator = 0.0;
+    t->fixedSteps = 0;
+    t->lastFrameTime = std::chrono::high_resolution_clock::now();
 }
+
+double Timer::GetFPS()
+{
+    const double dt = GetInstance()->deltaTime;
+    if (dt > 0.0)
+        return 1.0 / dt;
+
+    // Wenn FIXED und gerade kein Step fällig: FPS nicht aus 0 ableiten
+    return 0.0;
+}
+
+

@@ -43,7 +43,7 @@ int main()
         Engine::Flip();
     }
 
-    return Windows::ShutDown();
+    return 0;
 }
 
 void CreateQuad(LPENTITY* mesh, MATERIAL* material)

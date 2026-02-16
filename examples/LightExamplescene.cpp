@@ -1,17 +1,23 @@
-﻿#include "gidx.h"
+﻿#include <Windows.h>
+#include "gidx.h"
+#include "core.h"
 
 LPENTITY g_plateMesh = nullptr;
 LPENTITY g_cubeMesh = nullptr;
+LPENTITY g_cubeMesh2= nullptr;
 LPENTITY g_camera = nullptr;
 LPENTITY g_redLight = nullptr;
 LPENTITY g_blueLight = nullptr;
+LPENTITY g_directionalLight = nullptr;
 
 void CreateCube(LPENTITY* mesh, MATERIAL* material);
 
 int main()
 {
-    Engine::Graphics(1920, 1080);
-          
+    // Engine init
+    Engine::Graphics(1024, 768);
+
+    // Texturen
     LPTEXTURE brick = nullptr;
     Engine::LoadTexture(&brick, L"..\\media\\dx.bmp");
 
@@ -23,55 +29,79 @@ int main()
     Engine::PositionEntity(g_camera, 0.0f, 40.0f, -90.0f);
     Engine::RotateEntity(g_camera, 25.0f, 0.0f, 0.0f);
 
-    // Würfel (5 x 5 x 5, 10 Einheiten über Platte)
+    // Würfel
     LPMATERIAL whiteMaterial = nullptr;
     Engine::CreateMaterial(&whiteMaterial);
     Engine::MaterialTexture(whiteMaterial, brick);
+
     Engine::CreateMesh(&g_cubeMesh);
     CreateCube(&g_cubeMesh, whiteMaterial);
-    Engine::PositionEntity(g_cubeMesh, 0.0f, 25.0f, 0.0f);
-    Engine::ScaleEntity(g_cubeMesh, 5.0f, 5.0f, 5.0f);
+    Engine::PositionEntity(g_cubeMesh, 0.0f, 35.0f, 0.0f);
+    Engine::ScaleEntity(g_cubeMesh, 8.0f, 8.0f, 8.0f);
 
-    // Platte (50 x 0.2 x 50)
+    Engine::CreateMesh(&g_cubeMesh2);
+    CreateCube(&g_cubeMesh2, whiteMaterial);
+    Engine::PositionEntity(g_cubeMesh2, 10.0f, 15.0f, 0.0f);
+    Engine::ScaleEntity(g_cubeMesh2, 5.0f, 5.0f, 5.0f);
+
+    // Platte
     LPMATERIAL grayMaterial = nullptr;
     Engine::CreateMaterial(&grayMaterial);
     Engine::MaterialTexture(grayMaterial, dxlogo);
+
     Engine::CreateMesh(&g_plateMesh);
     CreateCube(&g_plateMesh, grayMaterial);
     Engine::PositionEntity(g_plateMesh, 0.0f, 0.0f, 0.0f);
     Engine::ScaleEntity(g_plateMesh, 50.0f, 0.5f, 50.0f);
 
-    // Rotes Licht (rechts oben)
+    // Lichter
+    Engine::CreateLight(&g_directionalLight, D3DLIGHT_DIRECTIONAL);
+    Engine::PositionEntity(g_directionalLight, 0.0f, 50.0f, 0.0f);
+    Engine::RotateEntity(g_directionalLight, 90.0f, 0.0f, 0.0f);
+    Engine::LightColor(g_directionalLight, 0.1f, 0.1f, 0.1f);
+
+
     Engine::CreateLight(&g_redLight, D3DLIGHT_POINT);
     Engine::PositionEntity(g_redLight, 20.0f, 15.0f, 0.0f);
     Engine::LightColor(g_redLight, 1.0f, 0.3f, 0.3f);
 
-    // Blaues Licht (links oben)
     Engine::CreateLight(&g_blueLight, D3DLIGHT_POINT);
     Engine::PositionEntity(g_blueLight, -20.0f, 15.0f, 0.0f);
     Engine::LightColor(g_blueLight, 0.3f, 0.3f, 1.0f);
 
-    // ← NEU: Erstelle ein DIRECTIONALES LICHT für Shadow Mapping!
-    LPENTITY g_directionalLight = nullptr;
-    Engine::CreateLight(&g_directionalLight, D3DLIGHT_DIRECTIONAL);  // ← DIRECTIONAL!
-    Engine::PositionEntity(g_directionalLight, 0.0f, 150.0f, 0.0f);
-    Engine::RotateEntity(g_directionalLight, -90.0f, 0.0f, 0.0f);
-    Engine::LightColor(g_directionalLight, 1.0f, 1.0f, 1.0f);
+    // Dieses Licht wirft Schatten (muss nach CreateLight aufgerufen werden)
+    Engine::SetDirectionalLight(g_directionalLight);
 
+    Engine::SetAmbientColor(0.1f, 0.1f, 0.1f);
 
-    //Engine::SetAmbientColor(0.2f, 0.2f, 0.2f);
+    //Engine::PositionEntity(g_camera, 0.0f, 50.0f, 0.0f);
+    //Engine::RotateEntity(g_camera, 60.0f, 0.0f, 0.0f);
 
-    float speed = 100.0f;
-    //Engine::PositionEntity(g_camera, 0.0f, 150.0f, 0.0f);
-    //Engine::RotateEntity(  g_camera, 90.0f, 0.0f, 0.0f);
-    Timer::SetTimeMode(Timer::TimeMode::VSYNC_ONLY);
-    Engine::SetVSync(Engine::VSync::ON);
+    Engine::SetVSync(1);
+
+    const float speed = 100.0f;
 
     while (Windows::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000))
     {
-        double dt = Timer::GetDeltaTime();
+        Core::BeginFrame();
 
-        // Würfel rotieren
+        const float dt = static_cast<float>(Core::GetDeltaTime());
+
+        Engine::Cls(0, 64, 128);
+
+        if ((GetAsyncKeyState(VK_UP) & 0x8000)) {
+            Engine::MoveEntity(g_redLight, 0.0f, 0.0f, 50.0f * dt);
+        }
+        if ((GetAsyncKeyState(VK_DOWN) & 0x8000)) {
+            Engine::MoveEntity(g_redLight, 0.0f, 0.0f, -50.0f * dt);
+        }
+        if ((GetAsyncKeyState(VK_RIGHT) & 0x8000)) {
+            Engine::MoveEntity(g_redLight, 50.0f * dt, 0.0f, 0.0f);
+        }
+        if ((GetAsyncKeyState(VK_LEFT) & 0x8000)) {
+            Engine::MoveEntity(g_redLight, -50.0f * dt, 0.0f, 0.0f);
+        }
+
         Engine::TurnEntity(g_cubeMesh, speed * dt, speed * dt, 0.0f);
 
         // Rendering
@@ -79,10 +109,14 @@ int main()
         Engine::UpdateWorld();
         Engine::RenderWorld();
         Engine::Flip();
+
+        Core::EndFrame();
     }
 
-    return Windows::ShutDown();
+    return 0;
 }
+
+
 
 void CreateCube(LPENTITY* mesh, MATERIAL* material)
 {

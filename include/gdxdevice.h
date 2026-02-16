@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include <d3d11.h>
 #include <dxgi.h>
 #include <vector>
+#include "gdxutil.h"  // ← WICHTIG: War vorher nicht included!
 
 namespace gdx
 {
@@ -114,7 +115,7 @@ namespace gdx
 		friend class CGIDX;
 
 	public:
-		DEVICEMANAGER deviceManager;
+		DEVICEMANAGER deviceManager;  // ← Bleibt hier
 
 	public:
 		CDevice();
@@ -155,9 +156,9 @@ namespace gdx
 			return m_pd3dDevice;
 		}
 
-		ID3D11RasterizerState* GetRasterizerState() const 
-		{ 
-			return m_pRasterizerState; 
+		ID3D11RasterizerState* GetRasterizerState() const
+		{
+			return m_pRasterizerState;
 		}
 
 		ID3D11DeviceContext* GetDeviceContext() const
@@ -175,7 +176,7 @@ namespace gdx
 			return m_pRenderTargetView;
 		}
 
-		// R�ckw�rtskompatibilit�t
+		// Rückwärtskompatibilität
 		ID3D11RenderTargetView* GetTargetView() const
 		{
 			return m_pRenderTargetView;

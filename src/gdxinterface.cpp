@@ -1,10 +1,10 @@
+// gdxinterface.cpp
 #include "gdxinterface.h"
 
 using namespace gdx;
 
-CInterface::CInterface() : m_bInitialized(true), m_factory(nullptr)
+CInterface::CInterface() : m_bInitialized(false), m_factory(nullptr)
 {
-
 }
 
 CInterface::~CInterface()
@@ -14,6 +14,8 @@ CInterface::~CInterface()
 
 HRESULT CInterface::Init(unsigned int bpp)
 {
+    (void)bpp; // Original: bpp unbenutzt
+
     Release();
 
     HRESULT hr = S_OK;
@@ -26,7 +28,7 @@ HRESULT CInterface::Init(unsigned int bpp)
     if (FAILED(hr))
     {
         Debug::LogHr(__FILE__, __LINE__, hr);
-        return hr;   // wenn Funktion HRESULT zurückgibt
+        return hr;
     }
 
     // Enumerate system information
@@ -42,9 +44,7 @@ HRESULT CInterface::Init(unsigned int bpp)
 
 void CInterface::Release()
 {
-    if (m_bInitialized)
-        Memory::SafeRelease(m_factory);
-
+    Memory::SafeRelease(m_factory);
     m_bInitialized = false;
 }
 
@@ -56,7 +56,6 @@ HRESULT CInterface::GetSystemInfo()
     HRESULT hr = S_OK;
     IDXGIAdapter* adapter = nullptr;
 
-    // Enumerate all graphics adapters
     for (UINT i = 0; m_factory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND; ++i)
     {
         if (!adapter)
@@ -75,7 +74,6 @@ HRESULT CInterface::GetSystemInfo()
 
         GXADAPTER gxAdapter;
 
-        // Get adapter description
         hr = adapter->GetDesc(&gxAdapter.Desc);
         if (FAILED(hr))
         {
@@ -84,7 +82,6 @@ HRESULT CInterface::GetSystemInfo()
             return hr;
         }
 
-        // Enumerate outputs for this adapter
         hr = EnumerateAdapterOutputs(adapter, gxAdapter);
         if (FAILED(hr))
         {
@@ -93,7 +90,6 @@ HRESULT CInterface::GetSystemInfo()
             return hr;
         }
 
-        // Add configured adapter to interface manager
         interfaceManager.AddAdapter(gxAdapter);
 
         Memory::SafeRelease(adapter);
@@ -117,7 +113,6 @@ HRESULT CInterface::EnumerateAdapterOutputs(IDXGIAdapter* adapter, GXADAPTER& gx
 
         GXOUTPUT gxOutput;
 
-        // Get output description
         hr = output->GetDesc(&gxOutput.OutputDesc);
         if (FAILED(hr))
         {
@@ -126,7 +121,6 @@ HRESULT CInterface::EnumerateAdapterOutputs(IDXGIAdapter* adapter, GXADAPTER& gx
             return hr;
         }
 
-        // Enumerate display modes for this output
         hr = EnumerateDisplayModes(output, gxOutput);
         if (FAILED(hr))
         {
@@ -134,7 +128,6 @@ HRESULT CInterface::EnumerateAdapterOutputs(IDXGIAdapter* adapter, GXADAPTER& gx
             return hr;
         }
 
-        // Add configured output to adapter
         gxAdapter.Outputs.push_back(gxOutput);
 
         Memory::SafeRelease(output);
@@ -151,32 +144,24 @@ HRESULT CInterface::EnumerateDisplayModes(IDXGIOutput* output, GXOUTPUT& gxOutpu
     HRESULT hr = S_OK;
     DXGI_FORMAT format = interfaceManager.GetDXGI_Format();
 
-    // First call: get number of display modes
     UINT numModes = 0;
     hr = output->GetDisplayModeList(format, 0, &numModes, nullptr);
 
     if (FAILED(hr) || numModes == 0)
-    {
         return hr;
-    }
 
-    // Second call: get actual display mode data
     std::vector<DXGI_MODE_DESC> displayModes(numModes);
     hr = output->GetDisplayModeList(format, 0, &numModes, displayModes.data());
 
     if (FAILED(hr))
-    {
         return hr;
-    }
 
-    // Process display modes and eliminate duplicates
     for (const auto& mode : displayModes)
     {
         GXDISPLAYMODE gxMode;
         gxMode.Width = mode.Width;
         gxMode.Height = mode.Height;
 
-        // Find existing resolution in output
         auto resolutionIt = std::find_if(
             gxOutput.DisplayModes.begin(),
             gxOutput.DisplayModes.end(),
@@ -185,7 +170,6 @@ HRESULT CInterface::EnumerateDisplayModes(IDXGIOutput* output, GXOUTPUT& gxOutpu
             }
         );
 
-        // Calculate frequency (float division, not integer)
         float frequency = mode.RefreshRate.Denominator != 0
             ? static_cast<float>(mode.RefreshRate.Numerator) / mode.RefreshRate.Denominator
             : 0.0f;
@@ -197,7 +181,6 @@ HRESULT CInterface::EnumerateDisplayModes(IDXGIOutput* output, GXOUTPUT& gxOutpu
 
         if (resolutionIt != gxOutput.DisplayModes.end())
         {
-            // Resolution exists, check if frequency is duplicate
             bool frequencyExists = std::any_of(
                 resolutionIt->Frequencies.begin(),
                 resolutionIt->Frequencies.end(),
@@ -207,15 +190,11 @@ HRESULT CInterface::EnumerateDisplayModes(IDXGIOutput* output, GXOUTPUT& gxOutpu
                 }
             );
 
-            // Only add if frequency doesn't already exist
             if (!frequencyExists)
-            {
                 resolutionIt->Frequencies.push_back(gxFrequency);
-            }
         }
         else
         {
-            // New resolution, create new entry
             gxMode.Frequencies.push_back(gxFrequency);
             gxOutput.DisplayModes.push_back(gxMode);
         }
@@ -223,6 +202,7 @@ HRESULT CInterface::EnumerateDisplayModes(IDXGIOutput* output, GXOUTPUT& gxOutpu
 
     return hr;
 }
+
 
 
 

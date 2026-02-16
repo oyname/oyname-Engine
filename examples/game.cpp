@@ -1,88 +1,106 @@
-﻿#include "gidx.h"
+﻿// game.cpp - Beispiel Game-Loop
+//
+// WICHTIG: Diese Funktion laeuft auf dem separaten Game-Thread.
+// Core::Init() und Core::CreateEngine() werden bereits in WinMain (main.cpp) aufgerufen.
+// Hier muss NUR die Spiellogik stehen.
+
+#include <Windows.h>
+#include "gidx.h"
 #include "core.h"
 
-static void CreateCube(LPENTITY* mesh, MATERIAL* material);
+LPENTITY g_plateMesh = nullptr;
+LPENTITY g_cubeMesh = nullptr;
+LPENTITY g_camera = nullptr;
+LPENTITY g_redLight = nullptr;
+LPENTITY g_blueLight = nullptr;
+LPENTITY g_directionalLight = nullptr;
 
-// Beispiel mit einem zweiten Shader. Der zweite Shader stellt das Objekt nur in Rot
+void CreateCube(LPENTITY* mesh, MATERIAL* material);
 
-int main()
+// Signatur muss zu main.h passen: int main(LPVOID hwnd)
+int main(LPVOID hwnd)
 {
-    bool windowed = true;
-    windowed == true ? Engine::Graphics(1200, 650) : Engine::Graphics(1980, 1080, false);
+    // Engine ist schon initialisiert (WinMain hat Core::Init + Core::CreateEngine aufgerufen).
+    // Hier nur noch Graphics-Modus setzen:
+    Engine::Graphics(1024, 768);
 
-    // Neue Shader
-    LPSHADER shader = nullptr;
-    Engine::CreateShader(&shader, L"..\\shaders\\VertexShaderRot.hlsl", "main", L"..\\shaders\\PixelShaderRot.hlsl", "main", Engine::CreateVertexFlags(true, false, false, false, false));
+    // Texturen
+    LPTEXTURE brick = nullptr;
+    Engine::LoadTexture(&brick, L"..\\media\\dx.bmp");
 
-    // Textur laden
-    LPTEXTURE face = nullptr;
-    Engine::LoadTexture(&face, L"..\\media\\face.bmp");
+    LPTEXTURE dxlogo = nullptr;
+    Engine::LoadTexture(&dxlogo, L"..\\media\\bricks.bmp");
 
-    // Kamera erstellen
-    LPENTITY camera = nullptr;
-    Engine::CreateCamera(&camera);
-    Engine::PositionEntity(camera, 0.0f, 0.0f, -5.0f);
-    Engine::RotateEntity(camera, 0.0f, 0.0f, 0.0f);
+    // Kamera
+    Engine::CreateCamera(&g_camera);
+    Engine::PositionEntity(g_camera, 0.0f, 40.0f, -90.0f);
+    Engine::RotateEntity(g_camera, 25.0f, 0.0f, 0.0f);
 
-    // Material 1 mit Textur Standard-Shader
-    LPMATERIAL material1 = nullptr;
-    Engine::CreateMaterial(&material1);
-    Engine::MaterialTexture(material1, face);
+    // Wuerfel
+    LPMATERIAL whiteMaterial = nullptr;
+    Engine::CreateMaterial(&whiteMaterial);
+    Engine::MaterialTexture(whiteMaterial, brick);
 
-    // Material 2 mit dem neuen Shader
-    LPMATERIAL material2 = nullptr;
-    Engine::CreateMaterial(&material2, shader);
+    Engine::CreateMesh(&g_cubeMesh);
+    CreateCube(&g_cubeMesh, whiteMaterial);
+    Engine::PositionEntity(g_cubeMesh, 0.0f, 25.0f, 0.0f);
+    Engine::ScaleEntity(g_cubeMesh, 5.0f, 5.0f, 5.0f);
 
-    // Qube erstellen
-    LPENTITY Mesh1 = nullptr;
-    Engine::CreateMesh(&Mesh1);
-    CreateCube(&Mesh1, material1);
-    Engine::PositionEntity(Mesh1, -2.0f, 0.0f, 0.0f);
-    Engine::ScaleEntity(Mesh1, 1.0f, 1.0f, 1.0f);
+    // Platte
+    LPMATERIAL grayMaterial = nullptr;
+    Engine::CreateMaterial(&grayMaterial);
+    Engine::MaterialTexture(grayMaterial, dxlogo);
 
-    // Zweiten Qube erstellen
-    LPENTITY Mesh2 = nullptr;
-    Engine::CreateMesh(&Mesh2);
-    CreateCube(&Mesh2, material2);
-    Engine::PositionEntity(Mesh2, 2.0f, 0.0f, 0.0f);
+    Engine::CreateMesh(&g_plateMesh);
+    CreateCube(&g_plateMesh, grayMaterial);
+    Engine::PositionEntity(g_plateMesh, 0.0f, 0.0f, 0.0f);
+    Engine::ScaleEntity(g_plateMesh, 50.0f, 0.5f, 50.0f);
 
-    // LICHT
-    LPENTITY directionalLight = nullptr;
-    Engine::CreateLight(&directionalLight, D3DLIGHT_POINT); 
-    Engine::PositionEntity(directionalLight, 0.0f, 0.0f, -10.0f);
-    Engine::RotateEntity(directionalLight, 90.0f, 20.0f, 0.0f);
-    Engine::LightColor(directionalLight, 1.0f, 1.0f, 1.0f);
+    // Lichter
+    Engine::CreateLight(&g_directionalLight, D3DLIGHT_DIRECTIONAL);
+    Engine::PositionEntity(g_directionalLight, 0.0f, 150.0f, 0.0f);
+    Engine::RotateEntity(g_directionalLight, 90.0f, 0.0f, 0.0f);
+    Engine::LightColor(g_directionalLight, 1.0f, 1.0f, 1.0f);
 
-    // 
+    Engine::CreateLight(&g_redLight, D3DLIGHT_POINT);
+    Engine::PositionEntity(g_redLight, 20.0f, 15.0f, 0.0f);
+    Engine::LightColor(g_redLight, 1.0f, 0.3f, 0.3f);
+    
+    Engine::CreateLight(&g_blueLight, D3DLIGHT_POINT);
+    Engine::PositionEntity(g_blueLight, -20.0f, 15.0f, 0.0f);
+    Engine::LightColor(g_blueLight, 0.3f, 0.3f, 1.0f);
+
+    // Dieses Licht wirft Schatten (muss nach CreateLight aufgerufen werden)
+    Engine::SetDirectionalLight(g_directionalLight);
+
     Engine::SetVSync(1);
 
     const float speed = 100.0f;
 
+    // === GAME LOOP ===
     while (Windows::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000))
     {
         Core::BeginFrame();
 
         const float dt = static_cast<float>(Core::GetDeltaTime());
 
-        if ((GetAsyncKeyState(VK_UP) & 0x8000))
-        {
-            Engine::MoveEntity(Mesh1, 0.0f, 0.0f, 5.0f * dt);
-        }
-        if ((GetAsyncKeyState(VK_DOWN) & 0x8000))
-        {
-            Engine::MoveEntity(Mesh1, 0.0f, 0.0f, -5.0f * dt);
-        }
-        if ((GetAsyncKeyState(VK_RIGHT) & 0x8000))
-        {
-            Engine::MoveEntity(Mesh1, 5.0f * dt, 0.0f, 0.0f);
-        }
-        if ((GetAsyncKeyState(VK_LEFT) & 0x8000))
-        {
-            Engine::MoveEntity(Mesh1, -5.0f * dt, 0.0f, 0.0f);
-        }
-
-        // Rendering
         Engine::Cls(0, 64, 128);
+
+        if ((GetAsyncKeyState(VK_UP) & 0x8000)) {
+            Engine::MoveEntity(g_cubeMesh, 0.0f, 0.0f, 50.0f * dt);
+        }
+        if ((GetAsyncKeyState(VK_DOWN) & 0x8000)) {
+            Engine::MoveEntity(g_cubeMesh, 0.0f, 0.0f, -50.0f * dt);
+        }
+        if ((GetAsyncKeyState(VK_RIGHT) & 0x8000)) {
+            Engine::MoveEntity(g_cubeMesh, 50.0f * dt, 0.0f, 0.0f);
+        }
+        if ((GetAsyncKeyState(VK_LEFT) & 0x8000)) {
+            Engine::MoveEntity(g_cubeMesh, -50.0f * dt, 0.0f, 0.0f);
+
+
+        Engine::TurnEntity(g_cubeMesh, speed * dt, speed * dt, 0.0f);
+
         Engine::UpdateWorld();
         Engine::RenderWorld();
         Engine::Flip();
@@ -90,8 +108,41 @@ int main()
         Core::EndFrame();
     }
 
+    // KEIN Engine::ReleaseEngine() hier!
+    // KEIN Core::Shutdown() hier!
+    // WinMain (main.cpp) ruft Core::Shutdown() auf, das macht beides automatisch.
+
+    Debug::Log("game.cpp: MAIN BEENDET. Letzte FPS: ", Core::GetFPS());
+
     return 0;
 }
+//while (Windows::MainLoop())
+//{
+//    Core::BeginFrame();   // Timer::Tick() -> Accumulator fuellen
+//
+//    const float dt = static_cast<float>(Core::GetDeltaTime());
+//
+//    // --- FIXED RATE: Physik, Kollision, Gameplay-Logik ---
+//    while (Timer::ConsumeFixedStep())
+//    {
+//        float fixedDt = static_cast<float>(Timer::GetFixedStep());  // 1/60
+//        // PhysicsUpdate(fixedDt);
+//        // CollisionCheck();
+//        // AI_Update(fixedDt);
+//    }
+//
+//    // --- VARIABLE RATE: Rendering (so schnell wie moeglich / VSync) ---
+//    Engine::Cls(0, 64, 128);
+//    Engine::TurnEntity(g_cubeMesh, speed * dt, speed * dt, 0.0f);
+//    Engine::UpdateWorld();
+//    Engine::RenderWorld();
+//    Engine::Flip();
+//
+//    Core::EndFrame();
+//}
+// Core::BeginFrame() ruft Timer::Tick() auf, das den Accumulator füllt.Die while (Timer::ConsumeFixedStep()) - Schleife verbraucht den Accumulator in 1 / 60s - Schritten – genau so oft wie nötig, unabhängig von der Renderrate.Rendering läuft danach einmal pro Frame mit variablem dt.
+// Wenn du später Bullet Physics einbaust, kommt dynamicsWorld->stepSimulation(fixedDt, 0) in die Fixed - Schleife.Der Spiral - of - Death - Schutz(MAX_FIXED_STEPS_PER_FRAME = 5) ist im Timer schon drin, damit bei Lags nicht hunderte Physik - Steps nachgeholt werden.
+// Core::EndFrame() bleibt ein leichter Platzhalter – da könnte später z.B.ein Frame - Time - Profiler oder ein Stats - Sammler rein, aber keine Spiellogik.
 
 void CreateCube(LPENTITY* mesh, MATERIAL* material)
 {

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #ifndef GDXUTIL_H_INCLUDED
 #define GDXUTIL_H_INCLUDED
@@ -6,6 +6,9 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>
+
+#include <wrl/client.h>
+using Microsoft::WRL::ComPtr;
 
 #include <string>
 #include <sstream>
@@ -50,7 +53,7 @@ enum GXFORMAT {
     R10G10B10_XR_BIAS_A2_UNORM = 1 << 6,
 };
 
-// Bitwise ops für GXFORMAT (GLOBAL, nicht in GXUTIL!)
+// Bitwise ops fï¿½r GXFORMAT (GLOBAL, nicht in GXUTIL!)
 inline GXFORMAT operator|(GXFORMAT a, GXFORMAT b)
 {
     return static_cast<GXFORMAT>(static_cast<int>(a) | static_cast<int>(b));
@@ -87,10 +90,9 @@ namespace GXUTIL
 
     GXFORMAT      GetSupportedFormats(D3D_FEATURE_LEVEL featureLevel);
 
-    // Achtung: ich lasse deine alte Versions-Logik (1..7) drin,
-    // damit dir nichts im restlichen Code bricht.
     int           GetDirectXVersion(D3D_FEATURE_LEVEL featureLevel);
     D3D_FEATURE_LEVEL GetFeatureLevelFromDirectXVersion(int version);
+    std::wstring  GetFeatureLevelName(D3D_FEATURE_LEVEL featureLevel);
 
     // -------- UTF helpers (header-only, kein <codecvt>) --------
     inline std::string WideToUtf8(const wchar_t* wstr)
@@ -117,7 +119,7 @@ namespace GXUTIL
 }
 
 // ============================================================
-// Debug (header-only) – getrennt HR / Win32, thread-safe
+// Debug (header-only) ï¿½ getrennt HR / Win32, thread-safe
 // ============================================================
 
 class Debug

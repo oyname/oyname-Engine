@@ -1,8 +1,55 @@
-#include "gidxwin.h"
+#include "gdxwin.h"
 #include "gdxutil.h"
+
 
 namespace Windows
 {
+    static bool g_running = true;
+    static HWND g_hwnd = nullptr;
+    
+    HWND GetHWND() { return g_hwnd; }
+    void SetHWND(HWND hwnd) { g_hwnd = hwnd; }
+    
+    void MainLoop(bool running)
+    {
+        g_running = running;
+    }
+    
+    void RequestQuit()
+    {
+        g_running = false;
+        if (g_hwnd)
+            PostMessage(g_hwnd, WM_CLOSE, 0, 0);
+    }
+    
+    bool MainLoop()
+    {
+        if (!g_running)
+            return false;
+    
+        MSG msg{};
+        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+        {
+            if (msg.message == WM_QUIT)
+            {
+                g_running = false;
+                return false;
+            }
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    
+        if (g_hwnd && !IsWindow(g_hwnd))
+        {
+            g_running = false;
+            return false;
+        }
+    
+        return g_running;
+    }
+    
+    
+
     CWindow::CWindow() :
         m_hInst(nullptr),
         m_hWnd(nullptr),
@@ -60,6 +107,8 @@ namespace Windows
         if (m_hWnd == nullptr)
             return nullptr;
 
+        Windows::SetHWND(m_hWnd);
+
         CreateConsole();
 
         ShowCursor(TRUE);
@@ -76,8 +125,11 @@ namespace Windows
 
     BOOL CWindow::Release()
     {
-        if (m_hWnd != nullptr)
+        if (m_hWnd)
+        {
+            DestroyWindow(m_hWnd); // Hinzugefügt
             m_hWnd = nullptr;
+        }
 
         m_bInitialized = false;
 

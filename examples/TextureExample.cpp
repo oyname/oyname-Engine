@@ -120,8 +120,6 @@ int main()
 
     Timer::SetTimeMode(Timer::TimeMode::VSYNC_ONLY);
 
-    Engine::SetVSync(Engine::VSync::ON);
-
     while (Windows::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000))
     {
         auto startTime = std::chrono::high_resolution_clock::now();

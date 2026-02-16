@@ -1,14 +1,14 @@
 // PixelShader.hlsl - Lighting + Shadow Mapping (PCF)
 // Registers:
 //  - t0/s0 : diffuse texture
-//  - t7/s7 : shadow map (comparison sampler)   <<< FIXED (was t1/s1)
+//  - t7/s7 : shadow map (comparison sampler)
 //  - b1    : LightBuffer
 //  - b2    : MaterialBuffer
 
 struct LightData
 {
-    float4 lightPosition; // XYZ: Position, W: 0 directional, 1 point
-    float4 lightDirection; // XYZ: Direction (for directional lights)
+    float4 lightPosition;     // XYZ: Position, W: 0 directional, 1 point
+    float4 lightDirection;    // XYZ: Direction (for directional lights)
     float4 lightDiffuseColor; // RGB: Diffuse, A: radius (for point lights)
     float4 lightAmbientColor; // RGB: Ambient (only first light used)
 };
@@ -27,23 +27,24 @@ cbuffer MaterialBuffer : register(b2)
     float shininess;
     float transparency;
     float receiveShadows; // 1 = use shadow map, 0 = ignore shadows
-    float padding; // 16-byte alignment
+    float padding;        // 16-byte alignment
 };
 
 struct PS_INPUT
 {
-    float4 position : SV_POSITION;
-    float3 normal : NORMAL;
-    float3 worldPosition : TEXCOORD1;
-    float4 color : COLOR;
-    float2 texCoord : TEXCOORD0;
+    float4 position           : SV_POSITION;
+    float3 normal             : NORMAL;
+    float3 worldPosition      : TEXCOORD1;
+    float4 color              : COLOR;
+    float2 texCoord           : TEXCOORD0;
     float4 positionLightSpace : TEXCOORD2; // from VS (light clip space)
+    float3 viewDirection      : TEXCOORD3; // from VS (Richtung zur Kamera)
 };
 
 Texture2D textureMap : register(t0);
 SamplerState samplerState : register(s0);
 
-// Shadow map moved to t7/s7 to avoid collision with material multi-textures
+// Shadow map on t7/s7 to avoid collision with material textures
 Texture2D shadowMapTexture : register(t7);
 SamplerComparisonState shadowSampler : register(s7);
 
@@ -78,8 +79,7 @@ float CalculateShadowFactor(float4 positionLightSpace, float3 normal, float3 lig
     if (projCoords.z < 0.0f || projCoords.z > 1.0f)
         return 1.0f;
 
-    // Slope-scaled-ish bias (cheap)
-    // lightDir is direction from light->surface for directional (see C++), we use surface->light as -lightDir
+    // Slope-scaled bias
     float ndotl = saturate(dot(normalize(normal), normalize(-lightDir)));
     float bias = max(0.0005f, 0.0030f * (1.0f - ndotl));
 
@@ -98,7 +98,6 @@ float CalculateShadowFactor(float4 positionLightSpace, float3 normal, float3 lig
         for (int x = -1; x <= 1; ++x)
         {
             float2 uv = projCoords.xy + float2((float) x, (float) y) * texelSize;
-            // SampleCmp returns 1 if compareDepth <= sampledDepth (lit), else 0 (shadow)
             shadowSum += shadowMapTexture.SampleCmpLevelZero(shadowSampler, uv, compareDepth);
         }
     }
@@ -109,6 +108,7 @@ float CalculateShadowFactor(float4 positionLightSpace, float3 normal, float3 lig
 float4 main(PS_INPUT input) : SV_Target
 {
     float3 normal = normalize(input.normal);
+    float3 viewDir = normalize(input.viewDirection);
 
     float3 ambient = float3(0.0, 0.0, 0.0);
     float3 diffuseAccum = float3(0.0, 0.0, 0.0);
@@ -117,7 +117,7 @@ float4 main(PS_INPUT input) : SV_Target
     if (lightCount > 0)
         ambient = lights[0].lightAmbientColor.rgb;
 
-    // Index des ersten Directional Light finden (fuer Shadow Mapping)
+    // Erstes Directional Light finden (fuer Shadow Mapping)
     int shadowLightIndex = -1;
     float3 shadowLightDir = float3(0, -1, 0);
     [loop]
@@ -125,7 +125,7 @@ float4 main(PS_INPUT input) : SV_Target
     {
         if (lights[s].lightPosition.w < 0.5f) // Directional
         {
-            shadowLightIndex = (int)s;
+            shadowLightIndex = (int) s;
             shadowLightDir = normalize(lights[s].lightDirection.xyz);
             break;
         }
@@ -153,27 +153,17 @@ float4 main(PS_INPUT input) : SV_Target
 
         // Shadow nur fuer das Directional Light das Schatten wirft
         float shadowFactor = 1.0f;
-        if (receiveShadows > 0.5f && (int)i == shadowLightIndex)
+        if (receiveShadows > 0.5f && (int) i == shadowLightIndex)
             shadowFactor = CalculateShadowFactor(input.positionLightSpace, normal, shadowLightDir);
 
         // Diffuse (Lambert)
         float diffuse_factor = max(dot(normal, -lightDir), 0.0f);
         diffuseAccum += lights[i].lightDiffuseColor.rgb * diffuse_factor * lightIntensity * shadowFactor;
 
-        // Specular (FIX: specular must be modulated by light color, otherwise it shines even when light is black)
-        // NOTE: view vector is currently faked as (0,1,0). For physically correct highlights, pass a real viewDir.
-        float3 halfVec = normalize(-lightDir + float3(0, 1, 0));
-        float specular_factor = pow(max(dot(normal, halfVec), 0.0f), max(shininess, 1.0f));
-
-        // Optional but recommended: gate specular by NdotL so back-facing light doesn't create highlights.
-        float NdotL = diffuse_factor;
-
-        specularAccum += specularColor.rgb
-                       * specular_factor
-                       * lights[i].lightDiffuseColor.rgb
-                       * lightIntensity
-                       * shadowFactor
-                       * NdotL;
+        // Specular (Blinn-Phong) - Lichtfarbe wird MIT multipliziert!
+        float3 halfVec = normalize(-lightDir + viewDir);
+        float specular_factor = pow(max(dot(normal, halfVec), 0.0f), shininess);
+        specularAccum += lights[i].lightDiffuseColor.rgb * specularColor.rgb * specular_factor * lightIntensity * shadowFactor;
     }
 
     float3 lighting = saturate(ambient + diffuseAccum + specularAccum);
@@ -191,4 +181,3 @@ float4 main(PS_INPUT input) : SV_Target
     float finalAlpha = hasMaterialColor ? (diffuseColor.a * transparency) : 1.0;
     return float4(final_color, finalAlpha);
 }
-

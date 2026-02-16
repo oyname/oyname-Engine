@@ -107,8 +107,6 @@ int main()
     float rotSpeedY = 45.0f;
     float rotSpeedZ = 20.0f;
 
-    Engine::SetVSync(Engine::VSync::OFF);  // VSync aus für echte Performance-Messung
-
     Debug::Log("========================================");
     Debug::Log("Starting render loop...");
     Debug::Log("Press ESC to exit");

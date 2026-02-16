@@ -1,6 +1,7 @@
 #pragma once
 
-#include <windows.h>
+#include <Windows.h>
+#include "gdxwin.h"
 #include "gdxutil.h"
 #include "gdxinterface.h"
 #include "gdxdevice.h"
@@ -19,15 +20,14 @@
 #define VERTEX_SHADER_FILE L"shaders/VertexShader.hlsl" 
 #define PIXEL_SHADER_FILE L"shaders/PixelShader.hlsl"
 
-namespace Windows
+namespace gdx { class CGIDX; }
+
+namespace Engine
 {
-	// MainLoop is used in gidx.cpp
-	void MainLoop(bool running);
+	extern gdx::CGIDX* engine;
 
-	bool MainLoop();
-
-	// Shthe main thread
-	int ShutDown();
+	int  CreateEngine(HWND hwnd, HINSTANCE hInst, int bpp, int width, int height);
+	void ReleaseEngine();
 }
 
 namespace gdx {
@@ -58,6 +58,8 @@ namespace gdx {
 		TextureManager		m_texturManager;
 		CameraManager		m_cameraManager;
 
+		int m_vsyncInterval = 1; // 1=ON, 0=OFF
+
 	public:
 		CDevice m_device;		// Device Manager, not to be confused with DirectXDevice
 		CInterface m_interface;	// Interface Manager
@@ -74,7 +76,8 @@ namespace gdx {
 		// 
 		HRESULT Graphic(unsigned int width, unsigned int height, bool windowed);
 		HRESULT Cls(float r, float g, float b, float a);
-
+		int FindBestAdapter();
+		
 		// Getter-Funktionen fÃ¼r private Variablen
 		HWND GetHWND();
 		unsigned int GetAdapterIndex();
@@ -96,9 +99,13 @@ namespace gdx {
 		void SetOutput(unsigned int index);
 		void SetDirectionalLight(LPENTITY entity);
 		void SetGlobalAmbient(const DirectX::XMFLOAT4& ambient) { m_globalAmbient = ambient; }
-		DirectX::XMFLOAT4 GetGlobalAmbient() const { return m_globalAmbient; }
+		void SetCamera(LPENTITY mesh);		
+		void SetVSyncInterval(int interval) noexcept;
 
-		void SetCamera(LPENTITY mesh);
+
+		DirectX::XMFLOAT4 GetGlobalAmbient() const { return m_globalAmbient; }
+		int GetVSyncInterval() const noexcept;
+
 
 	private:
 		static bool running;
@@ -108,12 +115,5 @@ namespace gdx {
 
 		static constexpr double FIXED_TIMESTEP = 1.0 / 60.0;
 		static constexpr double TARGET_FPS = 60.0;
-
-		void UpdateFrameTime();
-
-	public:
-
-		//double GetDeltaTime() { return Timer::GetDeltaTime(); }
-
 	};
 }

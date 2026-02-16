@@ -58,7 +58,6 @@ void RenderManager::UpdateShadowMatrixBuffer(const DirectX::XMMATRIX& viewMatrix
     }
 
     m_objectManager.m_device->GetDeviceContext()->Unmap(shadowMatrixBuffer, 0);
-    Debug::Log("RenderManager.cpp: Shadow Matrix Buffer updated");
 }
 
 void RenderManager::RenderShadowPass()

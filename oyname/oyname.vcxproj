@@ -20,10 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\examples\Adapter.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\examples\EntityTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\examples\game.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -32,8 +36,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\examples\LightExamplescene.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\examples\Multitextur.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -58,13 +62,14 @@
     <ClCompile Include="..\src\BufferManager.cpp" />
     <ClCompile Include="..\src\Camera.cpp" />
     <ClCompile Include="..\src\CameraManager.cpp" />
+    <ClCompile Include="..\src\core.cpp" />
     <ClCompile Include="..\src\Entity.cpp" />
     <ClCompile Include="..\src\gdxdevice.cpp" />
     <ClCompile Include="..\src\gdxengine.cpp" />
     <ClCompile Include="..\src\gdxinterface.cpp" />
     <ClCompile Include="..\src\gdxutil.cpp" />
     <ClCompile Include="..\src\gidx.cpp" />
-    <ClCompile Include="..\src\gidxwin.cpp" />
+    <ClCompile Include="..\src\gdxwin.cpp" />
     <ClCompile Include="..\src\InputLayoutManager.cpp" />
     <ClCompile Include="..\src\Light.cpp" />
     <ClCompile Include="..\src\LightManager.cpp" />
@@ -78,20 +83,21 @@
     <ClCompile Include="..\src\Surface.cpp" />
     <ClCompile Include="..\src\Texture.cpp" />
     <ClCompile Include="..\src\TextureManager.cpp" />
-    <ClCompile Include="..\src\Timer.cpp" />
+    <ClCompile Include="..\src\timer.cpp" />
     <ClCompile Include="..\src\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\BufferManager.h" />
     <ClInclude Include="..\include\Camera.h" />
     <ClInclude Include="..\include\CameraManager.h" />
+    <ClInclude Include="..\include\core.h" />
     <ClInclude Include="..\include\Entity.h" />
     <ClInclude Include="..\include\gdxdevice.h" />
     <ClInclude Include="..\include\gdxengine.h" />
     <ClInclude Include="..\include\gdxinterface.h" />
     <ClInclude Include="..\include\gdxutil.h" />
     <ClInclude Include="..\include\gidx.h" />
-    <ClInclude Include="..\include\gidxwin.h" />
+    <ClInclude Include="..\include\gdxwin.h" />
     <ClInclude Include="..\include\InputLayoutManager.h" />
     <ClInclude Include="..\include\Light.h" />
     <ClInclude Include="..\include\LightManager.h" />
@@ -106,7 +112,7 @@
     <ClInclude Include="..\include\Surface.h" />
     <ClInclude Include="..\include\Texture.h" />
     <ClInclude Include="..\include\TextureManager.h" />
-    <ClInclude Include="..\include\Timer.h" />
+    <ClInclude Include="..\include\timer.h" />
     <ClInclude Include="..\include\Transform.h" />
     <ClInclude Include="..\third_party\stb_image.h" />
   </ItemGroup>
@@ -196,13 +202,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)third_party\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\core;$(SolutionDir)\include;$(SolutionDir)\third_party\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <GenerateMapFile>false</GenerateMapFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -228,13 +235,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)third_party\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\core;$(SolutionDir)\include;$(SolutionDir)\third_party\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateMapFile>false</GenerateMapFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

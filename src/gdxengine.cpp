@@ -1,5 +1,43 @@
 ﻿#include "gdxengine.h"
+#include "gdxdevice.h"   
+#include "gdxwin.h"      
+#include "core.h"
 #include <fstream>
+
+namespace Engine
+{
+	gdx::CGIDX* engine = nullptr;
+
+	int CreateEngine(HWND hwnd, HINSTANCE hInst, int bpp, int width, int height)
+	{
+		if (engine)
+			return 0;
+
+		int result = 0;
+		engine = new gdx::CGIDX(
+			hwnd, hInst,
+			(unsigned)bpp,
+			(unsigned)width,
+			(unsigned)height,
+			&result
+		);
+
+		if (result != 0 || !engine)
+		{
+			delete engine;
+			engine = nullptr;
+			return (result != 0) ? result : -1;
+		}
+
+		return 0;
+	}
+
+	void ReleaseEngine()
+	{
+		delete engine;
+		engine = nullptr;
+	}
+}
 
 namespace gdx
 {
@@ -11,30 +49,8 @@ namespace gdx
 	std::chrono::high_resolution_clock::time_point CGIDX::lastFrameTime = std::chrono::high_resolution_clock::now();
 	CGIDX* CGIDX::s_instance = nullptr;
 
-	// Hilfsfunktion: Konvertiere relativen Pfad zu absolutem Pfad
-	std::wstring ResolveAbsolutePath(const std::wstring& relativePath) {
-		wchar_t absolutePath[MAX_PATH];
-
-		// Windows API: Löse relative Pfade auf
-		DWORD result = GetFullPathNameW(relativePath.c_str(), MAX_PATH, absolutePath, nullptr);
-
-		if (result == 0 || result >= MAX_PATH) {
-			// Fehler beim Auflösen - gib Original zurück
-			Debug::Log("WARNING: Could not resolve path: ", relativePath.c_str());
-			return relativePath;
-		}
-
-		return std::wstring(absolutePath);
-	}
-
-	static std::wstring GetExeDir()
-	{
-		wchar_t path[MAX_PATH]{};
-		GetModuleFileNameW(nullptr, path, MAX_PATH);
-		std::wstring p(path);
-		auto pos = p.find_last_of(L"\\/");
-		return (pos == std::wstring::npos) ? L"" : p.substr(0, pos + 1);
-	}
+	// Pfad-Utilities jetzt in Core (core.h / core.cpp)
+	// GetExeDir() und ResolveAbsolutePath() entfernt.
 
 	//
 	CGIDX::CGIDX(HWND hwnd, HINSTANCE hinst, unsigned int bpp, unsigned int screenX, unsigned int screenY, int* result) :
@@ -53,27 +69,63 @@ namespace gdx
 
 		m_interface.Init(bpp);
 
-		// Primary adapter = 0
-		this->SetAdapter(0);
+		int bestAdapter = FindBestAdapter();
+		this->SetAdapter(bestAdapter); 
 
-		std::wstring exeDir = GetExeDir();
-
-		vs = ResolveAbsolutePath(exeDir + L"..\\..\\shaders\\VertexShader.hlsl");
-		ps = ResolveAbsolutePath(exeDir + L"..\\..\\shaders\\PixelShader.hlsl");
+		// Shader-Pfade ueber Core aufloesen
+		vs = Core::ResolvePath(L"..\\..\\shaders\\VertexShader.hlsl");
+		ps = Core::ResolvePath(L"..\\..\\shaders\\PixelShader.hlsl");
 
 		// Prüfe ob Dateien existieren
 		std::wifstream vsFile(vs);
 		std::wifstream psFile(ps);
 
 		if (!vsFile.good()) {
-			Debug::Log("Vertex Shader NOT FOUND!");
+			Debug::Log("gdxengine.cpp: Vertex Shader NOT FOUND at: ", vs.c_str());
+		}
+		else {
+			Debug::Log("gdxengine.cpp: Vertex Shader found at: ", vs.c_str());
 		}
 
 		if (!psFile.good()) {
-			Debug::Log("Pixel Shader NOT FOUND!");
+			Debug::Log("gdxengine.cpp: Pixel Shader NOT FOUND at: ", ps.c_str());
+		}
+		else {
+			Debug::Log("gdxengine.cpp: Pixel Shader found at: ", ps.c_str());
 		}
 
 		m_bInitialized = true;
+	}
+
+	int CGIDX::FindBestAdapter()
+	{
+		int bestIndex = 0;
+		D3D_FEATURE_LEVEL bestLevel = D3D_FEATURE_LEVEL_9_1;
+
+		// Iteriere durch alle Adapters
+		for (size_t i = 0; i < m_device.deviceManager.GetNumAdapters(); ++i)
+		{
+			D3D_FEATURE_LEVEL currentLevel =
+				GXUTIL::GetFeatureLevelFromDirectXVersion(
+					m_device.deviceManager.GetDirectXVersion(i));
+
+			// Ist dieser besser als bisheriger beste?
+			if (currentLevel > bestLevel)
+			{
+				bestLevel = currentLevel;
+				bestIndex = i;
+
+				Debug::Log("gdxengine.cpp: Better Adapter found at index ", i,
+					" with Feature Level: ", GXUTIL::GetFeatureLevelName(GXUTIL::GetFeatureLevelFromDirectXVersion(
+						m_device.deviceManager.GetDirectXVersion(i))));
+			}
+		}
+
+		Debug::Log("gdxengine.cpp: SELECTED BEST Adapter at index ", bestIndex,
+			" with Feature Level: ", GXUTIL::GetFeatureLevelName(GXUTIL::GetFeatureLevelFromDirectXVersion(
+				m_device.deviceManager.GetDirectXVersion(bestIndex))));
+
+		return bestIndex;
 	}
 
 	CGIDX::~CGIDX()
@@ -226,23 +278,21 @@ namespace gdx
 	{
 		HRESULT hr = S_OK;
 
-		Timer::GetInstance()->Update();
-
 		auto* pContext = this->m_device.GetDeviceContext();
 		if (!pContext)
 		{
-			Debug::Log("RenderWorld: Device Context is null.");
+			Debug::Log("gdxengine.cpp: RenderWorld - Device Context is null.");
 			return E_FAIL;
 		}
 
 		auto* pCamera = m_cameraManager.GetCurrentCam();
 		if (!pCamera)
 		{
-			Debug::Log("RenderWorld: No valid camera found.");
+			Debug::Log("gdxengine.cpp: RenderWorld - No valid camera found.");
 			return E_FAIL;
 		}
 
-		// Clear (kann im Engine bleiben; Owner der Pipeline-States ist trotzdem RenderManager)
+		// Clear
 		ID3D11DepthStencilView* dsv = this->m_device.GetDepthStencilView();
 		if (!dsv)
 			return E_POINTER;
@@ -263,7 +313,7 @@ namespace gdx
 		auto* cam = m_cameraManager.GetCurrentCam();
 
 		if (cam == nullptr) {
-			Debug::Log("ERROR: UpdateWorld - No camera set");
+			Debug::Log("gdxengine.cpp: ERROR - UpdateWorld - No camera set");
 			return;
 		}
 
@@ -295,44 +345,6 @@ namespace gdx
 		}
 
 		return hr;
-	}
-
-	void CGIDX::UpdateFrameTime()
-	{
-		auto currentTime = std::chrono::high_resolution_clock::now();
-		double rawDeltaTime = std::chrono::duration<double>(currentTime - lastFrameTime).count();
-		lastFrameTime = currentTime;
-
-		if (rawDeltaTime > 0.1) {
-			rawDeltaTime = 0.1;
-		}
-
-		// === MODUS-ABHÄNGIG ===
-		if (timeMode == Timer::TimeMode::FIXED_TIMESTEP) {
-			// Feste Timestep (60 FPS)
-			accumulator += rawDeltaTime;
-
-			if (accumulator >= FIXED_TIMESTEP) {
-				deltaTime = FIXED_TIMESTEP;
-				accumulator -= FIXED_TIMESTEP;
-			}
-			else {
-				deltaTime = 0.0;  // Kein Update diese Frame
-			}
-
-			// Frame-Rate-Limiting
-			double targetFrameTime = 1.0 / TARGET_FPS;
-			if (rawDeltaTime < targetFrameTime) {
-				std::this_thread::sleep_for(
-					std::chrono::duration<double>(targetFrameTime - rawDeltaTime)
-				);
-			}
-		}
-		else if (timeMode == Timer::TimeMode::VSYNC_ONLY) {
-			// Variable Delta-Time (nur VSync)
-			deltaTime = rawDeltaTime;
-			// Kein Sleep, kein Fixed Timestep
-		}
 	}
 
 	HWND CGIDX::GetHWND()
@@ -406,36 +418,46 @@ namespace gdx
 	void CGIDX::SetCamera(LPENTITY entity)
 	{
 		if (entity == nullptr) {
-			Debug::Log("ERROR: SetCamera - entity is nullptr");
+			Debug::Log("gdxengine.cpp: ERROR - SetCamera - entity is nullptr");
 			return;
 		}
 
 		// Type-Check mit dynamic_cast
 		Camera* camera = dynamic_cast<Camera*>(entity);
 		if (camera == nullptr) {
-			Debug::Log("ERROR: SetCamera - Entity is not a Camera!");
+			Debug::Log("gdxengine.cpp: ERROR - SetCamera - Entity is not a Camera!");
 			return;
 		}
 
-		GetCam().SetCamera(camera);         // ← Camera* an CameraManager
-		m_renderManager.SetCamera(entity);  // ← Entity* an RenderManager (OK)
+		GetCam().SetCamera(camera);         // Camera* an CameraManager
+		m_renderManager.SetCamera(entity);  // Entity* an RenderManager (OK)
 	}
 
 	void CGIDX::SetDirectionalLight(LPENTITY entity)
 	{
 		if (entity == nullptr) {
-			Debug::Log("ERROR: SetDirectionalLight - entity is nullptr");
+			Debug::Log("gdxengine.cpp: ERROR - SetDirectionalLight - entity is nullptr");
 			return;
 		}
 
 		// Type-Check mit dynamic_cast
 		Light* light = dynamic_cast<Light*>(entity);
 		if (light == nullptr) {
-			Debug::Log("ERROR: SetDirectionalLight - Entity is not a Light!");
+			Debug::Log("gdxengine.cpp: ERROR - SetDirectionalLight - Entity is not a Light!");
 			return;
 		}
 
 		m_renderManager.SetDirectionalLight(entity);
 		Debug::Log("gdxengine.cpp: SetDirectionalLight - Directional Light set for Shadow Mapping");
+	}
+
+	void CGIDX::SetVSyncInterval(int interval) noexcept
+	{
+		m_vsyncInterval = (interval != 0) ? 1 : 0;
+	}
+
+	int CGIDX::GetVSyncInterval() const noexcept
+	{
+		return m_vsyncInterval;
 	}
 }
