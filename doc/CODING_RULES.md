@@ -141,7 +141,7 @@ delete mesh;                       // FALSCH
 ```
 
 - `SafeRelease()` nur für COM-Objekte ohne `ComPtr` verwenden.
-- Kein `new`/`delete` im Spielcode. Ausschließlich Engine-API verwenden.
+- Kein `new`/`delete` im Spielcode für Engine-Objekte. Ausschließlich Engine-API verwenden.
 
 ---
 
