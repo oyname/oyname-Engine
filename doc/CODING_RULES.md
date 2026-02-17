@@ -17,7 +17,7 @@ Interne Engine-Klassen (`GDXEngine`, `GDXDevice`, `GDXInterface`) brauchen keine
 
 **Regeln:**
 
-- Spielcode (`game.cpp` und alles was der Nutzer schreibt) ruft **nur** Funktionen aus dem `Engine`-Namespace auf. Direkter Zugriff auf interne Engine-Klassen aus Spielcode ist verboten.
+- Spielcode ruft **nur** Funktionen aus dem `Engine`-Namespace auf. Direkter Zugriff auf interne Engine-Klassen aus Spielcode ist verboten.
 - `Core::` kennt kein `ID3D11Device` und kein `IDXGISwapChain`.
 - **Niemals** `using namespace DirectX` in einen Header schreiben.
 
