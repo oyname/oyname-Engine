@@ -1,4 +1,4 @@
-# GDX Engine – Coding Rules
+# OYNAME Engine – Coding Rules
 
 > Stand: Februar 2026
 
@@ -17,7 +17,7 @@ Interne Engine-Klassen (`GDXEngine`, `GDXDevice`, `GDXInterface`) brauchen keine
 
 **Regeln:**
 
-- Spielcode (`game.cpp` und alles was der Nutzer schreibt) ruft **nur** Funktionen aus dem `Engine`-Namespace auf. Direkter Zugriff auf interne Engine-Klassen aus Spielcode ist verboten.
+- Spielcode ruft **nur** Funktionen aus dem `Engine`-Namespace auf. Direkter Zugriff auf interne Engine-Klassen aus Spielcode ist verboten.
 - `Core::` kennt kein `ID3D11Device` und kein `IDXGISwapChain`.
 - **Niemals** `using namespace DirectX` in einen Header schreiben.
 
@@ -45,7 +45,6 @@ In `.cpp`-Dateien ist `using namespace DirectX;` am Anfang der Datei erlaubt.
 | Scoped Enums | `enum class` + PascalCase | `enum class RenderQueueType { Opaque, Transparent }` |
 | Legacy-Enums / Flags | ALL\_CAPS | `D3DLIGHTTYPE`, `COLLISION` |
 
-> Das `GDX`-Präfix ersetzt den früheren `gdx::`-Namespace. Kein weiterer Namespace nötig.
 
 ---
 
@@ -142,7 +141,7 @@ delete mesh;                       // FALSCH
 ```
 
 - `SafeRelease()` nur für COM-Objekte ohne `ComPtr` verwenden.
-- Kein `new`/`delete` im Spielcode. Ausschließlich Engine-API verwenden.
+- Kein `new`/`delete` im Spielcode für Engine-Objekte. Ausschließlich Engine-API verwenden.
 
 ---
 
