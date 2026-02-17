@@ -45,7 +45,6 @@ In `.cpp`-Dateien ist `using namespace DirectX;` am Anfang der Datei erlaubt.
 | Scoped Enums | `enum class` + PascalCase | `enum class RenderQueueType { Opaque, Transparent }` |
 | Legacy-Enums / Flags | ALL\_CAPS | `D3DLIGHTTYPE`, `COLLISION` |
 
-> Das `GDX`-Präfix ersetzt den früheren `gdx::`-Namespace. Kein weiterer Namespace nötig.
 
 ---
 
