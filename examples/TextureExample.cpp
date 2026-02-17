@@ -1,4 +1,5 @@
 ﻿#include "gidx.h"
+#include "core.h"
 #include <chrono>
 #include <thread>
 
@@ -23,8 +24,8 @@ int main()
     sw == true ? Engine::Graphics(1200, 650) : Engine::Graphics(1980, 1080, false);
 
 
-    g_shadertest = nullptr;
-    Engine::CreateShader(&g_shadertest, L"..\\shaders\\VertexShaderRot.hlsl", "main", L"..\\shaders\\PixelShaderRot.hlsl", "main", Engine::CreateVertexFlags(true, false, false, false, false));
+    //g_shadertest = nullptr;
+    //Engine::CreateShader(&g_shadertest, L"..\\shaders\\VertexShaderRot.hlsl", "main", L"..\\shaders\\PixelShaderRot.hlsl", "main", Engine::CreateVertexFlags(true, false, false, false, false));
 
 
 
@@ -47,7 +48,8 @@ int main()
     Engine::MaterialTexture(material2, texture1);
 
     LPMATERIAL material3;
-    Engine::CreateMaterial(&material3, g_shadertest);
+    //Engine::CreateMaterial(&material3, g_shadertest);
+    Engine::CreateMaterial(&material3);
     // So kann man auch einem Material eine Textur zuweisen
     Engine::MaterialTexture(material3, texture2);
 
@@ -62,30 +64,30 @@ int main()
     // Light erstellen
     LPENTITY light = nullptr;
     Engine::CreateLight(&light, D3DLIGHT_DIRECTIONAL);    // Nutzt LightManager
-    Engine::PositionEntity(light, 0.0f, 0.0f, 0.0f);
-    Engine::RotateEntity(light, -90, 0, 0);                // Funktioniert
-    Engine::LightColor(light, 0.0f, 0.0f, 1.0f);
+    Engine::PositionEntity(light, 0.0f, 20.0f, 10.0f);
+    Engine::RotateEntity(light, 90, 0, 0);                // Funktioniert
+    Engine::LightColor(light, 0.4f, 0.4f, 0.5f);
 
     LPENTITY light2 = nullptr;
     Engine::CreateLight(&light2, D3DLIGHT_DIRECTIONAL);  // Nutzt LightManager
-    Engine::PositionEntity(light, 0.0f, 0.0f, 0.0f);
-    Engine::RotateEntity(light2, 90, 0, 0);                // Funktioniert
-    Engine::LightColor(light2, 1.0f, 0.0f, 0.0f);
+    Engine::PositionEntity(light2, 0.0f, 10.0f, -10.0f);
+    Engine::RotateEntity(light2, -45, 0, 0);                // Funktioniert
+    Engine::LightColor(light2, 0.5f, 0.0f, 0.0f);
 
-
-    //Engine::SetAmbientColor(0.4f, 0.0f, 0.0f);
+    Engine::SetDirectionalLight(light);
+    Engine::SetAmbientColor(0.1f, 0.1f, 0.1f);
 
     LPENTITY cube;
     CreateCube(&cube, material3);
     Engine::PositionEntity(cube, 0.0f, 2.0f, 10.0f);
     Engine::RotateEntity(cube, 0.0f, 0.0f, 0.0f);
-    Engine::ScaleEntity(cube, 1.0f, 1.0f, 1.0f);
+    Engine::ScaleEntity(cube, 2.0f, 2.0f, 2.0f);
     Engine::EntityCollisionMode(cube, COLLISION::BOX);
 
     LPENTITY cube2;
     CreateCube(&cube2, material2);
     Engine::PositionEntity(cube2, 0.0f, -4.0f, 10.0f);
-    Engine::ScaleEntity(cube2, 5.0f, 0.2f, 5.0f);
+    Engine::ScaleEntity(cube2, 50.0f, 0.2f, 50.0f);
     Engine::RotateEntity(cube2, 0.0f, 0.0f, 0.0f);
     Engine::EntityCollisionMode(cube2, COLLISION::BOX);
 
@@ -118,7 +120,8 @@ int main()
 
     auto lastTime = std::chrono::high_resolution_clock::now();
 
-    Timer::SetTimeMode(Timer::TimeMode::VSYNC_ONLY);
+    //Engine::PositionEntity(camera, 0.0f, 50.0f, 10.0f);
+    //Engine::RotateEntity(camera, 90, 0, 0);
 
     while (Windows::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000))
     {
@@ -126,11 +129,11 @@ int main()
         auto elapsedTime = std::chrono::duration<double>(startTime - lastTime).count();
         lastTime = startTime;
 
-        double dt = Timer::GetDeltaTime();
+        Core::BeginFrame();
+
+        const float dt = static_cast<float>(Core::GetDeltaTime());
 
         if (elapsedTime > 0.5) elapsedTime = 0.5;
-
-        Engine::Cls(0, 0, 0);
 
         if ((GetAsyncKeyState(VK_ADD) & 0x8000))
         {
@@ -144,17 +147,17 @@ int main()
         {
             Engine::TurnEntity(cube, speed * dt, speed * dt, 0.0f);
         }
-
+        
         if ((GetAsyncKeyState(VK_F1) & 0x8000))
         {
             Engine::MoveEntity(camera, 0.0f, 0.0f * dt, 2.0f * dt);
         }
 
 
-        //if (Engine::EntityCollision(cube, cube2))
+        if (Engine::EntityCollision(cube, cube2))
            Debug::Log("Kollision");
-        //else
-        //    Debug::Log("Keine Kollision");
+        else
+            Debug::Log("Keine Kollision");
 
         // Extrahiere OBB Corners und visualisiere
         DirectX::XMFLOAT3 corners[8];
@@ -177,10 +180,13 @@ int main()
         //    XMVectorGetZ(LightForward));
 
 
+         // Rendering
+        Engine::Cls(0, 64, 128);
         Engine::UpdateWorld();
         Engine::RenderWorld();
         Engine::Flip();
 
+        Core::EndFrame();
         // FPS nur jede N Frames ausgeben:
         //static int frameCount = 0;
         //if (frameCount++ % 150 == 0) {
@@ -190,7 +196,7 @@ int main()
     }
 
     // Shutdown the engine
-    return Windows::ShutDown();
+    return 0;
 }
 
 void MoveObjectInCircle(LPENTITY mesh, float centerX, float centerZ, float radius, float angle) {

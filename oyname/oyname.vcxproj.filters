@@ -153,9 +153,6 @@
     <ClCompile Include="..\src\gdxengine.cpp">
       <Filter>03_Engine\01 Engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\gidx.cpp">
-      <Filter>02_DirectX\01 Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\examples\Adapter.cpp">
       <Filter>05_Example</Filter>
     </ClCompile>

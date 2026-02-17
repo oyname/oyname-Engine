@@ -24,6 +24,9 @@ int main()
     LPTEXTURE dxlogo = nullptr;
     Engine::LoadTexture(&dxlogo, L"..\\media\\bricks.bmp");
 
+    LPTEXTURE face = nullptr;
+    Engine::LoadTexture(&face, L"..\\media\\face.bmp");
+
     // Kamera
     Engine::CreateCamera(&g_camera);
     Engine::PositionEntity(g_camera, 0.0f, 40.0f, -90.0f);
@@ -37,11 +40,15 @@ int main()
     Engine::CreateMesh(&g_cubeMesh);
     CreateCube(&g_cubeMesh, whiteMaterial);
     Engine::PositionEntity(g_cubeMesh, 0.0f, 35.0f, 0.0f);
-    Engine::ScaleEntity(g_cubeMesh, 8.0f, 8.0f, 8.0f);
+    Engine::ScaleEntity(g_cubeMesh, 25.0f, 8.0f, 8.0f);
+
+    LPMATERIAL faceMaterial = nullptr;
+    Engine::CreateMaterial(&faceMaterial);
+    Engine::MaterialTexture(faceMaterial, face);
 
     Engine::CreateMesh(&g_cubeMesh2);
-    CreateCube(&g_cubeMesh2, whiteMaterial);
-    Engine::PositionEntity(g_cubeMesh2, 10.0f, 15.0f, 0.0f);
+    CreateCube(&g_cubeMesh2, faceMaterial);
+    Engine::PositionEntity(g_cubeMesh2, 20.0f, 15.0f, -20.0f);
     Engine::ScaleEntity(g_cubeMesh2, 5.0f, 5.0f, 5.0f);
 
     // Platte
@@ -52,11 +59,11 @@ int main()
     Engine::CreateMesh(&g_plateMesh);
     CreateCube(&g_plateMesh, grayMaterial);
     Engine::PositionEntity(g_plateMesh, 0.0f, 0.0f, 0.0f);
-    Engine::ScaleEntity(g_plateMesh, 50.0f, 0.5f, 50.0f);
+    Engine::ScaleEntity(g_plateMesh, 100.0f, 1.0f, 100.0f);
 
     // Lichter
     Engine::CreateLight(&g_directionalLight, D3DLIGHT_DIRECTIONAL);
-    Engine::PositionEntity(g_directionalLight, 0.0f, 50.0f, 0.0f);
+    Engine::PositionEntity(g_directionalLight, 0.0f, 80.0f, 0.0f);
     Engine::RotateEntity(g_directionalLight, 90.0f, 0.0f, 0.0f);
     Engine::LightColor(g_directionalLight, 0.1f, 0.1f, 0.1f);
 
@@ -71,11 +78,7 @@ int main()
 
     // Dieses Licht wirft Schatten (muss nach CreateLight aufgerufen werden)
     Engine::SetDirectionalLight(g_directionalLight);
-
     Engine::SetAmbientColor(0.1f, 0.1f, 0.1f);
-
-    //Engine::PositionEntity(g_camera, 0.0f, 50.0f, 0.0f);
-    //Engine::RotateEntity(g_camera, 60.0f, 0.0f, 0.0f);
 
     Engine::SetVSync(1);
 

@@ -12,7 +12,7 @@ INT APIENTRY WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
     desc.vsync       = true;
     desc.debug       = true;
     desc.windowed    = true;
-    desc.windowTitle = L"giDX\u00b3 Engine";
+    desc.windowTitle = L"OYNAME Engine";
     desc.className   = L"gidx";
     desc.appIcon     = 101;
     // desc.width / desc.height = 0 -> Desktop-Aufloesung
