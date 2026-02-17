@@ -29,10 +29,10 @@ public:
     ~Mesh();
 
     // 1. Überschreibt Entity::Update() - für einfaches Update
-    void Update(const gdx::CDevice* device) override;
+    void Update(const GDXDevice* device) override;
 
     // 2. Rendering-spezifisches Update mit MatrixSet
-    void Update(const gdx::CDevice* device, const MatrixSet* matrixSet);
+    void Update(const GDXDevice* device, const MatrixSet* matrixSet);
 
     unsigned int NumSurface();
     Surface* GetSurface(unsigned int index);

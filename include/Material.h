@@ -26,7 +26,7 @@ public:
     ~Material();
 
     // ==================== TEXTURE METHODS ====================
-    void SetTexture(const gdx::CDevice* device);
+    void SetTexture(const GDXDevice* device);
     void SetTexture(ID3D11Texture2D* texture, ID3D11ShaderResourceView* textureView, ID3D11SamplerState* imageSamplerState);
     void UpdateConstantBuffer(ID3D11DeviceContext* context);
 

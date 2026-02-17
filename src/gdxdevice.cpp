@@ -1,9 +1,8 @@
 ﻿#include "gdxutil.h"
 #include "gdxdevice.h"
 
-using namespace gdx;
 
-CDevice::CDevice() : m_bInitialized(false),
+GDXDevice::GDXDevice() : m_bInitialized(false),
 m_pd3dDevice(nullptr),
 m_pContext(nullptr),
 m_pSwapChain(nullptr),
@@ -23,12 +22,12 @@ m_shadowMatrixBuffer(nullptr)
 {
 }
 
-CDevice::~CDevice()
+GDXDevice::~GDXDevice()
 {
     Release();
 }
 
-void CDevice::Release()
+void GDXDevice::Release()
 {
     if (m_bInitialized)
     {
@@ -55,12 +54,12 @@ void CDevice::Release()
     m_bInitialized = false;
 }
 
-HRESULT CDevice::Init()
+HRESULT GDXDevice::Init()
 {
     return EnumerateSystemDevices();
 }
 
-HRESULT CDevice::EnumerateSystemDevices()
+HRESULT GDXDevice::EnumerateSystemDevices()
 {
     Debug::Log("EnumerateSystemDevices START...");
 
@@ -153,7 +152,7 @@ HRESULT CDevice::EnumerateSystemDevices()
     return S_OK;
 }
 
-HRESULT CDevice::InitializeDirectX(IDXGIAdapter* adapter, D3D_FEATURE_LEVEL* featureLevel)
+HRESULT GDXDevice::InitializeDirectX(IDXGIAdapter* adapter, D3D_FEATURE_LEVEL* featureLevel)
 {
     if (!adapter || !featureLevel)
         return E_INVALIDARG;
@@ -182,7 +181,7 @@ HRESULT CDevice::InitializeDirectX(IDXGIAdapter* adapter, D3D_FEATURE_LEVEL* fea
     return hr;
 }
 
-HRESULT CDevice::CreateSwapChain(IDXGIFactory* pDXGIFactory, HWND hWnd,
+HRESULT GDXDevice::CreateSwapChain(IDXGIFactory* pDXGIFactory, HWND hWnd,
     unsigned int width, unsigned int height, DXGI_FORMAT format,
     unsigned int numerator, unsigned int denominator,
     bool windowed)
@@ -223,7 +222,7 @@ HRESULT CDevice::CreateSwapChain(IDXGIFactory* pDXGIFactory, HWND hWnd,
     return hr;
 }
 
-HRESULT CDevice::CreateRenderTarget(unsigned int width, unsigned int height)
+HRESULT GDXDevice::CreateRenderTarget(unsigned int width, unsigned int height)
 {
     // Width and height are determined by the swap chain, 
     // these parameters are kept for backward compatibility but not used
@@ -253,7 +252,7 @@ HRESULT CDevice::CreateRenderTarget(unsigned int width, unsigned int height)
     return hr;
 }
 
-HRESULT CDevice::Flip(int syncInterval)
+HRESULT GDXDevice::Flip(int syncInterval)
 {
     if (!m_pSwapChain)
         return E_INVALIDARG;
@@ -261,19 +260,19 @@ HRESULT CDevice::Flip(int syncInterval)
     return m_pSwapChain->Present(syncInterval, 0);
 }
 
-void CDevice::SetVertexShader(ID3D11VertexShader* vs)
+void GDXDevice::SetVertexShader(ID3D11VertexShader* vs)
 {
     if (m_pContext)
         m_pContext->VSSetShader(vs, nullptr, 0);
 }
 
-void CDevice::SetPixelShader(ID3D11PixelShader* ps)
+void GDXDevice::SetPixelShader(ID3D11PixelShader* ps)
 {
     if (m_pContext)
         m_pContext->PSSetShader(ps, nullptr, 0);
 }
 
-void CDevice::ResizeWindow(HWND hwnd, unsigned int x, unsigned int y, bool windowed)
+void GDXDevice::ResizeWindow(HWND hwnd, unsigned int x, unsigned int y, bool windowed)
 {
     if (!hwnd || x == 0 || y == 0)
         return;
@@ -300,7 +299,7 @@ void CDevice::ResizeWindow(HWND hwnd, unsigned int x, unsigned int y, bool windo
     UpdateWindow(hwnd);
 }
 
-HRESULT CDevice::CreateDepthBuffer(unsigned int width, unsigned int height)
+HRESULT GDXDevice::CreateDepthBuffer(unsigned int width, unsigned int height)
 {
     if (width == 0 || height == 0 || !m_pd3dDevice)
         return E_INVALIDARG;
@@ -336,7 +335,7 @@ cleanup:
     return hr;
 }
 
-HRESULT CDevice::CreateShadowBuffer(unsigned int width, unsigned int height)
+HRESULT GDXDevice::CreateShadowBuffer(unsigned int width, unsigned int height)
 {
     if (width == 0 || height == 0 || !m_pd3dDevice)
         return E_INVALIDARG;
@@ -381,7 +380,7 @@ cleanup:
     return hr;
 }
 
-HRESULT CDevice::CreateDepthTexture(unsigned int width, unsigned int height)
+HRESULT GDXDevice::CreateDepthTexture(unsigned int width, unsigned int height)
 {
     if (!m_pd3dDevice)
         return E_INVALIDARG;
@@ -410,7 +409,7 @@ HRESULT CDevice::CreateDepthTexture(unsigned int width, unsigned int height)
     return hr;
 }
 
-HRESULT CDevice::CreateDepthStencilView()
+HRESULT GDXDevice::CreateDepthStencilView()
 {
     if (!m_pd3dDevice || !m_depthStencilBuffer)
         return E_INVALIDARG;
@@ -431,7 +430,7 @@ HRESULT CDevice::CreateDepthStencilView()
     return hr;
 }
 
-HRESULT CDevice::CreateRasterizerState()
+HRESULT GDXDevice::CreateRasterizerState()
 {
     if (!m_pd3dDevice)
         return E_INVALIDARG;
@@ -453,7 +452,7 @@ HRESULT CDevice::CreateRasterizerState()
     return hr;
 }
 
-HRESULT CDevice::CreateDepthStencilState()
+HRESULT GDXDevice::CreateDepthStencilState()
 {
     if (!m_pd3dDevice)
         return E_INVALIDARG;
@@ -474,7 +473,7 @@ HRESULT CDevice::CreateDepthStencilState()
     return hr;
 }
 
-HRESULT CDevice::CreateShadowMapTexture(UINT width, UINT height)
+HRESULT GDXDevice::CreateShadowMapTexture(UINT width, UINT height)
 {
     if (!m_pd3dDevice)
         return E_INVALIDARG;
@@ -518,7 +517,7 @@ HRESULT CDevice::CreateShadowMapTexture(UINT width, UINT height)
     return hr;
 }
 
-HRESULT CDevice::CreateResourceViews()
+HRESULT GDXDevice::CreateResourceViews()
 {
     if (!m_pd3dDevice || !m_pShadowMap)
         return E_INVALIDARG;
@@ -573,7 +572,7 @@ HRESULT CDevice::CreateResourceViews()
     return hr;
 }
 
-HRESULT CDevice::CreateComparisonStatus()
+HRESULT GDXDevice::CreateComparisonStatus()
 {
     if (!m_pd3dDevice)
         return E_INVALIDARG;
@@ -623,7 +622,7 @@ HRESULT CDevice::CreateComparisonStatus()
     return hr;
 }
 
-HRESULT CDevice::CreateRenderStats()
+HRESULT GDXDevice::CreateRenderStats()
 {
     if (!m_pd3dDevice)
         return E_INVALIDARG;
@@ -667,7 +666,7 @@ HRESULT CDevice::CreateRenderStats()
 }
 
 
-HRESULT CDevice::CreateShadowMatrixBuffer()
+HRESULT GDXDevice::CreateShadowMatrixBuffer()
 {
     if (!m_pd3dDevice)
         return E_INVALIDARG;

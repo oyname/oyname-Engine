@@ -1,12 +1,13 @@
 ﻿#include "Entity.h"
 #include "gdxdevice.h"
 #include "Memory.h"
+using namespace DirectX;
 
 Entity::Entity() :
     constantBuffer(nullptr),
     isActive(true)
 {
-    transform.setWorldMatrix(&matrixSet.worldMatrix);
+    transform.SetWorldMatrix(&matrixSet.worldMatrix);
 
     matrixSet.worldMatrix = DirectX::XMMatrixIdentity();
     matrixSet.viewMatrix = DirectX::XMMatrixIdentity();
@@ -19,15 +20,15 @@ Entity::~Entity() {
     Memory::SafeRelease(constantBuffer);
 }
 
-void Entity::Update(const gdx::CDevice* device) {
+void Entity::Update(const GDXDevice* device) {
     if (!isActive) return;
 
     HRESULT hr = S_OK;
     D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-    matrixSet.worldMatrix = transform.getScaling() *
-        transform.getRotation() *
-        transform.getTranslation();
+    matrixSet.worldMatrix = transform.GetScaling() *
+        transform.GetRotation() *
+        transform.GetTranslation();
 
     if (constantBuffer != nullptr) {
         hr = device->GetDeviceContext()->Map(constantBuffer, 0,

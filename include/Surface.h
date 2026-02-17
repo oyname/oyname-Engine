@@ -5,7 +5,6 @@
 #include "gdxutil.h"
 #include "gdxdevice.h"
 
-using namespace DirectX;
 
 class Mesh;    // forward
 
@@ -20,35 +19,35 @@ public:
     void VertexTexCoords(unsigned int index, float u, float v);
     void AddIndex(UINT index);
 
-    void Draw(const gdx::CDevice* m_device, const DWORD flags);
+    void Draw(const GDXDevice* m_device, const DWORD flags);
 
     // Getter
-    float getVertexX(unsigned int index) const;
-    float getVertexY(unsigned int index) const;
-    float getVertexZ(unsigned int index) const;
+    float GetVertexX(unsigned int index) const;
+    float GetVertexY(unsigned int index) const;
+    float GetVertexZ(unsigned int index) const;
 
-    void CalculateSize(XMMATRIX roationMatrix, XMFLOAT3& minSize, XMFLOAT3& maxSize);
+    void CalculateSize(DirectX::XMMATRIX roationMatrix, DirectX::XMFLOAT3& minSize, DirectX::XMFLOAT3& maxSize);
 
 public:
     bool isActive = false;
 
-    std::vector<XMFLOAT3> position;
+    std::vector<DirectX::XMFLOAT3> position;
     unsigned int size_position;
     unsigned int size_listPosition;
 
-    std::vector<XMFLOAT3> normal;
+    std::vector<DirectX::XMFLOAT3> normal;
     unsigned int size_normal;
     unsigned int size_listNormal;
 
-    std::vector<XMFLOAT4> color;
+    std::vector<DirectX::XMFLOAT4> color;
     unsigned int size_color;
     unsigned int size_listColor;
 
-    std::vector<XMFLOAT2> uv1;
+    std::vector<DirectX::XMFLOAT2> uv1;
     unsigned int size_uv1;
     unsigned int size_listUV1;
 
-    std::vector<XMFLOAT2> uv2;
+    std::vector<DirectX::XMFLOAT2> uv2;
     unsigned int size_uv2;
     unsigned int size_listUV2;
 
@@ -63,11 +62,11 @@ public:
     ID3D11Buffer* indexBuffer;
 
     Mesh* pMesh = nullptr;               
-    XMFLOAT3 minPoint;
-    XMFLOAT3 maxPoint;
+    DirectX::XMFLOAT3 minPoint;
+    DirectX::XMFLOAT3 maxPoint;
 
 public:
-    // ist dafür gemacht um Linien zu rendern!
+    // ist dafï¿½r gemacht um Linien zu rendern!
     bool test;
 };
 

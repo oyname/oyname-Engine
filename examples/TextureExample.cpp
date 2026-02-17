@@ -1,5 +1,4 @@
 ﻿#include "gidx.h"
-#include "core.h"
 #include <chrono>
 #include <thread>
 
@@ -9,10 +8,10 @@ static void CreateSphere(LPENTITY* mesh, MATERIAL* material, int numSegments);
 static void MoveObjectInCircle(LPENTITY mesh, float centerX, float centerZ, float radius, float angle);
 static void CreateBox2(LPENTITY* mesh, MATERIAL* material, float sizeX, float sizeY, float sizeZ);
 static void CreateBox(LPENTITY* mesh, MATERIAL* material, std::vector<DirectX::XMFLOAT3>& points);
-static void InitializeBoxPoints(std::vector<XMFLOAT3>& points, XMFLOAT3 minCorner, XMFLOAT3 maxCorner);
+static void InitializeBoxPoints(std::vector<DirectX::XMFLOAT3>& points, DirectX::XMFLOAT3 minCorner, DirectX::XMFLOAT3 maxCorner);
 static void UpdateBoxWithCorners(LPENTITY mesh, unsigned int indexSurface, const DirectX::XMFLOAT3 corners[8]);
-static void UpdateBoxPointsEx(std::vector<DirectX::XMFLOAT3>& points, XMFLOAT3 minCorner, XMFLOAT3 maxCorner);
-static void UpdateBox(LPENTITY mesh, unsigned int indexSurface, std::vector<DirectX::XMFLOAT3>& points, XMFLOAT3 minCorner, XMFLOAT3 maxCorner);
+static void UpdateBoxPointsEx(std::vector<DirectX::XMFLOAT3>& points, DirectX::XMFLOAT3 minCorner, DirectX::XMFLOAT3 maxCorner);
+static void UpdateBox(LPENTITY mesh, unsigned int indexSurface, std::vector<DirectX::XMFLOAT3>& points, DirectX::XMFLOAT3 minCorner, DirectX::XMFLOAT3 maxCorner);
 static void CreateCollisionBox(LPSURFACE wuerfel, std::vector<DirectX::XMFLOAT3>& points);
 
 static     LPSHADER g_shadertest;
@@ -93,8 +92,8 @@ int main()
 
     Engine::EntityTexture(cube, texture2);
 
-    Engine::engine->GetOM().addMeshToMaterial(material2, dynamic_cast<Mesh*>(cube2));
-    Engine::engine->GetOM().addMeshToMaterial(material3, dynamic_cast<Mesh*>(cube));
+    Engine::engine->GetOM().AddMeshToMaterial(material2, dynamic_cast<Mesh*>(cube2));
+    Engine::engine->GetOM().AddMeshToMaterial(material3, dynamic_cast<Mesh*>(cube));
 
     // Winkel inkrementieren, um das Objekt im Kreis zu bewegen
     double angle = 0.0;
@@ -168,9 +167,9 @@ int main()
         Engine::EntityOBB(cube2)->GetCorners(corners1);  // ← GEÄNDERT
         UpdateBoxWithCorners(box2, 0, corners);
 
-        Engine::LookAt(camera, DirectX::XMVectorGetX(cube->transform.getPosition()),
-            DirectX::XMVectorGetY(cube->transform.getPosition()),
-            DirectX::XMVectorGetZ(cube->transform.getPosition()));
+        Engine::LookAt(camera, DirectX::XMVectorGetX(cube->transform.GetPosition()),
+            DirectX::XMVectorGetY(cube->transform.GetPosition()),
+            DirectX::XMVectorGetZ(cube->transform.GetPosition()));
 
         // DEBUG: Zeige die Kamera-Richtung
         //DirectX::XMVECTOR LightForward = light->transform.getLookAt();
@@ -390,19 +389,19 @@ void CreateSphere(LPENTITY* mesh, MATERIAL* material, int numSegments)
     Engine::FillBuffer(sphere);
 }
 
-void InitializeBoxPoints(std::vector<XMFLOAT3>& points, XMFLOAT3 minCorner, XMFLOAT3 maxCorner)
+void InitializeBoxPoints(std::vector<DirectX::XMFLOAT3>& points, DirectX::XMFLOAT3 minCorner, DirectX::XMFLOAT3 maxCorner)
 {
     points.clear();
 
     points.push_back(minCorner);
-    points.push_back(XMFLOAT3(maxCorner.x, minCorner.y, minCorner.z));
-    points.push_back(XMFLOAT3(maxCorner.x, maxCorner.y, minCorner.z));
-    points.push_back(XMFLOAT3(minCorner.x, maxCorner.y, minCorner.z));
+    points.push_back(DirectX::XMFLOAT3(maxCorner.x, minCorner.y, minCorner.z));
+    points.push_back(DirectX::XMFLOAT3(maxCorner.x, maxCorner.y, minCorner.z));
+    points.push_back(DirectX::XMFLOAT3(minCorner.x, maxCorner.y, minCorner.z));
 
-    points.push_back(XMFLOAT3(minCorner.x, minCorner.y, maxCorner.z));
-    points.push_back(XMFLOAT3(maxCorner.x, minCorner.y, maxCorner.z));
+    points.push_back(DirectX::XMFLOAT3(minCorner.x, minCorner.y, maxCorner.z));
+    points.push_back(DirectX::XMFLOAT3(maxCorner.x, minCorner.y, maxCorner.z));
     points.push_back(maxCorner);
-    points.push_back(XMFLOAT3(minCorner.x, maxCorner.y, maxCorner.z));
+    points.push_back(DirectX::XMFLOAT3(minCorner.x, maxCorner.y, maxCorner.z));
 }
 
 void UpdateBoxWithCorners(LPENTITY mesh, unsigned int indexSurface, const DirectX::XMFLOAT3 corners[8])
@@ -441,19 +440,19 @@ void UpdateBoxWithCorners(LPENTITY mesh, unsigned int indexSurface, const Direct
     Engine::UpdateVertexBuffer(Engine::EntitySurface(mesh, indexSurface));
 }
 
-void UpdateBoxPointsEx(std::vector<DirectX::XMFLOAT3>& points, XMFLOAT3 minCorner, XMFLOAT3 maxCorner) {
+void UpdateBoxPointsEx(std::vector<DirectX::XMFLOAT3>& points, DirectX::XMFLOAT3 minCorner, DirectX::XMFLOAT3 maxCorner) {
     if (points.size() != 8) {
         InitializeBoxPoints(points, minCorner, maxCorner);
     }
     else {
-        points.push_back(XMFLOAT3(minCorner.x, minCorner.y, minCorner.z));
-        points.push_back(XMFLOAT3(maxCorner.x, minCorner.y, minCorner.z));
-        points.push_back(XMFLOAT3(maxCorner.x, maxCorner.y, minCorner.z));
-        points.push_back(XMFLOAT3(minCorner.x, maxCorner.y, minCorner.z));
-        points.push_back(XMFLOAT3(minCorner.x, minCorner.y, maxCorner.z));
-        points.push_back(XMFLOAT3(maxCorner.x, minCorner.y, maxCorner.z));
-        points.push_back(XMFLOAT3(maxCorner.x, maxCorner.y, maxCorner.z));
-        points.push_back(XMFLOAT3(minCorner.x, maxCorner.y, maxCorner.z));
+        points.push_back(DirectX::XMFLOAT3(minCorner.x, minCorner.y, minCorner.z));
+        points.push_back(DirectX::XMFLOAT3(maxCorner.x, minCorner.y, minCorner.z));
+        points.push_back(DirectX::XMFLOAT3(maxCorner.x, maxCorner.y, minCorner.z));
+        points.push_back(DirectX::XMFLOAT3(minCorner.x, maxCorner.y, minCorner.z));
+        points.push_back(DirectX::XMFLOAT3(minCorner.x, minCorner.y, maxCorner.z));
+        points.push_back(DirectX::XMFLOAT3(maxCorner.x, minCorner.y, maxCorner.z));
+        points.push_back(DirectX::XMFLOAT3(maxCorner.x, maxCorner.y, maxCorner.z));
+        points.push_back(DirectX::XMFLOAT3(minCorner.x, maxCorner.y, maxCorner.z));
     }
 }
 

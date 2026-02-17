@@ -1,4 +1,5 @@
 ﻿#include "Surface.h"
+using namespace DirectX;
 
 Surface::Surface() :
     size_position(0),
@@ -35,21 +36,21 @@ Surface::~Surface() {
     Memory::SafeRelease(uv2Buffer);
 }
 
-float Surface::getVertexX(unsigned int index) const
+float Surface::GetVertexX(unsigned int index) const
 {
     if (index >= position.size())
         return 0.0f;
     return position[index].x;
 }
 
-float Surface::getVertexY(unsigned int index) const
+float Surface::GetVertexY(unsigned int index) const
 {
     if (index >= position.size())
         return 0.0f;
     return position[index].y;
 }
 
-float Surface::getVertexZ(unsigned int index) const
+float Surface::GetVertexZ(unsigned int index) const
 {
     if (index >= position.size())
         return 0.0f;
@@ -110,7 +111,7 @@ void Surface::AddIndex(UINT index)
     size_listIndex = (unsigned int)indices.size();
 }
 
-void Surface::Draw(const gdx::CDevice* device, const DWORD flagsVertex)
+void Surface::Draw(const GDXDevice* device, const DWORD flagsVertex)
 {
     unsigned int offset = 0;
     unsigned int cnt = 0;

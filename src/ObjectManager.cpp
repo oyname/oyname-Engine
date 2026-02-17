@@ -1,7 +1,8 @@
 ﻿#include "ObjectManager.h"
 #include <algorithm>
+using namespace DirectX;
 
-ObjectManager::ObjectManager() : m_device(nullptr) {
+ObjectManager::ObjectManager() {
 }
 
 ObjectManager::~ObjectManager()
@@ -48,45 +49,40 @@ ObjectManager::~ObjectManager()
     m_entities.clear();
 }
 
-void ObjectManager::Init(gdx::CDevice* device)
-{
-    m_device = device;
-}
-
-Surface* ObjectManager::createSurface() {
+Surface* ObjectManager::CreateSurface() {
     Surface* surface = new Surface;
     m_surfaces.push_back(surface);
  
     return surface;
 }
 
-Mesh* ObjectManager::createMesh() {
+Mesh* ObjectManager::CreateMesh() {
     Mesh* mesh = new Mesh;
     m_meshes.push_back(mesh);
     m_entities.push_back(mesh);
     return mesh;
 }
 
-Camera* ObjectManager::createCamera() {
+Camera* ObjectManager::CreateCamera() {
     Camera* camera = new Camera;
     m_cameras.push_back(camera);
     m_entities.push_back(camera);
     return camera;
 }
 
-Material* ObjectManager::createMaterial() {
+Material* ObjectManager::CreateMaterial() {
     Material* material = new Material;
     m_materials.push_back(material);
     return material;
 }
 
-Shader* ObjectManager::createShader() {
+Shader* ObjectManager::CreateShader() {
     Shader* shader = new Shader;
     m_shaders.push_back(shader);
     return shader;
 }
 
-void ObjectManager::addSurfaceToMesh(Mesh* mesh, Surface* surface)
+void ObjectManager::AddSurfaceToMesh(Mesh* mesh, Surface* surface)
 {
     if (!mesh || !surface) return;
 
@@ -97,7 +93,7 @@ void ObjectManager::addSurfaceToMesh(Mesh* mesh, Surface* surface)
     // surface->pShader = mesh->pShader;
 }
 
-void ObjectManager::addMeshToMaterial(Material* material, Mesh* mesh) {
+void ObjectManager::AddMeshToMaterial(Material* material, Mesh* mesh) {
     if (!material || !mesh) return;
 
     // Keep the relationship consistent.
@@ -109,15 +105,15 @@ void ObjectManager::addMeshToMaterial(Material* material, Mesh* mesh) {
     // Ensure the material is part of the shader bucket used for rendering.
     // (Rendering walks: shader -> materials -> meshes -> surfaces)
     if (material->pRenderShader)
-        assignShaderToMaterial(material->pRenderShader, material);
+        AssignShaderToMaterial(material->pRenderShader, material);
 }
 
-void ObjectManager::addMaterialToShader(Shader* shader, Material* material)
+void ObjectManager::AddMaterialToShader(Shader* shader, Material* material)
 {
-    assignShaderToMaterial(shader, material);
+    AssignShaderToMaterial(shader, material);
 }
 
-void ObjectManager::deleteSurface(Surface* surface) {
+void ObjectManager::DeleteSurface(Surface* surface) {
     if (!surface) return;
 
     // Fast path: surface knows its mesh.
@@ -148,7 +144,7 @@ void ObjectManager::deleteSurface(Surface* surface) {
     }
 }
 
-void ObjectManager::deleteMesh(Mesh* mesh) {
+void ObjectManager::DeleteMesh(Mesh* mesh) {
     if (!mesh) return;
 
     UnregisterRenderable(mesh);
@@ -191,7 +187,7 @@ void ObjectManager::deleteMesh(Mesh* mesh) {
     }
 }
 
-void ObjectManager::deleteCamera(Camera* camera) {
+void ObjectManager::DeleteCamera(Camera* camera) {
     auto entIt = std::find(m_entities.begin(), m_entities.end(), camera);
     if (entIt != m_entities.end()) {
         m_entities.erase(entIt);
@@ -204,7 +200,7 @@ void ObjectManager::deleteCamera(Camera* camera) {
     }
 }
 
-void ObjectManager::deleteMaterial(Material* material)
+void ObjectManager::DeleteMaterial(Material* material)
 {
     if (!material) return;
 
@@ -229,7 +225,7 @@ void ObjectManager::deleteMaterial(Material* material)
     }
 }
 
-void ObjectManager::removeSurfaceFromMesh(Mesh* mesh, Surface* surface) {
+void ObjectManager::RemoveSurfaceFromMesh(Mesh* mesh, Surface* surface) {
     auto& surfaces = mesh->surfaces;
     for (auto it = surfaces.begin(); it != surfaces.end(); ++it) {
         if (*it == surface) {
@@ -239,7 +235,7 @@ void ObjectManager::removeSurfaceFromMesh(Mesh* mesh, Surface* surface) {
     }
 }
 
-void ObjectManager::removeMeshFromMaterial(Material* material, Mesh* mesh) {
+void ObjectManager::RemoveMeshFromMaterial(Material* material, Mesh* mesh) {
     auto& meshes = material->meshes;
     for (auto it = meshes.begin(); it != meshes.end(); ++it) {
         if (*it == mesh) {
@@ -249,7 +245,7 @@ void ObjectManager::removeMeshFromMaterial(Material* material, Mesh* mesh) {
     }
 }
 
-void ObjectManager::removeMaterialFromShader(Shader* shader, Material* material) {
+void ObjectManager::RemoveMaterialFromShader(Shader* shader, Material* material) {
     auto& materials = shader->materials;
     for (auto it = materials.begin(); it != materials.end(); ++it) {
         if (*it == material) {
@@ -259,7 +255,7 @@ void ObjectManager::removeMaterialFromShader(Shader* shader, Material* material)
     }
 }
 
-Surface* ObjectManager::getPreviousSurface(Surface* currentSurface) {
+Surface* ObjectManager::GetPreviousSurface(Surface* currentSurface) {
     for (auto it = m_surfaces.begin(); it != m_surfaces.end(); ++it) {
         if (*it == currentSurface) {
             if (it != m_surfaces.begin()) {
@@ -271,7 +267,7 @@ Surface* ObjectManager::getPreviousSurface(Surface* currentSurface) {
     return nullptr;
 }
 
-Mesh* ObjectManager::getPreviousMesh(Mesh* currentMesh) {
+Mesh* ObjectManager::GetPreviousMesh(Mesh* currentMesh) {
     for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it) {
         if (*it == currentMesh) {
             if (it != m_meshes.begin()) {
@@ -283,7 +279,7 @@ Mesh* ObjectManager::getPreviousMesh(Mesh* currentMesh) {
     return nullptr;
 }
 
-Camera* ObjectManager::getPreviousCamera(Camera* currentCamera) {
+Camera* ObjectManager::GetPreviousCamera(Camera* currentCamera) {
     for (auto it = m_cameras.begin(); it != m_cameras.end(); ++it) {
         if (*it == currentCamera) {
             if (it != m_cameras.begin()) {
@@ -295,7 +291,7 @@ Camera* ObjectManager::getPreviousCamera(Camera* currentCamera) {
     return nullptr;
 }
 
-Material* ObjectManager::getPreviousMaterial(Material* currentMaterial) {
+Material* ObjectManager::GetPreviousMaterial(Material* currentMaterial) {
     for (auto it = m_materials.begin(); it != m_materials.end(); ++it) {
         if (*it == currentMaterial) {
             if (it != m_materials.begin()) {
@@ -307,7 +303,7 @@ Material* ObjectManager::getPreviousMaterial(Material* currentMaterial) {
     return nullptr;
 }
 
-Shader* ObjectManager::getPreviousShader(Shader* currentShader)
+Shader* ObjectManager::GetPreviousShader(Shader* currentShader)
 {
     for (auto it = m_shaders.begin(); it != m_shaders.end(); ++it) {
         if (*it == currentShader) {
@@ -320,7 +316,7 @@ Shader* ObjectManager::getPreviousShader(Shader* currentShader)
     return nullptr;
 }
 
-Surface* ObjectManager::getSurface(Mesh* mesh)
+Surface* ObjectManager::GetSurface(Mesh* mesh)
 {
     if (!mesh->surfaces.empty()) {
         return mesh->surfaces.front();
@@ -328,7 +324,7 @@ Surface* ObjectManager::getSurface(Mesh* mesh)
     return nullptr;
 }
 
-Material* ObjectManager::getStandardMaterial() const
+Material* ObjectManager::GetStandardMaterial() const
 {
     if (!m_materials.empty()) {
         return m_materials.front();
@@ -336,26 +332,26 @@ Material* ObjectManager::getStandardMaterial() const
     return nullptr;
 }
 
-Shader* ObjectManager::getShader(const Surface& surface) const
+Shader* ObjectManager::GetShader(const Surface& surface) const
 {
     if (surface.pMesh && surface.pMesh->pMaterial)
         return surface.pMesh->pMaterial->pRenderShader;
     return nullptr;
 }
 
-Shader* ObjectManager::getShader(const Mesh& mesh) const
+Shader* ObjectManager::GetShader(const Mesh& mesh) const
 {
     if (mesh.pMaterial)
         return mesh.pMaterial->pRenderShader;
     return nullptr;
 }
 
-Shader* ObjectManager::getShader(const Material& material) const
+Shader* ObjectManager::GetShader(const Material& material) const
 {
     return material.pRenderShader;
 }
 
-void ObjectManager::processMesh()
+void ObjectManager::ProcessMesh()
 {
     for (auto it = this->m_meshes.begin(); it != this->m_meshes.end(); ++it) {
         Mesh* mesh = *it;
@@ -363,7 +359,7 @@ void ObjectManager::processMesh()
     }
 }
 
-void ObjectManager::deleteShader(Shader* shader)
+void ObjectManager::DeleteShader(Shader* shader)
 {
     if (!shader) return;
 
@@ -383,7 +379,7 @@ void ObjectManager::deleteShader(Shader* shader)
     }
 }
 
-void ObjectManager::assignShaderToMaterial(Shader* shader, Material* material)
+void ObjectManager::AssignShaderToMaterial(Shader* shader, Material* material)
 {
     if (!material) return;
 

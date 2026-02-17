@@ -1,5 +1,6 @@
 ﻿#include "Memory.h"
 #include "Mesh.h"
+using namespace DirectX;
 
 Mesh::Mesh() :
     Entity(),
@@ -13,7 +14,7 @@ Mesh::~Mesh() {
 }
 
 // ← Version 1: Einfaches Update (von Entity geerbt)
-void Mesh::Update(const gdx::CDevice* device)
+void Mesh::Update(const GDXDevice* device)
 {
     // Basis-Update (Transform → Matrix)
     Entity::Update(device);
@@ -25,7 +26,7 @@ void Mesh::Update(const gdx::CDevice* device)
 }
 
 // ← Version 2: Rendering-Update mit Custom MatrixSet
-void Mesh::Update(const gdx::CDevice* device, const MatrixSet* inMatrixSet)
+void Mesh::Update(const GDXDevice* device, const MatrixSet* inMatrixSet)
 {
     if (!isActive) return;
     if (!device || !inMatrixSet) return;
@@ -102,7 +103,7 @@ void Mesh::CalculateOBB(unsigned int index)
     };
 
     // Extrahiere Skalierungsfaktoren
-    XMMATRIX scalingMatrix = transform.getScaling();
+    XMMATRIX scalingMatrix = transform.GetScaling();
     float scaleX = XMVectorGetX(scalingMatrix.r[0]);
     float scaleY = XMVectorGetY(scalingMatrix.r[1]);
     float scaleZ = XMVectorGetZ(scalingMatrix.r[2]);
@@ -113,8 +114,8 @@ void Mesh::CalculateOBB(unsigned int index)
     extents.z *= scaleZ;
 
     XMFLOAT3 pos;
-    XMStoreFloat3(&pos, transform.getPosition());
-    XMVECTOR quat = XMQuaternionRotationMatrix(transform.getRotation());
+    XMStoreFloat3(&pos, transform.GetPosition());
+    XMVECTOR quat = XMQuaternionRotationMatrix(transform.GetRotation());
     XMFLOAT4 quatFloat;
     XMStoreFloat4(&quatFloat, quat);
 

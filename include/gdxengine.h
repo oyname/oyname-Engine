@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include "core.h"
 #include "gdxwin.h"
 #include "gdxutil.h"
 #include "gdxinterface.h"
@@ -19,20 +20,19 @@
 
 #define VERTEX_SHADER_FILE L"shaders/VertexShader.hlsl" 
 #define PIXEL_SHADER_FILE L"shaders/PixelShader.hlsl"
-
-namespace gdx { class CGIDX; }
+// Forward declaration
+class GDXEngine;
 
 namespace Engine
 {
-	extern gdx::CGIDX* engine;
+	extern GDXEngine* engine;
 
 	int  CreateEngine(HWND hwnd, HINSTANCE hInst, int bpp, int width, int height);
 	void ReleaseEngine();
 }
 
-namespace gdx {
 
-	class CGIDX {
+class GDXEngine {
 	private:
 		bool m_bInitialized;
 		HWND m_hwnd;				// Window handle
@@ -41,7 +41,7 @@ namespace gdx {
 		int m_screenHeight;			// Screen height	
 		int m_adapterIndex;			// Current adapter index
 		int m_monitorIndex;			// Index of the monitor
-		static CGIDX* s_instance;	// Singleton-Pointer
+		static GDXEngine* s_instance;	// Singleton-Pointer
 
 		DirectX::XMFLOAT4 m_globalAmbient;  // Globale Ambient-Farbe für die Szene
 
@@ -61,13 +61,13 @@ namespace gdx {
 		int m_vsyncInterval = 1; // 1=ON, 0=OFF
 
 	public:
-		CDevice m_device;		// Device Manager, not to be confused with DirectXDevice
-		CInterface m_interface;	// Interface Manager
+		GDXDevice m_device;		// Device Manager, not to be confused with DirectXDevice
+		GDXInterface m_interface;	// Interface Manager
 
-		CGIDX(HWND hwnd, HINSTANCE hinst, unsigned int bpp, unsigned int screenX, unsigned int screenY, int* result);
-		~CGIDX();
+		GDXEngine(HWND hwnd, HINSTANCE hinst, unsigned int bpp, unsigned int screenX, unsigned int screenY, int* result);
+		~GDXEngine();
 
-		static CGIDX* GetInstance() { return s_instance; }
+		static GDXEngine* GetInstance() { return s_instance; }
 
 		HRESULT RenderWorld();
 		void Cleanup();
@@ -116,4 +116,3 @@ namespace gdx {
 		static constexpr double FIXED_TIMESTEP = 1.0 / 60.0;
 		static constexpr double TARGET_FPS = 60.0;
 	};
-}

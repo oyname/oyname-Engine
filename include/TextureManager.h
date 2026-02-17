@@ -6,27 +6,25 @@
 
 #include "Texture.h"
 
-namespace gdx
+
+class TextureManager
 {
-	class TextureManager
-	{
-	private:
-		typedef std::vector<LPTEXTURE> TextureContainer;
-		TextureContainer tc;
+private:
+	typedef std::vector<LPTEXTURE> TextureContainer;
+	TextureContainer tc;
 
-		int  CheckTexture(std::wstring sFilename);
+	int  CheckTexture(std::wstring sFilename);
 
-		void ReleaseTexture(void);
+	void ReleaseTexture(void);
 
-	public:
-		TextureManager();
+public:
+	TextureManager();
 
-		~TextureManager();
+	~TextureManager();
 
-		static TextureManager& instance(void);
+	static TextureManager& Instance(void);
 
-		HRESULT LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename, LPLPTEXTURE lpTexture);
-	};
-	typedef gdx::TextureManager* LPTEXTUREMANAGER;
-}
+	HRESULT LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename, LPLPTEXTURE lpTexture);
+};
+typedef TextureManager* LPTEXTUREMANAGER;
 

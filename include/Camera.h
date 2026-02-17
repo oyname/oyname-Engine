@@ -2,7 +2,6 @@
 #include "Entity.h"
 #include "gdxutil.h"
 
-using namespace DirectX;
 
 class Camera : public Entity
 {
@@ -24,7 +23,7 @@ public:
     ~Camera();
 
     // UpdateCamera ist Camera-spezifisch
-    void UpdateCamera(XMVECTOR position, XMVECTOR direction, XMVECTOR up);
+    void UpdateCamera(DirectX::XMVECTOR position, DirectX::XMVECTOR direction, DirectX::XMVECTOR up);
 };
 
 typedef Camera* LPCAMERA;

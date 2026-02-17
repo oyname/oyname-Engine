@@ -2,11 +2,12 @@
 #include "ObjectManager.h"
 #include "LightManager.h"
 #include "RenderQueue.h"
+#include "gdxdevice.h"
 #include <d3d11.h>
 
 class RenderManager {
 public:
-    RenderManager(ObjectManager& objectManager, LightManager& lightManager);
+    RenderManager(ObjectManager& objectManager, LightManager& lightManager, GDXDevice& device);
     ~RenderManager() = default;
 
     void SetCamera(LPENTITY camera);
@@ -28,7 +29,8 @@ private:
 
     // Manager-Klassen (Referenzen)
     ObjectManager& m_objectManager;
-    LightManager& m_lightManager;
+    LightManager&  m_lightManager;
+    GDXDevice&     m_device;
 
     // Helper Functions
     void UpdateShadowMatrixBuffer(const DirectX::XMMATRIX& viewMatrix, const DirectX::XMMATRIX& projMatrix);

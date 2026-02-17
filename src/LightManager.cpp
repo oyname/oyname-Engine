@@ -2,6 +2,7 @@
 #include "gdxengine.h"
 #include "Camera.h"
 #include "Memory.h"
+using namespace DirectX;
 
 LightManager::LightManager() : lightBuffer(nullptr)
 {
@@ -29,14 +30,14 @@ static LightType ConvertD3DLightTypeToLightType(D3DLIGHTTYPE d3dType)
 }
 
 // Alte Signatur für Rückwärtskompatibilität (falls noch irgendwo genutzt)
-Light* LightManager::createLight(D3DLIGHTTYPE type)
+Light* LightManager::CreateLight(D3DLIGHTTYPE type)
 {
     // Konvertiere alte API zu neuer API
     LightType lightType = ConvertD3DLightTypeToLightType(type);
-    return createLight(lightType);
+    return CreateLight(lightType);
 }
 
-Light* LightManager::createLight(LightType type)
+Light* LightManager::CreateLight(LightType type)
 {
     if (m_lights.size() >= MAX_LIGHTS) {
         Debug::Log("LightManager.cpp: WARNING - Max light count (32) reached, cannot create new light");
@@ -65,7 +66,7 @@ void LightManager::PositionLightAtCamera(Light* light, Camera* camera, DirectX::
     }
 
     // 1. Position: Kamera-Position + Offset
-    DirectX::XMVECTOR camPos = camera->transform.getPosition();
+    DirectX::XMVECTOR camPos = camera->transform.GetPosition();
     DirectX::XMVECTOR lightPos = DirectX::XMVectorAdd(camPos, offset);
 
     // 2. Rotation: Exakte Kopie der Kamera-Rotation (Quaternion)
@@ -79,7 +80,7 @@ void LightManager::PositionLightAtCamera(Light* light, Camera* camera, DirectX::
         (light->GetLightType() == LightType::Directional ? "Directional" : "Point"), ")");
 }
 
-void LightManager::InitializeLightBuffer(const gdx::CDevice* device)
+void LightManager::InitializeLightBuffer(const GDXDevice* device)
 {
     if (lightBuffer != nullptr) {
         Memory::SafeRelease(lightBuffer);
@@ -102,7 +103,7 @@ void LightManager::InitializeLightBuffer(const gdx::CDevice* device)
     Debug::Log("LightManager.cpp: Light buffer initialized successfully (Capacity: 32 lights)");
 }
 
-void LightManager::Update(const gdx::CDevice* device)
+void LightManager::Update(const GDXDevice* device)
 {
     // Buffer initialisieren wenn nötig
     if (lightBuffer == nullptr) {
@@ -117,8 +118,8 @@ void LightManager::Update(const gdx::CDevice* device)
 
     // Hole globales Ambient von der Engine
     DirectX::XMFLOAT4 globalAmbient(0.2f, 0.2f, 0.2f, 1.0f);
-    if (gdx::CGIDX::GetInstance() != nullptr) {
-        globalAmbient = gdx::CGIDX::GetInstance()->GetGlobalAmbient();
+    if (GDXEngine::GetInstance() != nullptr) {
+        globalAmbient = GDXEngine::GetInstance()->GetGlobalAmbient();
     }
 
     // Jetzt alle Lichter SAMMELN mit den aktualisierten Daten

@@ -10,67 +10,65 @@
 #include "Material.h"
 #include "Shader.h"
 
-using namespace DirectX;
 
 class RenderManager;
 
 class ObjectManager
 {
-    friend class RenderManager;
 public:
     ObjectManager();
     ~ObjectManager();
-    void Init(gdx::CDevice* device);
+    void Init() {}
 
     // CREATE
-    Camera* createCamera();
-    Shader* createShader();
-    Material* createMaterial();
-    Mesh* createMesh();
-    Surface* createSurface();
+    Camera* CreateCamera();
+    Shader* CreateShader();
+    Material* CreateMaterial();
+    Mesh* CreateMesh();
+    Surface* CreateSurface();
 
     void RegisterRenderable(Mesh* mesh);
     void UnregisterRenderable(Mesh* mesh);
 
     // ADD
-    void addSurfaceToMesh(Mesh* mesh, Surface* surface);
-    void addMeshToMaterial(Material* material, Mesh* mesh);
+    void AddSurfaceToMesh(Mesh* mesh, Surface* surface);
+    void AddMeshToMaterial(Material* material, Mesh* mesh);
 
     // Assign shader to material and keep buckets in sync
-    void assignShaderToMaterial(Shader* shader, Material* material);
+    void AssignShaderToMaterial(Shader* shader, Material* material);
 
     // Backwards compatibility (old name used by gidx.h)
-    void addMaterialToShader(Shader* shader, Material* material);
+    void AddMaterialToShader(Shader* shader, Material* material);
 
     // DELETE
-    void deleteSurface(Surface* surface);
-    void deleteMesh(Mesh* mesh);
-    void deleteCamera(Camera* camera);
-    void deleteMaterial(Material* material);
-    void deleteShader(Shader* shader);
+    void DeleteSurface(Surface* surface);
+    void DeleteMesh(Mesh* mesh);
+    void DeleteCamera(Camera* camera);
+    void DeleteMaterial(Material* material);
+    void DeleteShader(Shader* shader);
 
     // REMOVE
-    void removeSurfaceFromMesh(Mesh* mesh, Surface* surface);
-    void removeMeshFromMaterial(Material* material, Mesh* mesh);
-    void removeMaterialFromShader(Shader* shader, Material* material);
+    void RemoveSurfaceFromMesh(Mesh* mesh, Surface* surface);
+    void RemoveMeshFromMaterial(Material* material, Mesh* mesh);
+    void RemoveMaterialFromShader(Shader* shader, Material* material);
 
     // GET PREVIOUS
-    Surface* getPreviousSurface(Surface* currentSurface);
-    Mesh* getPreviousMesh(Mesh* currentMesh);
-    Camera* getPreviousCamera(Camera* currentCamera);
-    Material* getPreviousMaterial(Material* currentMaterial);
-    Shader* getPreviousShader(Shader* currentShader);
+    Surface* GetPreviousSurface(Surface* currentSurface);
+    Mesh* GetPreviousMesh(Mesh* currentMesh);
+    Camera* GetPreviousCamera(Camera* currentCamera);
+    Material* GetPreviousMaterial(Material* currentMaterial);
+    Shader* GetPreviousShader(Shader* currentShader);
 
     // GET
-    void processMesh();
-    Surface* getSurface(Mesh* mesh);
-    Material* getStandardMaterial() const;
-    Shader* getShader(const Surface& surface) const;
-    Shader* getShader(const Mesh& mesh) const;
-    Shader* getShader(const Material& material) const;
+    void ProcessMesh();
+    Surface* GetSurface(Mesh* mesh);
+    Material* GetStandardMaterial() const;
+    Shader* GetShader(const Surface& surface) const;
+    Shader* GetShader(const Mesh& mesh) const;
+    Shader* GetShader(const Material& material) const;
+    const std::vector<Shader*>& GetShaders() const { return m_shaders; }
 
 private:
-    gdx::CDevice* m_device;
     std::vector<Entity*> m_entities;
     std::vector<Surface*> m_surfaces;
     std::vector<Mesh*> m_meshes;

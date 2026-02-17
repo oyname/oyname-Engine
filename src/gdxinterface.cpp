@@ -1,18 +1,17 @@
 // gdxinterface.cpp
 #include "gdxinterface.h"
 
-using namespace gdx;
 
-CInterface::CInterface() : m_bInitialized(false), m_factory(nullptr)
+GDXInterface::GDXInterface() : m_bInitialized(false), m_factory(nullptr)
 {
 }
 
-CInterface::~CInterface()
+GDXInterface::~GDXInterface()
 {
     Release();
 }
 
-HRESULT CInterface::Init(unsigned int bpp)
+HRESULT GDXInterface::Init(unsigned int bpp)
 {
     (void)bpp; // Original: bpp unbenutzt
 
@@ -42,13 +41,13 @@ HRESULT CInterface::Init(unsigned int bpp)
     return hr;
 }
 
-void CInterface::Release()
+void GDXInterface::Release()
 {
     Memory::SafeRelease(m_factory);
     m_bInitialized = false;
 }
 
-HRESULT CInterface::GetSystemInfo()
+HRESULT GDXInterface::GetSystemInfo()
 {
     if (!m_factory)
         return E_FAIL;
@@ -98,7 +97,7 @@ HRESULT CInterface::GetSystemInfo()
     return hr;
 }
 
-HRESULT CInterface::EnumerateAdapterOutputs(IDXGIAdapter* adapter, GXADAPTER& gxAdapter)
+HRESULT GDXInterface::EnumerateAdapterOutputs(IDXGIAdapter* adapter, GXADAPTER& gxAdapter)
 {
     if (!adapter)
         return E_INVALIDARG;
@@ -136,7 +135,7 @@ HRESULT CInterface::EnumerateAdapterOutputs(IDXGIAdapter* adapter, GXADAPTER& gx
     return hr;
 }
 
-HRESULT CInterface::EnumerateDisplayModes(IDXGIOutput* output, GXOUTPUT& gxOutput)
+HRESULT GDXInterface::EnumerateDisplayModes(IDXGIOutput* output, GXOUTPUT& gxOutput)
 {
     if (!output)
         return E_INVALIDARG;

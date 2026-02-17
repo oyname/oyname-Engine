@@ -159,5 +159,3 @@ int grafikformats()
     return 0;
 }
 
-using namespace gdx;
-
