@@ -21,6 +21,18 @@ using Microsoft::WRL::ComPtr;
 #include <dxgi.h>
 #include <DirectXMath.h>
 
+#include <unordered_set>
+
+#include <cstdint>
+
+inline std::string Ptr(const void* p)
+{
+    std::ostringstream oss;
+    oss << "0x" << std::hex << std::uppercase
+        << reinterpret_cast<std::uintptr_t>(p);
+    return oss.str();
+}
+
 // ============================================================
 // Enums / Flags
 // ============================================================
@@ -90,7 +102,7 @@ namespace GXUTIL
 
     GXFORMAT      GetSupportedFormats(D3D_FEATURE_LEVEL featureLevel);
 
-    int           GetDirectXVersion(D3D_FEATURE_LEVEL featureLevel);
+    int           GetFeatureLevel(D3D_FEATURE_LEVEL featureLevel);
     D3D_FEATURE_LEVEL GetFeatureLevelFromDirectXVersion(int version);
     std::wstring  GetFeatureLevelName(D3D_FEATURE_LEVEL featureLevel);
 
@@ -136,6 +148,29 @@ public:
     template<typename... Args>
     static void LogError(Args&&... args) { Write("[ERROR] ", std::cerr, std::forward<Args>(args)...); }
 
+    // Einmal insgesamt (ohne Argumente)
+    static void LogOnce()
+    {
+        constexpr const char* key = "__Debug_LogOnce_NoArgs__";
+        if (!TryMarkSeen(key)) return;
+        Log("LogOnce() fired"); // <- deine Message
+    }
+
+    // Einmal pro key, ohne weitere Args: key wird als Message geloggt
+    static void LogOnce(const char* key)
+    {
+        if (!TryMarkSeen(key)) return;
+        Log(key);
+    }
+
+    // Einmal pro key, mit Args: du entscheidest, was geloggt wird
+    template<typename... Args>
+    static void LogOnce(const char* key, Args&&... args)
+    {
+        if (!TryMarkSeen(key)) return;
+        Log(std::forward<Args>(args)...);
+    }
+
     static void LogHr(const char* file, int line, HRESULT hr)
     {
         if (SUCCEEDED(hr)) return;
@@ -153,6 +188,18 @@ public:
 
 private:
     inline static std::mutex s_mutex;
+
+    // Shared once-state
+    inline static std::unordered_set<std::string> s_seenOnce;
+    inline static std::mutex s_onceMutex;
+
+    static bool TryMarkSeen(const char* key)
+    {
+        if (!key) key = "__null__";
+
+        std::lock_guard<std::mutex> lock(s_onceMutex);
+        return s_seenOnce.emplace(key).second;
+    }
 
     static std::string Now()
     {

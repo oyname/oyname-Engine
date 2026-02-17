@@ -107,23 +107,19 @@ namespace gdx
 		{
 			D3D_FEATURE_LEVEL currentLevel =
 				GXUTIL::GetFeatureLevelFromDirectXVersion(
-					m_device.deviceManager.GetDirectXVersion(i));
+					m_device.deviceManager.GetFeatureLevel(i));
 
 			// Ist dieser besser als bisheriger beste?
 			if (currentLevel > bestLevel)
 			{
 				bestLevel = currentLevel;
 				bestIndex = i;
-
-				Debug::Log("gdxengine.cpp: Better Adapter found at index ", i,
-					" with Feature Level: ", GXUTIL::GetFeatureLevelName(GXUTIL::GetFeatureLevelFromDirectXVersion(
-						m_device.deviceManager.GetDirectXVersion(i))));
 			}
 		}
 
 		Debug::Log("gdxengine.cpp: SELECTED BEST Adapter at index ", bestIndex,
 			" with Feature Level: ", GXUTIL::GetFeatureLevelName(GXUTIL::GetFeatureLevelFromDirectXVersion(
-				m_device.deviceManager.GetDirectXVersion(bestIndex))));
+				m_device.deviceManager.GetFeatureLevel(bestIndex))));
 
 		return bestIndex;
 	}
@@ -156,7 +152,7 @@ namespace gdx
 
 		// Current adapter with supported DirectX version
 		D3D_FEATURE_LEVEL featureLevel;
-		featureLevel = GXUTIL::GetFeatureLevelFromDirectXVersion(m_device.deviceManager.GetDirectXVersion(index));
+		featureLevel = GXUTIL::GetFeatureLevelFromDirectXVersion(m_device.deviceManager.GetFeatureLevel(index));
 
 		// Create adapter with current index
 		hr = m_interface.GetFactory()->EnumAdapters(index, &adapter);

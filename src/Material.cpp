@@ -21,9 +21,10 @@ Material::Material() :
 }
 
 Material::~Material() {
-    Memory::SafeRelease(m_texture);
-    Memory::SafeRelease(m_textureView);
-    Memory::SafeRelease(m_imageSamplerState);
+    m_texture = nullptr;
+    m_textureView = nullptr;
+    m_imageSamplerState = nullptr;
+
     Memory::SafeRelease(materialBuffer);
     meshes.clear();
 }
@@ -36,11 +37,19 @@ void Material::SetTexture(const gdx::CDevice* device)
     }
 }
 
-void Material::SetTexture(ID3D11Texture2D* texture, ID3D11ShaderResourceView* textureView, ID3D11SamplerState* imageSamplerState)
+void Material::SetTexture(ID3D11Texture2D* texture, ID3D11ShaderResourceView* textureView, ID3D11SamplerState* sampler)
 {
+    Memory::SafeRelease(m_imageSamplerState);
+    Memory::SafeRelease(m_textureView);
+    Memory::SafeRelease(m_texture);
+
     m_texture = texture;
     m_textureView = textureView;
-    m_imageSamplerState = imageSamplerState;
+    m_imageSamplerState = sampler;
+
+    if (m_texture) m_texture->AddRef();
+    if (m_textureView) m_textureView->AddRef();
+    if (m_imageSamplerState) m_imageSamplerState->AddRef();
 }
 
 void Material::UpdateConstantBuffer(ID3D11DeviceContext* context)

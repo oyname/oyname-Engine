@@ -30,7 +30,7 @@ public:
     void CalculateSize(XMMATRIX roationMatrix, XMFLOAT3& minSize, XMFLOAT3& maxSize);
 
 public:
-    bool isActive;
+    bool isActive = false;
 
     std::vector<XMFLOAT3> position;
     unsigned int size_position;

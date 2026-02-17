@@ -20,6 +20,11 @@ enum class RenderQueueType { Opaque, AlphaTest, Transparent, Additive };
 class Mesh : public Entity
 {
 public:
+    std::vector<Surface*> surfaces;
+    Material* pMaterial = nullptr;
+    DirectX::BoundingOrientedBox obb;
+
+public:
     Mesh();
     ~Mesh();
 
@@ -27,7 +32,7 @@ public:
     void Update(const gdx::CDevice* device) override;
 
     // 2. Rendering-spezifisches Update mit MatrixSet
-    void Update(const gdx::CDevice* device, MatrixSet* matrixSet);
+    void Update(const gdx::CDevice* device, const MatrixSet* matrixSet);
 
     unsigned int NumSurface();
     Surface* GetSurface(unsigned int index);
@@ -43,11 +48,6 @@ public:
     void operator delete(void* p) noexcept {
         _aligned_free(p);
     }
-
-public:
-    std::vector<Surface*> surfaces;
-    Material* pMaterial = nullptr;
-    DirectX::BoundingOrientedBox obb;
 
 private:
     COLLISION collisionType;

@@ -35,14 +35,12 @@ int main()
 
     // Qube erstellen
     LPENTITY Mesh1 = nullptr;
-    Engine::CreateMesh(&Mesh1);
     CreateCube(&Mesh1, material1);
     Engine::PositionEntity(Mesh1, -2.0f, 0.0f, 0.0f);
     Engine::ScaleEntity(Mesh1, 1.0f, 1.0f, 1.0f);
 
     // Zweiten Qube erstellen
     LPENTITY Mesh2 = nullptr;
-    Engine::CreateMesh(&Mesh2);
     CreateCube(&Mesh2, material2);
     Engine::PositionEntity(Mesh2, 2.0f, 0.0f, 0.0f);
 

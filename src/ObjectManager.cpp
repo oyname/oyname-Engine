@@ -56,6 +56,7 @@ void ObjectManager::Init(gdx::CDevice* device)
 Surface* ObjectManager::createSurface() {
     Surface* surface = new Surface;
     m_surfaces.push_back(surface);
+ 
     return surface;
 }
 
@@ -150,15 +151,16 @@ void ObjectManager::deleteSurface(Surface* surface) {
 void ObjectManager::deleteMesh(Mesh* mesh) {
     if (!mesh) return;
 
+    UnregisterRenderable(mesh);
+
     // Detach from all materials
     for (auto& material : m_materials) {
         auto& meshes = material->meshes;
-        for (auto it = meshes.begin(); it != meshes.end(); ++it) {
-            if (*it == mesh) {
-                meshes.erase(it);
-                break;
-            }
+        for (auto& material : m_materials) {
+            auto& meshes = material->meshes;
+            meshes.erase(std::remove(meshes.begin(), meshes.end(), mesh), meshes.end());
         }
+        mesh->pMaterial = nullptr;
     }
 
     // ObjectManager owns surfaces -> delete all surfaces of this mesh here.
@@ -206,18 +208,22 @@ void ObjectManager::deleteMaterial(Material* material)
 {
     if (!material) return;
 
+    // Detach meshes
+    for (auto* mesh : material->meshes) {
+        if (mesh && mesh->pMaterial == material)
+            mesh->pMaterial = nullptr;
+    }
+    material->meshes.clear();
+
     // remove from shader bucket
     Shader* sh = material->pRenderShader;
-    if (sh)
-    {
+    if (sh) {
         auto& v = sh->materials;
         v.erase(std::remove(v.begin(), v.end(), material), v.end());
     }
 
     auto it = std::find(m_materials.begin(), m_materials.end(), material);
-    if (it != m_materials.end())
-    {
-        material->meshes.clear();
+    if (it != m_materials.end()) {
         m_materials.erase(it);
         Memory::SafeDelete(material);
     }

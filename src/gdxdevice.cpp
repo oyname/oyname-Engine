@@ -123,7 +123,7 @@ HRESULT CDevice::EnumerateSystemDevices()
             GXDEVICE gxDevice = {};
             gxDevice.featureLevel = achieved;
             gxDevice.supportedFormat = GXUTIL::GetSupportedFormats(achieved);
-            gxDevice.directxVersion = GXUTIL::GetDirectXVersion(achieved);
+            gxDevice.directxVersion = GXUTIL::GetFeatureLevel(achieved);
 
             deviceManager.GetDevices().push_back(gxDevice);
 

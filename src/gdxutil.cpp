@@ -103,7 +103,7 @@ namespace GXUTIL
     }
 
     //
-    int GetDirectXVersion(D3D_FEATURE_LEVEL featureLevel)
+    int GetFeatureLevel(D3D_FEATURE_LEVEL featureLevel)
     {
         // ← ZUSÄTZLICHER FIX: Falls noch Byte-Swap-Fehler durchkommen
         if (featureLevel == 0xC100) featureLevel = D3D_FEATURE_LEVEL_12_1;

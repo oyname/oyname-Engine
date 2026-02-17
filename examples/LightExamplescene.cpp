@@ -4,7 +4,7 @@
 
 LPENTITY g_plateMesh = nullptr;
 LPENTITY g_cubeMesh = nullptr;
-LPENTITY g_cubeMesh2= nullptr;
+LPENTITY g_cubeMesh2 = nullptr;
 LPENTITY g_camera = nullptr;
 LPENTITY g_redLight = nullptr;
 LPENTITY g_blueLight = nullptr;
@@ -29,37 +29,44 @@ int main()
 
     // Kamera
     Engine::CreateCamera(&g_camera);
-    Engine::PositionEntity(g_camera, 0.0f, 40.0f, -90.0f);
-    Engine::RotateEntity(g_camera, 25.0f, 0.0f, 0.0f);
+    Engine::PositionEntity(g_camera, 0.0f, 30.0f, -90.0f);
+    Engine::RotateEntity(g_camera, 10.0f, 0.0f, 0.0f);
 
-    // Würfel
+    // Wuerfel 1
     LPMATERIAL whiteMaterial = nullptr;
     Engine::CreateMaterial(&whiteMaterial);
     Engine::MaterialTexture(whiteMaterial, brick);
 
-    Engine::CreateMesh(&g_cubeMesh);
-    CreateCube(&g_cubeMesh, whiteMaterial);
+    CreateCube(&g_cubeMesh, whiteMaterial);  // CreateCube ruft intern CreateMesh auf
     Engine::PositionEntity(g_cubeMesh, 0.0f, 35.0f, 0.0f);
-    Engine::ScaleEntity(g_cubeMesh, 25.0f, 8.0f, 8.0f);
+    Engine::ScaleEntity(g_cubeMesh, 8.0f, 8.0f, 8.0f);
 
+    Debug::Log("Cube1 Mesh: ", Ptr(g_cubeMesh).c_str(),
+        " surfaces=", ((Mesh*)g_cubeMesh)->surfaces.size());
+
+    // Wuerfel 2
     LPMATERIAL faceMaterial = nullptr;
     Engine::CreateMaterial(&faceMaterial);
     Engine::MaterialTexture(faceMaterial, face);
 
-    Engine::CreateMesh(&g_cubeMesh2);
-    CreateCube(&g_cubeMesh2, faceMaterial);
-    Engine::PositionEntity(g_cubeMesh2, 20.0f, 15.0f, -20.0f);
+    CreateCube(&g_cubeMesh2, faceMaterial);  // CreateCube ruft intern CreateMesh auf
+    Engine::PositionEntity(g_cubeMesh2, 10.0f, 15.0f, -10.0f);
     Engine::ScaleEntity(g_cubeMesh2, 5.0f, 5.0f, 5.0f);
+
+    Debug::Log("Cube2 Mesh: ", Ptr(g_cubeMesh2).c_str(),
+        " surfaces=", ((Mesh*)g_cubeMesh2)->surfaces.size());
 
     // Platte
     LPMATERIAL grayMaterial = nullptr;
     Engine::CreateMaterial(&grayMaterial);
     Engine::MaterialTexture(grayMaterial, dxlogo);
 
-    Engine::CreateMesh(&g_plateMesh);
-    CreateCube(&g_plateMesh, grayMaterial);
+    CreateCube(&g_plateMesh, grayMaterial);  // CreateCube ruft intern CreateMesh auf
     Engine::PositionEntity(g_plateMesh, 0.0f, 0.0f, 0.0f);
     Engine::ScaleEntity(g_plateMesh, 100.0f, 1.0f, 100.0f);
+
+    Debug::Log("Plate Mesh: ", Ptr(g_plateMesh).c_str(),
+        " surfaces=", ((Mesh*)g_plateMesh)->surfaces.size());
 
     // Lichter
     Engine::CreateLight(&g_directionalLight, D3DLIGHT_DIRECTIONAL);
@@ -67,11 +74,10 @@ int main()
     Engine::RotateEntity(g_directionalLight, 90.0f, 0.0f, 0.0f);
     Engine::LightColor(g_directionalLight, 0.1f, 0.1f, 0.1f);
 
-
     Engine::CreateLight(&g_redLight, D3DLIGHT_POINT);
     Engine::PositionEntity(g_redLight, 20.0f, 15.0f, 0.0f);
     Engine::LightColor(g_redLight, 1.0f, 0.3f, 0.3f);
-
+    
     Engine::CreateLight(&g_blueLight, D3DLIGHT_POINT);
     Engine::PositionEntity(g_blueLight, -20.0f, 15.0f, 0.0f);
     Engine::LightColor(g_blueLight, 0.3f, 0.3f, 1.0f);

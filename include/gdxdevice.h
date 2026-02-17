@@ -49,7 +49,7 @@ namespace gdx
 			return devices[adapterIndex].supportedFormat;
 		}
 
-		int GetDirectXVersion(unsigned int adapterIndex) const
+		int GetFeatureLevel(unsigned int adapterIndex) const
 		{
 			if (adapterIndex >= devices.size())
 				return 0;

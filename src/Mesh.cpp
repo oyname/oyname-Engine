@@ -25,38 +25,41 @@ void Mesh::Update(const gdx::CDevice* device)
 }
 
 // ← Version 2: Rendering-Update mit Custom MatrixSet
-void Mesh::Update(const gdx::CDevice* device, MatrixSet* matrixSet)
+void Mesh::Update(const gdx::CDevice* device, const MatrixSet* inMatrixSet)
 {
     if (!isActive) return;
+    if (!device || !inMatrixSet) return;
 
     // Collision Box aktualisieren
     if (collisionType != COLLISION::NONE) {
         CalculateOBB(0);
     }
 
-    HRESULT hr = S_OK;
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
+    // Lokales Copy (verhindert, dass du externen Speicher “brauchst”)
+    MatrixSet ms = *inMatrixSet;
 
-    // MatrixSet wurde von außen übergeben (für Rendering mit Kamera-Matrizen)
-    // World Matrix ist bereits in matrixSet->worldMatrix gesetzt
+    // World kommt IMMER aus dem Mesh-Transform
+    ms.worldMatrix = transform.GetLocalTransformationMatrix();
 
-    // Constant Buffer aktualisieren
-    if (constantBuffer != nullptr) {
-        hr = device->GetDeviceContext()->Map(constantBuffer, 0,
-            D3D11_MAP_WRITE_DISCARD, 0,
-            &mappedResource);
-        if (FAILED(hr))
-        {
+    if (constantBuffer)
+    {
+        D3D11_MAPPED_SUBRESOURCE mapped{};
+        HRESULT hr = device->GetDeviceContext()->Map(
+            constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+
+        if (FAILED(hr)) {
             Debug::LogHr(__FILE__, __LINE__, hr);
             return;
         }
 
-        memcpy(mappedResource.pData, matrixSet, sizeof(MatrixSet));
+        memcpy(mapped.pData, &ms, sizeof(MatrixSet));
         device->GetDeviceContext()->Unmap(constantBuffer, 0);
+
         device->GetDeviceContext()->VSSetConstantBuffers(0, 1, &constantBuffer);
         device->GetDeviceContext()->PSSetConstantBuffers(0, 1, &constantBuffer);
     }
 }
+
 
 unsigned int Mesh::NumSurface()
 {

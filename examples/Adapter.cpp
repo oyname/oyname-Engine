@@ -1,4 +1,5 @@
 #include "gidx.h"
+#include "core.h"
 
 // OYNAME Engine
 // 
@@ -26,15 +27,26 @@ int main()
     Engine::SetGfxDriver(0);
     Engine::SetOutput(1);
 
+    Engine::SetVSync(1);
+
     Debug::Log("X: ", Engine::GetWidth(), " Y: ", Engine::GetHeight(), " Hz: ", Engine::GetMaxFrequency(1920,1080));
 
     while (Windows::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000)) // Main loop
     {
- 
+        //Core::BeginFrame();
+        //const float dt = static_cast<float>(Core::GetDeltaTime());
+        //
+        //
+        //Engine::Cls(0, 64, 128);
+        //Engine::UpdateWorld();
+        //Engine::RenderWorld();
+        //Engine::Flip();
+        //
+        //Core::EndFrame();
     }
 
     // Shutdown the engine
-    return Windows::ShutDown();
+    return 0;
 
 }
 
@@ -105,7 +117,6 @@ void directxversion()
 {
     std::string text = "";
     unsigned int version = Engine::GfxGetDirectXVersion();
-    
 
     switch (version)
     {
@@ -121,7 +132,7 @@ void directxversion()
     case 4:
         text = "DirectX 11";
         break;
-    case 51:
+    case 5:
         text = "DirectX 11.1";
         break;
     case 6:

@@ -12,11 +12,17 @@ Texture::Texture() : m_texture(nullptr), m_textureView(nullptr), m_isLocked(fals
 
 Texture::~Texture()
 {
-
+    Memory::SafeRelease(m_imageSamplerState);
+    Memory::SafeRelease(m_textureView);
+    Memory::SafeRelease(m_texture);
+    m_pixels = nullptr;
+    m_isLocked = false;
 }
 
 HRESULT Texture::AddTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename)
 {
+    Memory::SafeRelease(m_imageSamplerState);
+    Memory::SafeRelease(m_textureView);
     Memory::SafeRelease(m_texture);
 
     // Bilddaten laden

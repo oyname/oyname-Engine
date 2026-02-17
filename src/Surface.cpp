@@ -1,7 +1,6 @@
 ﻿#include "Surface.h"
 
 Surface::Surface() :
-    isActive(false),
     size_position(0),
     size_listPosition(0),
     size_color(0),
@@ -20,11 +19,14 @@ Surface::Surface() :
     size_uv1(0),
     size_uv2(0),
     pMesh(nullptr),
+    isActive(true),
     test(false)
+
 {
 }
 
 Surface::~Surface() {
+    isActive = false;
     Memory::SafeRelease(positionBuffer);
     Memory::SafeRelease(colorBuffer);
     Memory::SafeRelease(indexBuffer);

@@ -24,8 +24,8 @@ int main()
     sw == true ? Engine::Graphics(1200, 650) : Engine::Graphics(1980, 1080, false);
 
 
-    //g_shadertest = nullptr;
-    //Engine::CreateShader(&g_shadertest, L"..\\shaders\\VertexShaderRot.hlsl", "main", L"..\\shaders\\PixelShaderRot.hlsl", "main", Engine::CreateVertexFlags(true, false, false, false, false));
+    g_shadertest = nullptr;
+    Engine::CreateShader(&g_shadertest, L"..\\shaders\\VertexShaderRot.hlsl", "main", L"..\\shaders\\PixelShaderRot.hlsl", "main", Engine::CreateVertexFlags(true, false, false, false, false));
 
 
 
@@ -155,9 +155,9 @@ int main()
 
 
         if (Engine::EntityCollision(cube, cube2))
-           Debug::Log("Kollision");
+           Debug::LogOnce("Kollision");
         else
-            Debug::Log("Keine Kollision");
+            Debug::LogOnce("Keine Kollision");
 
         // Extrahiere OBB Corners und visualisiere
         DirectX::XMFLOAT3 corners[8];

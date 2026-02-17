@@ -9,6 +9,13 @@ namespace gdx {
 }
 
 class Entity {
+
+public:
+    Transform transform;
+    MatrixSet matrixSet;
+    ID3D11Buffer* constantBuffer;
+    D3D11_VIEWPORT viewport;
+
 public:
     Entity();
     virtual ~Entity();
@@ -36,10 +43,8 @@ public:
     }
 
 public:
-    Transform transform;
-    MatrixSet matrixSet;
-    ID3D11Buffer* constantBuffer;
-    D3D11_VIEWPORT viewport;
+    bool IsActive() const noexcept { return isActive; }
+    void SetActive(bool active) noexcept { isActive = active; }
 
 protected:
     bool isActive;

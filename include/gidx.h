@@ -94,7 +94,7 @@ namespace Engine
     }
 
     inline unsigned int GfxGetDirectXVersion() {
-        return engine->m_device.deviceManager.GetDirectXVersion(engine->GetAdapterIndex());
+        return engine->m_device.deviceManager.GetFeatureLevel(engine->GetAdapterIndex());
     }
 
     inline unsigned int GetCurrentAdapter() {

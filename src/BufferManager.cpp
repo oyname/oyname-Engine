@@ -36,22 +36,11 @@ HRESULT BufferManager::CreateBuffer(const void* data, UINT size, UINT count, D3D
 
 void BufferManager::UpdateBuffer(ID3D11Buffer* buffer, const void* data, UINT dataSize)
 {
-    if (buffer == nullptr) {
-        Debug::Log("ERROR: UpdateBuffer - buffer is nullptr!");
+    if (!buffer || !data || dataSize == 0) {
+        Debug::Log("ERROR: UpdateBuffer - invalid input!");
         return;
     }
 
-    if (data == nullptr) {
-        Debug::Log("ERROR: UpdateBuffer - data is nullptr!");
-        return;
-    }
-
-    if (dataSize == 0) {
-        Debug::Log("ERROR: UpdateBuffer - dataSize is 0!");
-        return;
-    }
-
-    m_context->UpdateSubresource(buffer, 0, nullptr, data, dataSize, 0);
     m_context->UpdateSubresource(buffer, 0, nullptr, data, dataSize, 0);
 }
 
