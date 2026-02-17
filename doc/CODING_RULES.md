@@ -1,4 +1,4 @@
-# GDX Engine – Coding Rules
+# OYNAME Engine – Coding Rules
 
 > Stand: Februar 2026
 
