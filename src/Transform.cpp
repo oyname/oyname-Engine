@@ -1,5 +1,5 @@
 ﻿#include "Transform.h"
-#include <cmath>
+using namespace DirectX;
 
 // Statische Konstanten
 static const XMVECTOR forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -34,7 +34,7 @@ Transform::~Transform()
 }
 
 // =========== PRIVATE HELPER ===========
-void Transform::updateMatrices() const
+void Transform::UpdateMatrices() const
 {
     if (!matricesDirty) return;
 
@@ -52,11 +52,11 @@ void Transform::updateMatrices() const
     }
 }
 
-void Transform::updateDirectionVectors() const
+void Transform::UpdateDirectionVectors() const
 {
     if (!vectorsDirty) return;
 
-    XMMATRIX rot = getRotation();
+    XMMATRIX rot = GetRotation();
 
     lookAt = XMVector3Normalize(XMVector3TransformNormal(forwardVector, rot));
     up = XMVector3Normalize(XMVector3TransformNormal(upVector, rot));
@@ -65,7 +65,7 @@ void Transform::updateDirectionVectors() const
     vectorsDirty = false;
 }
 
-XMVECTOR Transform::eulerToQuaternion(float pitch, float yaw, float roll) const
+XMVECTOR Transform::EulerToQuaternion(float pitch, float yaw, float roll) const
 {
     pitch = XMConvertToRadians(pitch);
     yaw = XMConvertToRadians(yaw);
@@ -74,7 +74,7 @@ XMVECTOR Transform::eulerToQuaternion(float pitch, float yaw, float roll) const
     return XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
 }
 
-void Transform::quaternionToEuler(const XMVECTOR& quat, float& pitch, float& yaw, float& roll) const
+void Transform::QuaternionToEuler(const XMVECTOR& quat, float& pitch, float& yaw, float& roll) const
 {
     float x = XMVectorGetX(quat);
     float y = XMVectorGetY(quat);
@@ -100,7 +100,7 @@ void Transform::quaternionToEuler(const XMVECTOR& quat, float& pitch, float& yaw
 // =========== EXISTIERENDE API ===========
 void Transform::Rotate(float fRotateX, float fRotateY, float fRotateZ, Space space)
 {
-    XMVECTOR delta = eulerToQuaternion(fRotateX, fRotateY, fRotateZ);
+    XMVECTOR delta = EulerToQuaternion(fRotateX, fRotateY, fRotateZ);
 
     if (space == Space::World) {
         rotationQuat = XMQuaternionMultiply(delta, rotationQuat);
@@ -180,62 +180,62 @@ float Transform::Distance(const XMVECTOR& target) const
 
 XMMATRIX Transform::GetLocalTransformationMatrix() const
 {
-    updateMatrices();
+    UpdateMatrices();
     return scalingMatrix * rotationMatrix * translationMatrix;
 }
 
-XMVECTOR Transform::getLookAt() const
+XMVECTOR Transform::GetLookAt() const
 {
-    updateDirectionVectors();
+    UpdateDirectionVectors();
     return lookAt;
 }
 
-XMVECTOR Transform::getUp() const
+XMVECTOR Transform::GetUp() const
 {
-    updateDirectionVectors();
+    UpdateDirectionVectors();
     return up;
 }
 
-XMVECTOR Transform::getRight() const
+XMVECTOR Transform::GetRight() const
 {
-    updateDirectionVectors();
+    UpdateDirectionVectors();
     return right;
 }
 
-XMMATRIX Transform::getRotation() const
+XMMATRIX Transform::GetRotation() const
 {
-    updateMatrices();
+    UpdateMatrices();
     return rotationMatrix;
 }
 
-XMMATRIX Transform::getTranslation() const
+XMMATRIX Transform::GetTranslation() const
 {
-    updateMatrices();
+    UpdateMatrices();
     return translationMatrix;
 }
 
-XMMATRIX Transform::getScaling() const
+XMMATRIX Transform::GetScaling() const
 {
-    updateMatrices();
+    UpdateMatrices();
     return scalingMatrix;
 }
 
 // Legacy-Methoden
-float Transform::getRoll(const XMMATRIX* XMMatrix_p_Rotation) const
+float Transform::GetRoll(const XMMATRIX* XMMatrix_p_Rotation) const
 {
     XMFLOAT4X4 values;
     XMStoreFloat4x4(&values, XMMatrixTranspose(*XMMatrix_p_Rotation));
     return (float)atan2(values._21, values._22);
 }
 
-float Transform::getYaw(const XMMATRIX* XMMatrix_p_Rotation) const
+float Transform::GetYaw(const XMMATRIX* XMMatrix_p_Rotation) const
 {
     XMFLOAT4X4 values;
     XMStoreFloat4x4(&values, XMMatrixTranspose(*XMMatrix_p_Rotation));
     return atan2(values._13, values._33);
 }
 
-float Transform::getPitch(const XMMATRIX* XMMatrix_p_Rotation) const
+float Transform::GetPitch(const XMMATRIX* XMMatrix_p_Rotation) const
 {
     XMFLOAT4X4 values;
     XMStoreFloat4x4(&values, XMMatrixTranspose(*XMMatrix_p_Rotation));
@@ -269,21 +269,21 @@ void Transform::RotateQuaternion(const XMVECTOR& quaternion, Space space)
 float Transform::GetPitch() const
 {
     float pitch, yaw, roll;
-    quaternionToEuler(rotationQuat, pitch, yaw, roll);
+    QuaternionToEuler(rotationQuat, pitch, yaw, roll);
     return pitch;
 }
 
 float Transform::GetYaw() const
 {
     float pitch, yaw, roll;
-    quaternionToEuler(rotationQuat, pitch, yaw, roll);
+    QuaternionToEuler(rotationQuat, pitch, yaw, roll);
     return yaw;
 }
 
 float Transform::GetRoll() const
 {
     float pitch, yaw, roll;
-    quaternionToEuler(rotationQuat, pitch, yaw, roll);
+    QuaternionToEuler(rotationQuat, pitch, yaw, roll);
     return roll;
 }
 
@@ -361,7 +361,7 @@ void Transform::Slerp(const Transform& target, float t)
 // 6. HELPER
 XMMATRIX Transform::GetWorldMatrix() const
 {
-    updateMatrices();
+    UpdateMatrices();
     return scalingMatrix * rotationMatrix * translationMatrix;
 }
 

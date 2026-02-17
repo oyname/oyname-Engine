@@ -29,7 +29,7 @@ Material::~Material() {
     meshes.clear();
 }
 
-void Material::SetTexture(const gdx::CDevice* device)
+void Material::SetTexture(const GDXDevice* device)
 {
     if (m_textureView && m_imageSamplerState) {
         device->GetDeviceContext()->PSSetShaderResources(0, 1, &m_textureView);

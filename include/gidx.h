@@ -199,7 +199,7 @@ namespace Engine
             return;
         }
 
-        Camera* cam = engine->GetOM().createCamera();
+        Camera* cam = engine->GetOM().CreateCamera();
         if (cam == nullptr) {
             Debug::Log("ERROR: CreateCamera - Failed to create camera");
             return;
@@ -213,7 +213,7 @@ namespace Engine
         );
 
         cam->GenerateProjectionMatrix(
-            XMConvertToRadians(60.0f),
+            DirectX::XMConvertToRadians(60.0f),
             (static_cast<float>(engine->GetWidth()) / static_cast<float>(engine->GetHeight())),
             0.1f, 1000.0f
         );
@@ -255,7 +255,7 @@ namespace Engine
         }
 
         // ← GEÄNDERT: Nutze LightManager statt ObjectManager
-        Light* l = engine->GetLM().createLight(type);
+        Light* l = engine->GetLM().CreateLight(type);
         if (l == nullptr) {
             Debug::Log("ERROR: CreateLight - Failed to create light");
             return;
@@ -269,7 +269,7 @@ namespace Engine
         );
 
         l->GenerateProjectionMatrix(
-            XMConvertToRadians(90.0f),
+            DirectX::XMConvertToRadians(90.0f),
             (static_cast<float>(engine->GetWidth()) / static_cast<float>(engine->GetHeight())),
             1.0f, 1000.0f
         );
@@ -361,21 +361,21 @@ namespace Engine
             return;
         }
 
-        Mesh* m = engine->GetOM().createMesh();
+        Mesh* m = engine->GetOM().CreateMesh();
         if (m == nullptr) {
             Debug::Log("ERROR: CreateMesh - Failed to create mesh");
             return;
         }
 
-        material = material == nullptr ? engine->GetOM().getStandardMaterial() : material;
+        material = material == nullptr ? engine->GetOM().GetStandardMaterial() : material;
 
         if (material == nullptr) {
             Debug::Log("ERROR: CreateMesh - No valid material available");
-            engine->GetOM().deleteMesh(m);
+            engine->GetOM().DeleteMesh(m);
             return;
         }
 
-        engine->GetOM().addMeshToMaterial(material, m);
+        engine->GetOM().AddMeshToMaterial(material, m);
 
         HRESULT hr = engine->GetBM().CreateBuffer(
             &m->matrixSet,
@@ -387,7 +387,7 @@ namespace Engine
         if (FAILED(hr))
         {
             Debug::LogHr(__FILE__, __LINE__, hr);
-            engine->GetOM().deleteMesh(m);
+            engine->GetOM().DeleteMesh(m);
             return;
         }
 
@@ -422,7 +422,7 @@ namespace Engine
         }
 
         // 2. Erstelle Shader-Objekt
-        *shader = engine->GetOM().createShader();
+        *shader = engine->GetOM().CreateShader();
         if (*shader == nullptr) {
             Debug::Log("ERROR: Engine::CreateShader - Failed to create shader object");
             return E_OUTOFMEMORY;
@@ -439,7 +439,7 @@ namespace Engine
         {
             Debug::LogHr(__FILE__, __LINE__, hr);
 
-            engine->GetOM().deleteShader(*shader);
+            engine->GetOM().DeleteShader(*shader);
             return hr;
         }
 
@@ -497,7 +497,7 @@ namespace Engine
             return;
         }
 
-        *material = engine->GetOM().createMaterial();
+        *material = engine->GetOM().CreateMaterial();
         if (*material == nullptr) {
             Debug::Log("ERROR: CreateMaterial - Failed to create material");
             return;
@@ -508,12 +508,12 @@ namespace Engine
 
         if (shader == nullptr) {
             Debug::Log("ERROR: CreateMaterial - No valid shader available");
-            engine->GetOM().deleteMaterial(*material);
+            engine->GetOM().DeleteMaterial(*material);
             *material = nullptr;
             return;
         }
 
-        engine->GetOM().addMaterialToShader(shader, *material);
+        engine->GetOM().AddMaterialToShader(shader, *material);
     }
 
     inline void CreateSurface(LPSURFACE* surface, LPENTITY entity)
@@ -528,7 +528,7 @@ namespace Engine
             return;
         }
 
-        *surface = engine->GetOM().createSurface();
+        *surface = engine->GetOM().CreateSurface();
         if (*surface == nullptr) {
             Debug::Log("ERROR: CreateSurface - Failed to create surface");
             return;
@@ -538,12 +538,12 @@ namespace Engine
         Mesh* mesh = dynamic_cast<Mesh*>(entity);
         if (mesh == nullptr) {
             Debug::Log("ERROR: CreateSurface - Entity is not a Mesh!");
-            engine->GetOM().deleteSurface(*surface);
+            engine->GetOM().DeleteSurface(*surface);
             *surface = nullptr;
             return;
         }
 
-        engine->GetOM().addSurfaceToMesh(mesh, *surface);
+        engine->GetOM().AddSurfaceToMesh(mesh, *surface);
     }
 
     inline LPSURFACE GetSurface(LPENTITY entity)
@@ -559,7 +559,7 @@ namespace Engine
             return nullptr;
         }
 
-        return engine->GetOM().getSurface(mesh);
+        return engine->GetOM().GetSurface(mesh);
     }
 
     inline void FillBuffer(LPSURFACE surface)
@@ -806,7 +806,7 @@ namespace Engine
         Mesh* mesh = dynamic_cast<Mesh*>(entity);
         if (!mesh) { Debug::Log("EntityMaterial - Entity ist kein Mesh"); return; }
         if (!material) { Debug::Log("EntityMaterial - material nullptr"); return; }
-        engine->GetOM().addMeshToMaterial(material, mesh);
+        engine->GetOM().AddMeshToMaterial(material, mesh);
     }
 
     inline void EntityTexture(LPENTITY entity, LPTEXTURE texture)

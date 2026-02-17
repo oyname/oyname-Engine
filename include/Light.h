@@ -3,7 +3,6 @@
 #include "gdxutil.h"
 #include "gdxdevice.h"
 
-using namespace DirectX;
 
 __declspec(align(16))
 struct LightBufferData
@@ -28,9 +27,9 @@ public:
     ~Light();
 
     // Override Entity::Update() - berechnet lightDirection automatisch aus Transform-Rotation
-    virtual void Update(const gdx::CDevice* device) override;
+    virtual void Update(const GDXDevice* device) override;
 
-    void UpdateLight(const gdx::CDevice* device, XMVECTOR position, XMVECTOR lookAt);
+    void UpdateLight(const GDXDevice* device, DirectX::XMVECTOR position, DirectX::XMVECTOR lookAt);
     void SetAmbientColor(const DirectX::XMFLOAT4& newColor);
     void SetDiffuseColor(const DirectX::XMFLOAT4& newColor);
 
@@ -48,8 +47,8 @@ public:
     // ==================== SHADOW MAPPING HELPERS ====================
     // View/Projection Matrizen für Shadow Mapping.
     // Directional -> Orthographic, Point -> Perspective.
-    XMMATRIX GetLightViewMatrix() const;
-    XMMATRIX GetLightProjectionMatrix() const;
+    DirectX::XMMATRIX GetLightViewMatrix() const;
+    DirectX::XMMATRIX GetLightProjectionMatrix() const;
 
     // Optional: Parameter für Shadow-Frustum
     void SetShadowOrthoSize(float size);

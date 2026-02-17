@@ -2,8 +2,8 @@
 #include "RenderManager.h"
 #include "Light.h"
 
-RenderManager::RenderManager(ObjectManager& objectManager, LightManager& lightManager)
-    : m_objectManager(objectManager), m_lightManager(lightManager),
+RenderManager::RenderManager(ObjectManager& objectManager, LightManager& lightManager, GDXDevice& device)
+    : m_objectManager(objectManager), m_lightManager(lightManager), m_device(device),
     m_currentCam(nullptr), m_directionLight(nullptr)
 {
 }
@@ -20,15 +20,15 @@ void RenderManager::SetDirectionalLight(LPENTITY dirLight)
 
 void RenderManager::UpdateShadowMatrixBuffer(const DirectX::XMMATRIX& viewMatrix, const DirectX::XMMATRIX& projMatrix)
 {
-    if (!m_objectManager.m_device)
+    if (!m_device.IsInitialized())
         return;
 
-    ID3D11Buffer* shadowMatrixBuffer = m_objectManager.m_device->GetShadowMatrixBuffer();
+    ID3D11Buffer* shadowMatrixBuffer = m_device.GetShadowMatrixBuffer();
     if (!shadowMatrixBuffer)
         return;
 
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    HRESULT hr = m_objectManager.m_device->GetDeviceContext()->Map(
+    HRESULT hr = m_device.GetDeviceContext()->Map(
         shadowMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
     if (FAILED(hr))
@@ -57,16 +57,16 @@ void RenderManager::UpdateShadowMatrixBuffer(const DirectX::XMMATRIX& viewMatrix
         bufferData->lightProjectionMatrix = DirectX::XMMatrixTranspose(projMatrix);
     }
 
-    m_objectManager.m_device->GetDeviceContext()->Unmap(shadowMatrixBuffer, 0);
+    m_device.GetDeviceContext()->Unmap(shadowMatrixBuffer, 0);
 }
 
 void RenderManager::RenderShadowPass()
 {
-    if (!m_currentCam || !m_directionLight || !m_objectManager.m_device)
+    if (!m_currentCam || !m_directionLight || !m_device.IsInitialized())
         return;
 
-    ID3D11DeviceContext* ctx = m_objectManager.m_device->GetDeviceContext();
-    ID3D11DepthStencilView* shadowDSV = m_objectManager.m_device->GetShadowMapDepthView();
+    ID3D11DeviceContext* ctx = m_device.GetDeviceContext();
+    ID3D11DepthStencilView* shadowDSV = m_device.GetShadowMapDepthView();
     if (!ctx || !shadowDSV)
         return;
 
@@ -81,11 +81,11 @@ void RenderManager::RenderShadowPass()
 
     ctx->ClearDepthStencilView(shadowDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-    if (ID3D11RasterizerState* rsShadow = m_objectManager.m_device->GetShadowRasterState())
+    if (ID3D11RasterizerState* rsShadow = m_device.GetShadowRasterState())
         ctx->RSSetState(rsShadow);
 
     UINT smW = 0, smH = 0;
-    m_objectManager.m_device->GetShadowMapSize(smW, smH);
+    m_device.GetShadowMapSize(smW, smH);
     if (smW == 0 || smH == 0)
         return;
 
@@ -109,16 +109,16 @@ void RenderManager::RenderShadowPass()
 
     UpdateShadowMatrixBuffer(lightViewMatrix, lightProjMatrix);
 
-    if (ID3D11Buffer* shadowMatrixBuffer = m_objectManager.m_device->GetShadowMatrixBuffer())
+    if (ID3D11Buffer* shadowMatrixBuffer = m_device.GetShadowMatrixBuffer())
         ctx->VSSetConstantBuffers(3, 1, &shadowMatrixBuffer);
 
     // ---- Draw depth into shadow map ----
-    for (Shader* shader : m_objectManager.m_shaders)
+    for (Shader* shader : m_objectManager.GetShaders())
     {
         if (!shader || shader->materials.empty())
             continue;
 
-        shader->UpdateShader(m_objectManager.m_device, ShaderBindMode::VS_ONLY);
+        shader->UpdateShader(&m_device, ShaderBindMode::VS_ONLY);
 
         for (Material* material : shader->materials)
         {
@@ -138,10 +138,10 @@ void RenderManager::RenderShadowPass()
                 ms.projectionMatrix = lightProjMatrix;
                 ms.worldMatrix = mesh->transform.GetLocalTransformationMatrix();
 
-                mesh->Update(m_objectManager.m_device, &ms);
+                mesh->Update(&m_device, &ms);
 
                 for (Surface* s : mesh->surfaces)
-                    if (s) s->Draw(m_objectManager.m_device, shader->flagsVertex);
+                    if (s) s->Draw(&m_device, shader->flagsVertex);
             }
         }
     }
@@ -149,22 +149,22 @@ void RenderManager::RenderShadowPass()
 
 void RenderManager::RenderNormalPass()
 {
-    if (!m_currentCam || !m_objectManager.m_device)
+    if (!m_currentCam || !m_device.IsInitialized())
         return;
 
-    ID3D11DeviceContext* ctx = m_objectManager.m_device->GetDeviceContext();
+    ID3D11DeviceContext* ctx = m_device.GetDeviceContext();
     if (!ctx)
         return;
 
     // ---- PASS 2 STATE (deterministisch) ----
-    ID3D11RenderTargetView* rtv = m_objectManager.m_device->GetRenderTargetView();
-    ID3D11DepthStencilView* dsv = m_objectManager.m_device->GetDepthStencilView();
+    ID3D11RenderTargetView* rtv = m_device.GetRenderTargetView();
+    ID3D11DepthStencilView* dsv = m_device.GetDepthStencilView();
     if (!rtv || !dsv)
         return;
 
     ctx->OMSetRenderTargets(1, &rtv, dsv);
 
-    if (ID3D11RasterizerState* rsDefault = m_objectManager.m_device->GetRasterizerState())
+    if (ID3D11RasterizerState* rsDefault = m_device.GetRasterizerState())
         ctx->RSSetState(rsDefault);
     else
         ctx->RSSetState(nullptr);
@@ -174,8 +174,8 @@ void RenderManager::RenderNormalPass()
 
     // ---- Shadow resources (t7/s7) – vorbereitet für späteren echten Shadow-PS ----
     constexpr UINT SHADOW_TEX_SLOT = 7;
-    ID3D11ShaderResourceView* shadowSRV = m_objectManager.m_device->GetShadowMapSRV();
-    ID3D11SamplerState* shadowSampler = m_objectManager.m_device->GetComparisonSampler();
+    ID3D11ShaderResourceView* shadowSRV = m_device.GetShadowMapSRV();
+    ID3D11SamplerState* shadowSampler = m_device.GetComparisonSampler();
 
     ctx->PSSetShaderResources(SHADOW_TEX_SLOT, 1, &shadowSRV);
     ctx->PSSetSamplers(SHADOW_TEX_SLOT, 1, &shadowSampler);
@@ -188,7 +188,7 @@ void RenderManager::RenderNormalPass()
         {
             UpdateShadowMatrixBuffer(light->GetLightViewMatrix(), light->GetLightProjectionMatrix());
 
-            if (ID3D11Buffer* shadowMatrixBuffer = m_objectManager.m_device->GetShadowMatrixBuffer())
+            if (ID3D11Buffer* shadowMatrixBuffer = m_device.GetShadowMatrixBuffer())
                 ctx->VSSetConstantBuffers(3, 1, &shadowMatrixBuffer);
         }
     }
@@ -209,7 +209,7 @@ void RenderManager::RenderScene()
     RenderNormalPass();
 
     // Lights
-    m_lightManager.Update(m_objectManager.m_device);
+    m_lightManager.Update(&m_device);
 
     Debug::LogOnce("RenderScene_BEGIN",
         "=== RenderScene BEGIN ===");
@@ -218,11 +218,11 @@ void RenderManager::RenderScene()
         "Camera: ", Ptr(m_currentCam).c_str());
 
     Debug::LogOnce("RenderScene_ShaderCount",
-        "Shader count: ", m_objectManager.m_shaders.size());
+        "Shader count: ", m_objectManager.GetShaders().size());
 
-    for (size_t si = 0; si < m_objectManager.m_shaders.size(); ++si)
+    for (size_t si = 0; si < m_objectManager.GetShaders().size(); ++si)
     {
-        Shader* shader = m_objectManager.m_shaders[si];
+        Shader* shader = m_objectManager.GetShaders()[si];
 
         if (!shader)
         {
@@ -244,7 +244,7 @@ void RenderManager::RenderScene()
         if (shader->materials.empty())
             continue;
 
-        shader->UpdateShader(m_objectManager.m_device);
+        shader->UpdateShader(&m_device);
 
         for (size_t mi = 0; mi < shader->materials.size(); ++mi)
         {
@@ -267,9 +267,9 @@ void RenderManager::RenderScene()
                     material->meshes.size());
             }
 
-            material->SetTexture(m_objectManager.m_device);
+            material->SetTexture(&m_device);
             material->UpdateConstantBuffer(
-                m_objectManager.m_device->GetDeviceContext());
+                m_device.GetDeviceContext());
 
             for (size_t mei = 0; mei < material->meshes.size(); ++mei)
             {
@@ -301,7 +301,7 @@ void RenderManager::RenderScene()
                         mesh->IsActive());
                 }
 
-                mesh->Update(m_objectManager.m_device,
+                mesh->Update(&m_device,
                     &m_currentCam->matrixSet);
 
                 for (size_t sui = 0; sui < mesh->surfaces.size(); ++sui)
@@ -339,7 +339,7 @@ void RenderManager::RenderScene()
                     }
 
                     surface->Draw(
-                        m_objectManager.m_device,
+                        &m_device,
                         shader->flagsVertex);
                 }
             }
@@ -365,30 +365,30 @@ void RenderManager::RenderScene()
 //    RenderNormalPass();
 //
 //    // Lichter aktualisieren
-//    m_lightManager.Update(m_objectManager.m_device);
+//    m_lightManager.Update(&m_device);
 //
 //    // Draw scene (nutzt jetzt garantiert Main-Pass-State)
-//    for (const auto& shader : m_objectManager.m_shaders)
+//    for (const auto& shader : m_objectManager.GetShaders())
 //    {
 //        if (!shader || shader->materials.empty())
 //            continue;
 //
-//        shader->UpdateShader(m_objectManager.m_device);
+//        shader->UpdateShader(&m_device);
 //
-//        // m_objectManager.m_device->GetDeviceContext()
+//        // m_device.GetDeviceContext()
 //        for (const auto& material : shader->materials)
 //        {
-//            material->SetTexture(m_objectManager.m_device);
-//            material->UpdateConstantBuffer(m_objectManager.m_device->GetDeviceContext());
+//            material->SetTexture(&m_device);
+//            material->UpdateConstantBuffer(m_device.GetDeviceContext());
 //
 //            for (const auto& mesh : material->meshes)
 //            {
 //
-//                mesh->Update(m_objectManager.m_device, &m_currentCam->matrixSet);
+//                mesh->Update(&m_device, &m_currentCam->matrixSet);
 //
 //                for (const auto& surface : mesh->surfaces)
 //                    if (surface)
-//                        surface->Draw(m_objectManager.m_device, shader->flagsVertex);
+//                        surface->Draw(&m_device, shader->flagsVertex);
 //            }
 //        }
 //    }

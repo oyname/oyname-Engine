@@ -26,7 +26,7 @@ Shader::~Shader() {
     materials.clear();
 }
 
-void Shader::UpdateShader(const gdx::CDevice* device, ShaderBindMode mode)
+void Shader::UpdateShader(const GDXDevice* device, ShaderBindMode mode)
 {
     // Fehlerbehandlung: Prüfe auf nullptr
     if (device == nullptr) {

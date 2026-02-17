@@ -1,5 +1,6 @@
 ﻿#include "Light.h"
 #include "Memory.h"
+using namespace DirectX;
 
 Light::Light() : Entity(), lightType(LightType::Directional)
 {
@@ -100,18 +101,18 @@ void Light::SetShadowFov(float fovRadians)
 
 // WICHTIG: Update() überschreiben - berechnet lightDirection 
 // automatisch aus der Transform-Rotation
-void Light::Update(const gdx::CDevice* device)
+void Light::Update(const GDXDevice* device)
 {
     // Basis-Update aufrufen (Matrix-Berechnungen)
     Entity::Update(device);
 
     // lightDirection aus der aktuellen Transform-Rotation berechnen
     // LookAt-Vektor ist die Forward-Richtung nach der Rotation
-    XMVECTOR direction = transform.getLookAt();
+    XMVECTOR direction = transform.GetLookAt();
     DirectX::XMStoreFloat4(&cbLight.lightDirection, direction);
 
     // Aktualisiere lightPosition basierend auf Licht-Typ
-    XMVECTOR pos = transform.getPosition();
+    XMVECTOR pos = transform.GetPosition();
 
     if (lightType == LightType::Directional)
     {
@@ -166,7 +167,7 @@ void Light::SetRadius(float radius)
     cbLight.lightDiffuseColor.w = radius;
 }
 
-void Light::UpdateLight(const gdx::CDevice* device, XMVECTOR position, XMVECTOR lookAt)
+void Light::UpdateLight(const GDXDevice* device, XMVECTOR position, XMVECTOR lookAt)
 {
     HRESULT hr = S_OK;
 

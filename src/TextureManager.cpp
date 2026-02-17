@@ -2,18 +2,18 @@
 
 using namespace DirectX;
 
-gdx::TextureManager::TextureManager() {}
+TextureManager::TextureManager() {}
 
-gdx::TextureManager::~TextureManager() {
+TextureManager::~TextureManager() {
     this->ReleaseTexture();
 }
 
-gdx::TextureManager& gdx::TextureManager::instance() {
+TextureManager& TextureManager::Instance() {
     static TextureManager manager_;
     return manager_;
 }
 
-void gdx::TextureManager::ReleaseTexture() {
+void TextureManager::ReleaseTexture() {
     for (auto& texture : this->tc) {
         Memory::SafeRelease(texture->m_texture);
         Memory::SafeRelease(texture->m_textureView);
@@ -22,7 +22,7 @@ void gdx::TextureManager::ReleaseTexture() {
     this->tc.clear();
 }
 
-HRESULT gdx::TextureManager::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename, LPLPTEXTURE lpTexture) {
+HRESULT TextureManager::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename, LPLPTEXTURE lpTexture) {
     HRESULT hr = S_OK;
     
     (*lpTexture) = NULL;
@@ -40,11 +40,11 @@ HRESULT gdx::TextureManager::LoadTexture(ID3D11Device* device, ID3D11DeviceConte
         (*lpTexture) = this->tc[textureIndex];
     }
 
-    // Rückgabe der Textur
+    // Rï¿½ckgabe der Textur
     return hr;
 }
 
-int gdx::TextureManager::CheckTexture(std::wstring sFilename) {
+int TextureManager::CheckTexture(std::wstring sFilename) {
     int textureIndex = -1;
 
     for (size_t i = 0; i < this->tc.size(); ++i) {

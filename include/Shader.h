@@ -92,7 +92,7 @@ public:
     /// 
     /// ⚠️ Fehlerbehandlung: Prüft auf nullptr Pointers
     /// </summary>
-    void UpdateShader(const gdx::CDevice* device, ShaderBindMode mode = ShaderBindMode::VS_PS);
+    void UpdateShader(const GDXDevice* device, ShaderBindMode mode = ShaderBindMode::VS_PS);
 
     // ==================== HILFSMETHODEN ====================
     /// <summary>

@@ -3,10 +3,8 @@
 #include <DirectXMath.h>
 #include "Transform.h"
 #include "gdxutil.h"
-
-namespace gdx {
-    class CDevice;
-}
+// Forward declaration
+class GDXDevice;
 
 class Entity {
 
@@ -21,7 +19,7 @@ public:
     virtual ~Entity();
 
     // Basis-Update für Transform → Matrix
-    virtual void Update(const gdx::CDevice* device);
+    virtual void Update(const GDXDevice* device);
 
     // Matrix-Generierung für alle Entities
     void GenerateViewMatrix(DirectX::XMVECTOR position,
