@@ -10,7 +10,7 @@ Shader::Shader() :
     blobVS(nullptr),
     blobPS(nullptr)
 {
-    // materials ist jetzt ein vector - keine Initialisierung nötig
+    // materials ist vector - keine Initialisierung nötig
 }
 
 Shader::~Shader() {
@@ -30,23 +30,23 @@ void Shader::UpdateShader(const GDXDevice* device, ShaderBindMode mode)
 {
     // Fehlerbehandlung: Prüfe auf nullptr
     if (device == nullptr) {
-        Debug::Log("ERROR: Shader::UpdateShader - device is nullptr");
+        Debug::Log("Shader.cpp: ERROR: Shader::UpdateShader - device is nullptr");
         return;
     }
 
     ID3D11DeviceContext* context = device->GetDeviceContext();
     if (context == nullptr) {
-        Debug::Log("ERROR: Shader::UpdateShader - device context is nullptr");
+        Debug::Log("Shader.cpp: ERROR: Shader::UpdateShader - device context is nullptr");
         return;
     }
 
     // Prüfe ob Shader für den gewünschten Bind-Mode gültig ist
     if (!IsValid(mode)) {
-        Debug::Log("WARNING: Shader::UpdateShader - Shader not valid for requested bind mode");
-        Debug::Log("  mode: ", (mode == ShaderBindMode::VS_ONLY ? "VS_ONLY" : "VS_PS"));
-        Debug::Log("  inputlayoutVertex: ", (inputlayoutVertex != nullptr ? "OK" : "MISSING"));
-        Debug::Log("  vertexShader: ", (vertexShader != nullptr ? "OK" : "MISSING"));
-        Debug::Log("  pixelShader: ", (pixelShader != nullptr ? "OK" : "MISSING"));
+        Debug::Log("Shader.cpp: WARNING: Shader::UpdateShader - Shader not valid for requested bind mode");
+        Debug::Log("Shader.cpp:   mode: ", (mode == ShaderBindMode::VS_ONLY ? "VS_ONLY" : "VS_PS"));
+        Debug::Log("Shader.cpp:   inputlayoutVertex: ", (inputlayoutVertex != nullptr ? "OK" : "MISSING"));
+        Debug::Log("Shader.cpp:   vertexShader: ", (vertexShader != nullptr ? "OK" : "MISSING"));
+        Debug::Log("Shader.cpp:   pixelShader: ", (pixelShader != nullptr ? "OK" : "MISSING"));
         return;
     }
 

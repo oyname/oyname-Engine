@@ -10,9 +10,7 @@
 
 namespace Core
 {
-    // ----------------------------------------------------------
     // Interner Zustand
-    // ----------------------------------------------------------
     enum class State { Uninitialized, Initialized, Running, ShuttingDown, Stopped };
 
     static State        g_state     = State::Uninitialized;
@@ -29,9 +27,7 @@ namespace Core
     // Fenster-Objekt (Lebensdauer = Core)
     static Windows::CWindow g_window;
 
-    // ----------------------------------------------------------
     // Pfad-Helpers (intern)
-    // ----------------------------------------------------------
     static std::wstring ResolveExeDir()
     {
         wchar_t path[MAX_PATH]{};
@@ -54,10 +50,7 @@ namespace Core
         return std::wstring(absolutePath);
     }
 
-    // ----------------------------------------------------------
     // Lifecycle
-    // ----------------------------------------------------------
-
     HWND Init(HINSTANCE hInst, WNDPROC wndProc, const Desc& desc)
     {
         if (g_state == State::Running || g_state == State::Initialized)
@@ -185,10 +178,7 @@ namespace Core
         return g_state == State::Running;
     }
 
-    // ----------------------------------------------------------
     // Konfiguration / Getter
-    // ----------------------------------------------------------
-
     const Desc& GetDesc()
     {
         return g_desc;
@@ -204,10 +194,7 @@ namespace Core
         return g_hInst;
     }
 
-    // ----------------------------------------------------------
     // Pfad-Utilities
-    // ----------------------------------------------------------
-
     const std::wstring& GetExeDir()
     {
         if (!g_exeDirResolved)
@@ -223,10 +210,7 @@ namespace Core
         return ResolveAbsolutePath(GetExeDir() + relativePath);
     }
 
-    // ----------------------------------------------------------
     // Frame-Statistiken
-    // ----------------------------------------------------------
-
     double GetDeltaTime()
     {
         return Timer::GetDeltaTime();

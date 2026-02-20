@@ -35,13 +35,13 @@ namespace Engine
 class GDXEngine {
 	private:
 		bool m_bInitialized;
-		HWND m_hwnd;				// Window handle
-		int m_colorDepth;			// Color depth (e.g., 32-bit colors)
-		int m_screenWidth;			// Screen width
-		int m_screenHeight;			// Screen height	
-		int m_adapterIndex;			// Current adapter index
-		int m_monitorIndex;			// Index of the monitor
-		static GDXEngine* s_instance;	// Singleton-Pointer
+		HWND m_hwnd;						// Window handle
+		int m_colorDepth;					// Color depth (e.g., 32-bit colors)
+		int m_screenWidth;					// Screen width
+		int m_screenHeight;					// Screen height	
+		int m_adapterIndex;					// Current adapter index
+		int m_monitorIndex;					// Index of the monitor
+		static GDXEngine* s_instance;		// Singleton-Pointer
 
 		DirectX::XMFLOAT4 m_globalAmbient;  // Globale Ambient-Farbe für die Szene
 
@@ -61,7 +61,7 @@ class GDXEngine {
 		int m_vsyncInterval = 1; // 1=ON, 0=OFF
 
 	public:
-		GDXDevice m_device;		// Device Manager, not to be confused with DirectXDevice
+		GDXDevice m_device;		    // Device Manager, not to be confused with DirectXDevice
 		GDXInterface m_interface;	// Interface Manager
 
 		GDXEngine(HWND hwnd, HINSTANCE hinst, unsigned int bpp, unsigned int screenX, unsigned int screenY, int* result);

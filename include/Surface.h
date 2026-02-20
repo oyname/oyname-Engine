@@ -62,11 +62,11 @@ public:
     ID3D11Buffer* indexBuffer;
 
     Mesh* pMesh = nullptr;               
-    DirectX::XMFLOAT3 minPoint;
-    DirectX::XMFLOAT3 maxPoint;
+    DirectX::XMFLOAT3 minPoint{};
+    DirectX::XMFLOAT3 maxPoint{};
 
 public:
-    // ist daf�r gemacht um Linien zu rendern!
+    // Debug Kollision...kann dann gelöscht werden!
     bool test;
 };
 

@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include "Transform.h"
 #include "gdxutil.h"
+
 // Forward declaration
 class GDXDevice;
 

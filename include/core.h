@@ -23,7 +23,7 @@
 namespace Core
 {
     // ----------------------------------------------------------
-    // Globale Konfiguration (einzige Quelle der Wahrheit)
+    // Globale Konfiguration 
     // ----------------------------------------------------------
     struct Desc
     {
@@ -68,16 +68,13 @@ namespace Core
     // Ist die Engine aktiv?
     bool IsRunning();
 
-    // ----------------------------------------------------------
     // Konfiguration (nur lesen)
-    // ----------------------------------------------------------
     const Desc& GetDesc();
     HWND        GetHWND();
     HINSTANCE   GetHInstance();
 
-    // ----------------------------------------------------------
+
     // Pfad-Utilities (frueher in gdxengine.cpp)
-    // ----------------------------------------------------------
 
     // Verzeichnis der ausfuehrbaren Datei inkl. trailing backslash.
     const std::wstring& GetExeDir();
@@ -85,9 +82,7 @@ namespace Core
     // Loest relativen Pfad relativ zum ExeDir auf.
     std::wstring ResolvePath(const std::wstring& relativePath);
 
-    // ----------------------------------------------------------
     // Frame-Statistiken
-    // ----------------------------------------------------------
     double   GetDeltaTime();
     double   GetFPS();
     uint64_t GetFrameCount();

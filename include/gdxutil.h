@@ -33,10 +33,6 @@ inline std::string Ptr(const void* p)
     return oss.str();
 }
 
-// ============================================================
-// Enums / Flags
-// ============================================================
-
 enum D3DLIGHTTYPE {
     D3DLIGHT_POINT = 1,
     D3DLIGHT_SPOT = 2,
@@ -76,10 +72,8 @@ inline GXFORMAT& operator|=(GXFORMAT& a, GXFORMAT b)
     return a;
 }
 
-// ============================================================
-// Common structs
-// ============================================================
 
+// Common structs
 __declspec(align(16))
 struct MatrixSet
 {
@@ -88,10 +82,7 @@ struct MatrixSet
     DirectX::XMMATRIX worldMatrix;
 };
 
-// ============================================================
 // GXUTIL API (Implementierung in gdxutil.cpp)
-// ============================================================
-
 namespace GXUTIL
 {
     DXGI_FORMAT   GetDXGIFormat(GXFORMAT format);
@@ -130,10 +121,7 @@ namespace GXUTIL
     }
 }
 
-// ============================================================
 // Debug (header-only) � getrennt HR / Win32, thread-safe
-// ============================================================
-
 class Debug
 {
 public:
@@ -163,7 +151,7 @@ public:
         Log(key);
     }
 
-    // Einmal pro key, mit Args: du entscheidest, was geloggt wird
+    // Einmal pro key, mit Args
     template<typename... Args>
     static void LogOnce(const char* key, Args&&... args)
     {
@@ -276,10 +264,7 @@ private:
 #define GDX_HR(x)   do { HRESULT _hr=(x); Debug::LogHr(__FILE__, __LINE__, _hr); } while(0)
 #define GDX_WIN32() do { Debug::LogWin32(__FILE__, __LINE__); } while(0)
 
-// ============================================================
 // Memory helpers
-// ============================================================
-
 namespace Memory
 {
     template<typename T>

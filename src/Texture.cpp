@@ -30,7 +30,7 @@ HRESULT Texture::AddTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
     int desiredChannels = 4;
 
     char* narrowFilename = nullptr;
-    size_t length = wcslen(filename) + 1; // +1 für das Nullzeichen am Ende
+    size_t length = wcslen(filename) + 1; // +1 fuer das Nullzeichen am Ende
     narrowFilename = new char[length];
     size_t convertedChars = 0;
     wcstombs_s(&convertedChars, narrowFilename, length, filename, length);
@@ -39,11 +39,11 @@ HRESULT Texture::AddTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 
     if (!imageData)
     {
-        Debug::Log("FAIL LOAD IMAGE ", __FILE__, __LINE__);
+        Debug::Log("Texture.cpp: FAIL LOAD IMAGE ", __FILE__, __LINE__);
         return E_FAIL;
     }
 
-    // Berechnung der maximalen Größe
+    // Berechnung der maximalen Grï¿½ï¿½e
     UINT maxSize = imageWidth > imageHeight ? imageWidth : imageHeight;
 
     // Texturbeschreibung erstellen
@@ -126,7 +126,7 @@ HRESULT Texture::CreateTexture(ID3D11Device* device, int width, int height)
 {
     Memory::SafeRelease(m_texture);
 
-    // Keine Initialdaten für eine leere Textur
+    // Keine Initialdaten fï¿½r eine leere Textur
     D3D11_SUBRESOURCE_DATA initData = {};
 
     initData.SysMemPitch = width * 4;
@@ -208,7 +208,7 @@ void Texture::SetPixel(ID3D11DeviceContext* deviceContext, int x, int y, unsigne
 void Texture::GetPixel(int x, int y, unsigned char& r, unsigned char& g, unsigned char& b, unsigned char& alpha)
 {
     if (!m_isLocked) {
-        r = g = b = 255; // Weiß
+        r = g = b = 255; // Weiï¿½
         alpha = 255;
         return;
     }

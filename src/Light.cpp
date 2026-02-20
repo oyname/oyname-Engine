@@ -1,6 +1,5 @@
 ﻿#include "Light.h"
 #include "Memory.h"
-using namespace DirectX;
 
 Light::Light() : Entity(), lightType(LightType::Directional)
 {
@@ -10,11 +9,11 @@ Light::Light() : Entity(), lightType(LightType::Directional)
     DirectX::XMStoreFloat4(&cbLight.lightPosition,
         DirectX::XMVECTOR{ 0.0f, 0.0f, 0.0f, 0.0f });
 
-    // Initialisiere Direction
+    // Up-Vector
     DirectX::XMStoreFloat4(&cbLight.lightDirection,
         DirectX::XMVECTOR{ 0.0f, 1.0f, 0.0f, 0.0f });
 
-    // Setze Diffuse mit Default-Radius (100 Einheiten)
+    // Setze Diffuse mit Default-Radius
     SetDiffuseColor(DirectX::XMFLOAT4(1.0f, 0.8f, 1.0f, 100.0f));  // A = Radius
 
     // Setze Ambient
@@ -103,16 +102,19 @@ void Light::SetShadowFov(float fovRadians)
 // automatisch aus der Transform-Rotation
 void Light::Update(const GDXDevice* device)
 {
+    std::string key = "Light.cpp: ";
+    Debug::LogOnce(key.c_str(), "Update Light: ", Ptr(this).c_str());
+
     // Basis-Update aufrufen (Matrix-Berechnungen)
     Entity::Update(device);
 
     // lightDirection aus der aktuellen Transform-Rotation berechnen
     // LookAt-Vektor ist die Forward-Richtung nach der Rotation
-    XMVECTOR direction = transform.GetLookAt();
+    DirectX::XMVECTOR direction = transform.GetLookAt();
     DirectX::XMStoreFloat4(&cbLight.lightDirection, direction);
 
     // Aktualisiere lightPosition basierend auf Licht-Typ
-    XMVECTOR pos = transform.GetPosition();
+    DirectX::XMVECTOR pos = transform.GetPosition();
 
     if (lightType == LightType::Directional)
     {
@@ -128,6 +130,8 @@ void Light::Update(const GDXDevice* device)
         DirectX::XMStoreFloat4(&posFloat, pos);
         cbLight.lightPosition = DirectX::XMFLOAT4(posFloat.x, posFloat.y, posFloat.z, 1.0f);
     }
+
+
 }
 
 void Light::SetDiffuseColor(const DirectX::XMFLOAT4& Color)
@@ -167,7 +171,7 @@ void Light::SetRadius(float radius)
     cbLight.lightDiffuseColor.w = radius;
 }
 
-void Light::UpdateLight(const GDXDevice* device, XMVECTOR position, XMVECTOR lookAt)
+void Light::UpdateLight(const GDXDevice* device, DirectX::XMVECTOR position, DirectX::XMVECTOR lookAt)
 {
     HRESULT hr = S_OK;
 

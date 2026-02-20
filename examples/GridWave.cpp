@@ -220,9 +220,9 @@ int main()
 
     while (Windows::MainLoop() && !(GetAsyncKeyState(VK_ESCAPE) & 0x8000))
     {
-        auto frameStart = std::chrono::high_resolution_clock::now();
-        double dt = std::chrono::duration<double>(frameStart - lastFrameTime).count();
-        lastFrameTime = frameStart;
+        Core::BeginFrame();
+
+        const float dt = static_cast<float>(Core::GetDeltaTime());
 
         static bool spacePressed = false;
         // ==================== INPUT ====================
@@ -238,6 +238,12 @@ int main()
 
         if ((GetAsyncKeyState(VK_UP) & 0x8000)) { Engine::MoveEntity(camera, 0.0f, 0.0f, 50.0f * dt); }
         if ((GetAsyncKeyState(VK_DOWN) & 0x8000)) { Engine::MoveEntity(camera, 0.0f, 0.0f, -50.0f * dt); }
+        if ((GetAsyncKeyState(VK_RIGHT) & 0x8000)) { Engine::MoveEntity(camera, 50.0f * dt, 0.0f, 0.0f * dt); }
+        if ((GetAsyncKeyState(VK_LEFT) & 0x8000)) { Engine::MoveEntity(camera, -50.0f * dt, 0.0f, 0.0f * dt); }
+
+        Engine::LookAt(camera, DirectX::XMVectorGetX(grid->transform.GetPosition()),
+                               DirectX::XMVectorGetY(grid->transform.GetPosition()),
+                               DirectX::XMVectorGetZ(grid->transform.GetPosition()));
 
         // Update grid
         if (waveEnabled)
@@ -250,13 +256,15 @@ int main()
         }
 
 
-        // Render
-        Engine::Cls(20, 20, 40);
+        // Rendering
+        Engine::Cls(0, 64, 128);
         Engine::UpdateWorld();
         Engine::RenderWorld();
         Engine::Flip();
 
+        Core::EndFrame();
+
     }
 
-    return Windows::ShutDown();
+    return 0;
 }

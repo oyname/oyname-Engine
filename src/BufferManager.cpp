@@ -37,7 +37,7 @@ HRESULT BufferManager::CreateBuffer(const void* data, UINT size, UINT count, D3D
 void BufferManager::UpdateBuffer(ID3D11Buffer* buffer, const void* data, UINT dataSize)
 {
     if (!buffer || !data || dataSize == 0) {
-        Debug::Log("ERROR: UpdateBuffer - invalid input!");
+        Debug::Log("BufferManager.cpp: ERROR: UpdateBuffer - invalid input!");
         return;
     }
 
@@ -50,7 +50,7 @@ HRESULT BufferManager::UpdateConstantBuffer(ID3D11Buffer* buffer, const void* da
     D3D11_MAPPED_SUBRESOURCE mappedResource;
     HRESULT hr = m_context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
     if (FAILED(hr)) {
-        return hr; // gibt echten Fehler zurück
+        return hr; // gibt echten Fehler zurï¿½ck
     }
     
     memcpy(mappedResource.pData, data, dataSize);

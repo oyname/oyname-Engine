@@ -61,13 +61,13 @@ HRESULT GDXDevice::Init()
 
 HRESULT GDXDevice::EnumerateSystemDevices()
 {
-    Debug::Log("EnumerateSystemDevices START...");
+    Debug::Log("gdxdevice.cpp: EnumerateSystemDevices START...");
 
     ComPtr<IDXGIFactory> factory;
     HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)factory.GetAddressOf());
     if (FAILED(hr))
     {
-        Debug::LogError("CreateDXGIFactory failed: 0x", std::hex, hr);
+        Debug::LogError("gdxdevice.cpp: CreateDXGIFactory failed: 0x", std::hex, hr);
         return hr;
     }
 
@@ -97,7 +97,7 @@ HRESULT GDXDevice::EnumerateSystemDevices()
 
         if (GXUTIL::isWindowsRenderer(adapter.Get()))
         {
-            Debug::LogWarning("Skipping Windows Basic Renderer");
+            Debug::LogWarning("gdxdevice.cpp: Skipping Windows Basic Renderer");
             continue;
         }
 
@@ -126,27 +126,27 @@ HRESULT GDXDevice::EnumerateSystemDevices()
 
             deviceManager.GetDevices().push_back(gxDevice);
 
-            Debug::Log("Device ", i, " added - FeatureLevel: ",
+            Debug::Log("gdxdevice.cpp: Device ", i, " added - FeatureLevel: ",
                 GXUTIL::GetFeatureLevelName(achieved));
 
             ++deviceCount;
         }
         else
         {
-            Debug::LogWarning("Adapter ", i, " - D3D11CreateDevice failed (hr=0x",
+            Debug::LogWarning("gdxdevice.cpp: Adapter ", i, " - D3D11CreateDevice failed (hr=0x",
                 std::hex, hr, std::dec, ")");
         }
     }
 
     if (deviceCount == 0)
     {
-        Debug::LogError("CRITICAL: No suitable Direct3D devices found!");
+        Debug::LogError("gdxdevice.cpp: CRITICAL: No suitable Direct3D devices found!");
         m_bInitialized = false;
         return E_FAIL;
     }
 
-    Debug::Log("EnumerateSystemDevices completed - ", deviceCount, " device(s) found");
-    Debug::Log("...EnumerateSystemDevices END");
+    Debug::Log("gdxdevice.cpp: EnumerateSystemDevices completed - ", deviceCount, " device(s) found");
+    Debug::Log("gdxdevice.cpp: ...EnumerateSystemDevices END");
 
     m_bInitialized = true;
     return S_OK;
@@ -509,7 +509,7 @@ HRESULT GDXDevice::CreateShadowMapTexture(UINT width, UINT height)
     hr = m_pd3dDevice->CreateTexture2D(&shadowMapDesc, NULL, &m_pShadowMap);
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create Shadow Map Texture: ", hr);
+        Debug::LogError("gdxdevice.cpp: Failed to create Shadow Map Texture: ", hr);
         return hr;
     }
 
@@ -540,7 +540,7 @@ HRESULT GDXDevice::CreateResourceViews()
     hr = m_pd3dDevice->CreateDepthStencilView(m_pShadowMap, &dsvDesc, &m_pShadowMapDepthView);
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create Shadow Map DSV: ", hr);
+        Debug::LogError("gdxdevice.cpp: Failed to create Shadow Map DSV: ", hr);
         return hr;
     }
 
@@ -563,7 +563,7 @@ HRESULT GDXDevice::CreateResourceViews()
     hr = m_pd3dDevice->CreateShaderResourceView(m_pShadowMap, &srvDesc, &m_pShadowMapSRView);
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create Shadow Map SRV: ", hr);
+        Debug::LogError("gdxdevice.cpp: Failed to create Shadow Map SRV: ", hr);
         Memory::SafeRelease(m_pShadowMapDepthView);
         return hr;
     }
@@ -614,7 +614,7 @@ HRESULT GDXDevice::CreateComparisonStatus()
     hr = m_pd3dDevice->CreateSamplerState(&comparisonSamplerDesc, &m_pComparisonSampler_point);
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create Comparison Sampler: ", hr);
+        Debug::LogError("gdxdevice.cpp: Failed to create Comparison Sampler: ", hr);
         return hr;
     }
 
@@ -657,7 +657,7 @@ HRESULT GDXDevice::CreateRenderStats()
     hr = m_pd3dDevice->CreateRasterizerState(&shadowRenderStateDesc, &m_pShadowRenderState);
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create Shadow Rasterizer State: ", hr);
+        Debug::LogError("gdxdevice.cpp: Failed to create Shadow Rasterizer State: ", hr);
         return hr;
     }
 
@@ -687,7 +687,7 @@ HRESULT GDXDevice::CreateShadowMatrixBuffer()
     HRESULT hr = m_pd3dDevice->CreateBuffer(&bd, nullptr, &m_shadowMatrixBuffer);
     if (FAILED(hr))
     {
-        Debug::LogError("Failed to create Shadow Matrix constant buffer: ", hr);
+        Debug::LogError("gdxdevice.cpp: Failed to create Shadow Matrix constant buffer: ", hr);
         return hr;
     }
 

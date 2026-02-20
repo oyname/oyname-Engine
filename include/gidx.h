@@ -109,7 +109,7 @@ namespace Engine
     inline void PositionEntity(LPENTITY entity, float x, float y, float z)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: PositionEntity - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: PositionEntity - entity is nullptr");
             return;
         }
         entity->transform.Position(x, y, z);
@@ -118,7 +118,7 @@ namespace Engine
     inline void PositionEntity(LPENTITY entity, DirectX::XMVECTOR pos)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: PositionEntity - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: PositionEntity - entity is nullptr");
             return;
         }
         entity->transform.SetPosition(pos);
@@ -127,7 +127,7 @@ namespace Engine
     inline void MoveEntity(LPENTITY entity, float x, float y, float z, Space mode = Space::Local)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: MoveEntity - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: MoveEntity - entity is nullptr");
             return;
         }
         entity->transform.Move(x, y, z, mode);
@@ -136,7 +136,7 @@ namespace Engine
     inline void RotateEntity(LPENTITY entity, float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: RotateEntity - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: RotateEntity - entity is nullptr");
             return;
         }
         entity->transform.Rotate(fRotateX, fRotateY, fRotateZ, mode);
@@ -145,7 +145,7 @@ namespace Engine
     inline void RotateEntity(LPENTITY entity, DirectX::XMVECTOR quaternion)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: RotateEntity - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: RotateEntity - entity is nullptr");
             return;
         }
         entity->transform.SetRotationQuaternion(quaternion);
@@ -154,7 +154,7 @@ namespace Engine
     inline void TurnEntity(LPENTITY entity, float fRotateX, float fRotateY, float fRotateZ, Space mode = Space::Local)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: TurnEntity - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: TurnEntity - entity is nullptr");
             return;
         }
         entity->transform.Turn(fRotateX, fRotateY, fRotateZ, mode);
@@ -163,7 +163,7 @@ namespace Engine
     inline void ScaleEntity(LPENTITY entity, float x, float y, float z)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: ScaleEntity - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: ScaleEntity - entity is nullptr");
             return;
         }
         entity->transform.Scale(x, y, z);
@@ -172,7 +172,7 @@ namespace Engine
     inline void LookAt(LPENTITY entity, float targetX, float targetY, float targetZ)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: LookAt - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: LookAt - entity is nullptr");
             return;
         }
         DirectX::XMVECTOR target = DirectX::XMVectorSet(targetX, targetY, targetZ, 1.0f);
@@ -183,7 +183,7 @@ namespace Engine
     inline void LookAt(LPENTITY entity, DirectX::XMVECTOR target)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: LookAt - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: LookAt - entity is nullptr");
             return;
         }
         DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -195,13 +195,13 @@ namespace Engine
     inline void CreateCamera(LPENTITY* camera)
     {
         if (camera == nullptr) {
-            Debug::Log("ERROR: CreateCamera - camera pointer is nullptr");
+            Debug::Log("gidx.h: ERROR: CreateCamera - camera pointer is nullptr");
             return;
         }
 
         Camera* cam = engine->GetOM().CreateCamera();
         if (cam == nullptr) {
-            Debug::Log("ERROR: CreateCamera - Failed to create camera");
+            Debug::Log("gidx.h: ERROR: CreateCamera - Failed to create camera");
             return;
         }
 
@@ -232,7 +232,7 @@ namespace Engine
     inline void SetCamera(LPENTITY camera)
     {
         if (camera == nullptr) {
-            Debug::Log("ERROR: SetCamera - camera is nullptr");
+            Debug::Log("gidx.h: ERROR: SetCamera - camera is nullptr");
             return;
         }
         engine->SetCamera(camera);  // engine->SetCamera macht den Cast intern
@@ -250,14 +250,14 @@ namespace Engine
     inline void CreateLight(LPENTITY* light, D3DLIGHTTYPE type)
     {
         if (light == nullptr) {
-            Debug::Log("ERROR: CreateLight - light pointer is nullptr");
+            Debug::Log("gidx.h: ERROR: CreateLight - light pointer is nullptr");
             return;
         }
 
         // ← GEÄNDERT: Nutze LightManager statt ObjectManager
         Light* l = engine->GetLM().CreateLight(type);
         if (l == nullptr) {
-            Debug::Log("ERROR: CreateLight - Failed to create light");
+            Debug::Log("gidx.h: ERROR: CreateLight - Failed to create light");
             return;
         }
 
@@ -322,13 +322,13 @@ namespace Engine
     inline void LightColor(LPENTITY light, float r, float g, float b, float a = 1.0f)
     {
         if (light == nullptr) {
-            Debug::Log("ERROR: LightColor - light is nullptr");
+            Debug::Log("gidx.h: ERROR: LightColor - light is nullptr");
             return;
         }
 
         Light* l = dynamic_cast<Light*>(light);
         if (l == nullptr) {
-            Debug::Log("ERROR: LightColor - Entity is not a Light!");
+            Debug::Log("gidx.h: ERROR: LightColor - Entity is not a Light!");
             return;
         }
 
@@ -357,20 +357,20 @@ namespace Engine
     inline void CreateMesh(LPENTITY* mesh, MATERIAL* material = nullptr)
     {
         if (mesh == nullptr) {
-            Debug::Log("ERROR: CreateMesh - mesh pointer is nullptr");
+            Debug::Log("gidx.h: ERROR: CreateMesh - mesh pointer is nullptr");
             return;
         }
 
         Mesh* m = engine->GetOM().CreateMesh();
         if (m == nullptr) {
-            Debug::Log("ERROR: CreateMesh - Failed to create mesh");
+            Debug::Log("gidx.h: ERROR: CreateMesh - Failed to create mesh");
             return;
         }
 
         material = material == nullptr ? engine->GetOM().GetStandardMaterial() : material;
 
         if (material == nullptr) {
-            Debug::Log("ERROR: CreateMesh - No valid material available");
+            Debug::Log("gidx.h: ERROR: CreateMesh - No valid material available");
             engine->GetOM().DeleteMesh(m);
             return;
         }
@@ -407,24 +407,24 @@ namespace Engine
 
         // 1. Validiere Input-Parameter
         if (shader == nullptr) {
-            Debug::Log("ERROR: Engine::CreateShader - shader pointer is nullptr");
+            Debug::Log("gidx.h: ERROR: Engine::CreateShader - shader pointer is nullptr");
             return E_INVALIDARG;
         }
 
         if (vertexShaderFile.empty() || pixelShaderFile.empty()) {
-            Debug::Log("ERROR: Engine::CreateShader - shader file paths are empty");
+            Debug::Log("gidx.h: ERROR: Engine::CreateShader - shader file paths are empty");
             return E_INVALIDARG;
         }
 
         if (engine == nullptr) {
-            Debug::Log("ERROR: Engine::CreateShader - engine is nullptr");
+            Debug::Log("gidx.h: ERROR: Engine::CreateShader - engine is nullptr");
             return E_FAIL;
         }
 
         // 2. Erstelle Shader-Objekt
         *shader = engine->GetOM().CreateShader();
         if (*shader == nullptr) {
-            Debug::Log("ERROR: Engine::CreateShader - Failed to create shader object");
+            Debug::Log("gidx.h: ERROR: Engine::CreateShader - Failed to create shader object");
             return E_OUTOFMEMORY;
         }
 
@@ -493,13 +493,13 @@ namespace Engine
     inline void CreateMaterial(LPMATERIAL* material, SHADER* shader = nullptr)
     {
         if (material == nullptr) {
-            Debug::Log("ERROR: CreateMaterial - material pointer is nullptr");
+            Debug::Log("gidx.h: ERROR: CreateMaterial - material pointer is nullptr");
             return;
         }
 
         *material = engine->GetOM().CreateMaterial();
         if (*material == nullptr) {
-            Debug::Log("ERROR: CreateMaterial - Failed to create material");
+            Debug::Log("gidx.h: ERROR: CreateMaterial - Failed to create material");
             return;
         }
 
@@ -507,7 +507,7 @@ namespace Engine
         shader = shader == nullptr ? engine->GetSM().GetShader() : shader;
 
         if (shader == nullptr) {
-            Debug::Log("ERROR: CreateMaterial - No valid shader available");
+            Debug::Log("gidx.h: ERROR: CreateMaterial - No valid shader available");
             engine->GetOM().DeleteMaterial(*material);
             *material = nullptr;
             return;
@@ -519,25 +519,25 @@ namespace Engine
     inline void CreateSurface(LPSURFACE* surface, LPENTITY entity)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: CreateSurface - surface pointer is nullptr");
+            Debug::Log("gidx.h: ERROR: CreateSurface - surface pointer is nullptr");
             return;
         }
 
         if (entity == nullptr) {
-            Debug::Log("ERROR: CreateSurface - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: CreateSurface - entity is nullptr");
             return;
         }
 
         *surface = engine->GetOM().CreateSurface();
         if (*surface == nullptr) {
-            Debug::Log("ERROR: CreateSurface - Failed to create surface");
+            Debug::Log("gidx.h: ERROR: CreateSurface - Failed to create surface");
             return;
         }
 
         // Prüfe ob Entity ein Mesh ist (nur Meshes haben Surfaces)
         Mesh* mesh = dynamic_cast<Mesh*>(entity);
         if (mesh == nullptr) {
-            Debug::Log("ERROR: CreateSurface - Entity is not a Mesh!");
+            Debug::Log("gidx.h: ERROR: CreateSurface - Entity is not a Mesh!");
             engine->GetOM().DeleteSurface(*surface);
             *surface = nullptr;
             return;
@@ -549,13 +549,13 @@ namespace Engine
     inline LPSURFACE GetSurface(LPENTITY entity)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: GetSurface - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: GetSurface - entity is nullptr");
             return nullptr;
         }
 
         Mesh* mesh = dynamic_cast<Mesh*>(entity);
         if (mesh == nullptr) {
-            Debug::Log("ERROR: GetSurface - Entity is not a Mesh!");
+            Debug::Log("gidx.h: ERROR: GetSurface - Entity is not a Mesh!");
             return nullptr;
         }
 
@@ -564,15 +564,15 @@ namespace Engine
 
     inline void FillBuffer(LPSURFACE surface)
     {
-        if (!surface) { Debug::Log("ERROR: FillBuffer - surface is nullptr"); return; }
+        if (!surface) { Debug::Log("gidx.h: ERROR: FillBuffer - surface is nullptr"); return; }
 
         Shader* shader = nullptr;
         if (surface->pMesh && surface->pMesh->pMaterial)
             shader = surface->pMesh->pMaterial->pRenderShader;
 
-        if (!shader) { Debug::Log("ERROR: FillBuffer - cannot resolve shader"); return; }
+        if (!shader) { Debug::Log("gidx.h: ERROR: FillBuffer - cannot resolve shader"); return; }
 
-        if (!shader) { Debug::Log("ERROR: FillBuffer - cannot resolve shader"); return; }
+        if (!shader) { Debug::Log("gidx.h: ERROR: FillBuffer - cannot resolve shader"); return; }
 
         // Vertexbuffer
         if (shader->flagsVertex & D3DVERTEX_POSITION) {
@@ -604,7 +604,7 @@ namespace Engine
     inline void UpdateColorBuffer(LPSURFACE surface)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: UpdateColorBuffer - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: UpdateColorBuffer - surface is nullptr");
             return;
         }
         engine->GetBM().UpdateBuffer(surface->colorBuffer, surface->color.data(), surface->size_color);
@@ -613,7 +613,7 @@ namespace Engine
     inline void UpdateVertexBuffer(LPSURFACE surface)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: UpdateVertexBuffer - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: UpdateVertexBuffer - surface is nullptr");
             return;
         }
         engine->GetBM().UpdateBuffer(surface->positionBuffer, surface->position.data(),
@@ -623,7 +623,7 @@ namespace Engine
     inline void AddVertex(LPSURFACE surface, float x, float y, float z)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: AddVertex - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: AddVertex - surface is nullptr");
             return;
         }
         surface->AddVertex(-1, x, y, z);
@@ -632,7 +632,7 @@ namespace Engine
     inline void AddVertex(int index, LPSURFACE surface, DirectX::XMVECTOR vec)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: AddVertex - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: AddVertex - surface is nullptr");
             return;
         }
         surface->AddVertex(index, DirectX::XMVectorGetX(vec), DirectX::XMVectorGetY(vec), DirectX::XMVectorGetZ(vec));
@@ -641,7 +641,7 @@ namespace Engine
     inline void AddVertex(LPSURFACE surface, DirectX::XMVECTOR vec)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: AddVertex - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: AddVertex - surface is nullptr");
             return;
         }
         surface->AddVertex(-1, DirectX::XMVectorGetX(vec), DirectX::XMVectorGetY(vec), DirectX::XMVectorGetZ(vec));
@@ -650,7 +650,7 @@ namespace Engine
     inline void AddVertex(LPSURFACE surface, DirectX::XMFLOAT3 vec)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: AddVertex - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: AddVertex - surface is nullptr");
             return;
         }
         surface->AddVertex(-1, vec.x, vec.y, vec.z);
@@ -659,7 +659,7 @@ namespace Engine
     inline void AddVertex(int index, LPSURFACE surface, DirectX::XMFLOAT3 vec)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: AddVertex - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: AddVertex - surface is nullptr");
             return;
         }
         surface->AddVertex(index, vec.x, vec.y, vec.z);
@@ -668,7 +668,7 @@ namespace Engine
     inline void VertexNormal(LPSURFACE surface, float x, float y, float z)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: VertexNormal - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: VertexNormal - surface is nullptr");
             return;
         }
         surface->VertexNormal(-1, x, y, z);
@@ -677,7 +677,7 @@ namespace Engine
     inline void VertexNormal(LPSURFACE surface, unsigned int index, float x, float y, float z)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: VertexNormal - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: VertexNormal - surface is nullptr");
             return;
         }
         surface->VertexNormal(index, x, y, z);
@@ -686,7 +686,7 @@ namespace Engine
     inline void VertexColor(LPSURFACE surface, unsigned int r, unsigned int g, unsigned int b)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: VertexColor - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: VertexColor - surface is nullptr");
             return;
         }
         surface->VertexColor(-1, float(r / 255.0f), float(g / 255.0f), float(b / 255.0f));
@@ -695,7 +695,7 @@ namespace Engine
     inline void VertexColor(LPSURFACE surface, unsigned int index, unsigned int r, unsigned int g, unsigned int b)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: VertexColor - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: VertexColor - surface is nullptr");
             return;
         }
         surface->VertexColor(index, float(r / 255.0f), float(g / 255.0f), float(b / 255.0f));
@@ -704,7 +704,7 @@ namespace Engine
     inline void VertexTexCoord(LPSURFACE surface, float u, float v)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: VertexTexCoord - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: VertexTexCoord - surface is nullptr");
             return;
         }
         surface->VertexTexCoords(-1, u, v);
@@ -713,7 +713,7 @@ namespace Engine
     inline void AddTriangle(LPSURFACE surface, unsigned int a, unsigned int b, unsigned int c)
     {
         if (surface == nullptr) {
-            Debug::Log("ERROR: AddTriangle - surface is nullptr");
+            Debug::Log("gidx.h: ERROR: AddTriangle - surface is nullptr");
             return;
         }
         surface->AddIndex(a);
@@ -767,7 +767,7 @@ namespace Engine
         // Prüfe ob Datei existiert
         std::wifstream file(filename);
         if (!file.good()) {
-            Debug::Log("ERROR: File not found!");
+            Debug::Log("gidx.h: ERROR: File not found!");
             return;
         }
 
@@ -781,19 +781,19 @@ namespace Engine
         );
 
         if (FAILED(hr)) {
-            Debug::Log("ERROR: Failed to load texture");
+            Debug::Log("gidx.h: ERROR: Failed to load texture");
         }
     }
 
     inline void MaterialTexture(LPMATERIAL material, LPTEXTURE texture)
     {
         if (material == nullptr) {
-            Debug::Log("ERROR: MaterialTexture - material is nullptr");
+            Debug::Log("gidx.h: ERROR: MaterialTexture - material is nullptr");
             return;
         }
 
         if (texture == nullptr) {
-            Debug::Log("ERROR: MaterialTexture - texture is nullptr");
+            Debug::Log("gidx.h: ERROR: MaterialTexture - texture is nullptr");
             return;
         }
 
@@ -801,30 +801,48 @@ namespace Engine
         material->UpdateConstantBuffer(engine->m_device.GetDeviceContext());
     }
 
+    // Zweite Textur (Slot 1): Detail-Map, Lightmap, Normal-Map, etc.
+    // Surface muss D3DVERTEX_TEX2 + uv2-Koordinaten haben.
+    // Im Pixel-Shader: Texture2D texDetail : register(t1);
+    inline void MaterialTexture2(LPMATERIAL material, LPTEXTURE texture)
+    {
+        if (material == nullptr) {
+            Debug::Log("gidx.h: ERROR: MaterialTexture2 - material is nullptr");
+            return;
+        }
+
+        if (texture == nullptr) {
+            Debug::Log("gidx.h: ERROR: MaterialTexture2 - texture is nullptr");
+            return;
+        }
+
+        material->SetTexture2(texture->m_texture, texture->m_textureView, texture->m_imageSamplerState);
+    }
+
     inline void EntityMaterial(LPENTITY entity, LPMATERIAL material)
     {
         Mesh* mesh = dynamic_cast<Mesh*>(entity);
-        if (!mesh) { Debug::Log("EntityMaterial - Entity ist kein Mesh"); return; }
-        if (!material) { Debug::Log("EntityMaterial - material nullptr"); return; }
+        if (!mesh) { Debug::Log("gidx.h: EntityMaterial - Entity ist kein Mesh"); return; }
+        if (!material) { Debug::Log("gidx.h: EntityMaterial - material nullptr"); return; }
         engine->GetOM().AddMeshToMaterial(material, mesh);
     }
 
     inline void EntityTexture(LPENTITY entity, LPTEXTURE texture)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: EntityTexture - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: EntityTexture - entity is nullptr");
             return;
         }
 
         if (texture == nullptr) {
-            Debug::Log("ERROR: EntityTexture - texture is nullptr");
+            Debug::Log("gidx.h: ERROR: EntityTexture - texture is nullptr");
             return;
         }
 
         // Prüfe ob Entity ein Mesh ist
         Mesh* mesh = dynamic_cast<Mesh*>(entity);
         if (mesh == nullptr) {
-            Debug::Log("ERROR: EntityTexture - Entity is not a Mesh!");
+            Debug::Log("gidx.h: ERROR: EntityTexture - Entity is not a Mesh!");
             return;
         }
 
@@ -834,20 +852,20 @@ namespace Engine
             material->SetTexture(texture->m_texture, texture->m_textureView, texture->m_imageSamplerState);
         }
         else {
-            Debug::Log("ERROR: EntityTexture - Mesh has no material");
+            Debug::Log("gidx.h: ERROR: EntityTexture - Mesh has no material");
         }
     }
 
     inline HRESULT  CreateTexture(LPLPTEXTURE texture, int width, int height)
     {
         if (texture == nullptr) {
-            Debug::Log("ERROR: CreateTexture - texture pointer is nullptr");
+            Debug::Log("gidx.h: ERROR: CreateTexture - texture pointer is nullptr");
             return E_INVALIDARG;
         }
 
         *texture = new TEXTURE;
         if (*texture == nullptr) {
-            Debug::Log("ERROR: CreateTexture - Failed to allocate texture");
+            Debug::Log("gidx.h: ERROR: CreateTexture - Failed to allocate texture");
             return E_OUTOFMEMORY;
         }
 
@@ -857,7 +875,7 @@ namespace Engine
     inline HRESULT LockBuffer(LPTEXTURE texture)
     {
         if (texture == nullptr) {
-            Debug::Log("ERROR: LockBuffer - texture is nullptr");
+            Debug::Log("gidx.h: ERROR: LockBuffer - texture is nullptr");
             return E_INVALIDARG;
         }
         return texture->LockBuffer(engine->m_device.GetDeviceContext());
@@ -866,7 +884,7 @@ namespace Engine
     inline void UnlockBuffer(LPTEXTURE texture)
     {
         if (texture == nullptr) {
-            Debug::Log("ERROR: UnlockBuffer - texture is nullptr");
+            Debug::Log("gidx.h: ERROR: UnlockBuffer - texture is nullptr");
             return;
         }
         texture->UnlockBuffer(engine->m_device.GetDeviceContext());
@@ -875,7 +893,7 @@ namespace Engine
     inline void SetPixel(LPTEXTURE texture, int x, int y, unsigned char r, unsigned char g, unsigned char b, unsigned char alpha)
     {
         if (texture == nullptr) {
-            Debug::Log("ERROR: SetPixel - texture is nullptr");
+            Debug::Log("gidx.h: ERROR: SetPixel - texture is nullptr");
             return;
         }
         texture->SetPixel(engine->m_device.GetDeviceContext(), x, y, r, g, b, alpha);
@@ -884,7 +902,7 @@ namespace Engine
     inline Color GetColor(LPTEXTURE texture, int x, int y)
     {
         if (texture == nullptr) {
-            Debug::Log("ERROR: GetColor - texture is nullptr");
+            Debug::Log("gidx.h: ERROR: GetColor - texture is nullptr");
             return Color(0, 0, 0, 0);
         }
 
@@ -894,19 +912,19 @@ namespace Engine
         return Color(r, g, b, alpha);
     }
 
-    // ==================== MESH-SPECIFIC FUNCTIONS ====================
+
     // Diese Funktionen funktionieren nur mit Meshes
 
     inline void EntityCollisionMode(LPENTITY entity, COLLISION mode)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: EntityCollisionMode - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: EntityCollisionMode - entity is nullptr");
             return;
         }
 
         Mesh* mesh = dynamic_cast<Mesh*>(entity);
         if (mesh == nullptr) {
-            Debug::Log("ERROR: EntityCollisionMode - Entity is not a Mesh!");
+            Debug::Log("gidx.h: ERROR: EntityCollisionMode - Entity is not a Mesh!");
             return;
         }
 
@@ -916,13 +934,13 @@ namespace Engine
     inline LPSURFACE EntitySurface(LPENTITY entity, unsigned int index = 0)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: EntitySurface - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: EntitySurface - entity is nullptr");
             return nullptr;
         }
 
         Mesh* mesh = dynamic_cast<Mesh*>(entity);
         if (mesh == nullptr) {
-            Debug::Log("ERROR: EntitySurface - Entity is not a Mesh!");
+            Debug::Log("gidx.h: ERROR: EntitySurface - Entity is not a Mesh!");
             return nullptr;
         }
 
@@ -932,7 +950,7 @@ namespace Engine
     inline bool EntityCollision(LPENTITY entity1, LPENTITY entity2)
     {
         if (entity1 == nullptr || entity2 == nullptr) {
-            Debug::Log("ERROR: EntityCollision - one or both entities are nullptr");
+            Debug::Log("gidx.h: ERROR: EntityCollision - one or both entities are nullptr");
             return false;
         }
 
@@ -940,7 +958,7 @@ namespace Engine
         Mesh* mesh2 = dynamic_cast<Mesh*>(entity2);
 
         if (mesh1 == nullptr || mesh2 == nullptr) {
-            Debug::Log("ERROR: EntityCollision - one or both entities are not Meshes!");
+            Debug::Log("gidx.h: ERROR: EntityCollision - one or both entities are not Meshes!");
             return false;
         }
 
@@ -950,13 +968,13 @@ namespace Engine
     inline DirectX::BoundingOrientedBox* EntityOBB(LPENTITY entity)
     {
         if (entity == nullptr) {
-            Debug::Log("ERROR: EntityOBB - entity is nullptr");
+            Debug::Log("gidx.h: ERROR: EntityOBB - entity is nullptr");
             return nullptr;
         }
 
         Mesh* mesh = dynamic_cast<Mesh*>(entity);
         if (mesh == nullptr) {
-            Debug::Log("ERROR: EntityOBB - Entity is not a Mesh!");
+            Debug::Log("gidx.h: ERROR: EntityOBB - Entity is not a Mesh!");
             return nullptr;
         }
 

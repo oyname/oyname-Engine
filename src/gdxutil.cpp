@@ -105,7 +105,7 @@ namespace GXUTIL
     //
     int GetFeatureLevel(D3D_FEATURE_LEVEL featureLevel)
     {
-        // ← ZUSÄTZLICHER FIX: Falls noch Byte-Swap-Fehler durchkommen
+        // ZUSÄTZLICHER FIX: Falls noch Byte-Swap-Fehler durchkommen
         if (featureLevel == 0xC100) featureLevel = D3D_FEATURE_LEVEL_12_1;
         if (featureLevel == 0xC000) featureLevel = D3D_FEATURE_LEVEL_12_0;
         if (featureLevel == 0xB100) featureLevel = D3D_FEATURE_LEVEL_11_1;

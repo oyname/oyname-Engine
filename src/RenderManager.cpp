@@ -196,6 +196,9 @@ void RenderManager::RenderNormalPass()
 
 void RenderManager::RenderScene()
 {
+    Debug::LogOnce("RenderScene_BEGIN",
+        "=== RenderScene BEGIN ===");
+
     if (!m_currentCam) {
         Debug::LogOnce("RenderScene_NoCamera",
             "WARNING: RenderManager::RenderScene - Camera not set");
@@ -210,9 +213,6 @@ void RenderManager::RenderScene()
 
     // Lights
     m_lightManager.Update(&m_device);
-
-    Debug::LogOnce("RenderScene_BEGIN",
-        "=== RenderScene BEGIN ===");
 
     Debug::LogOnce("RenderScene_Camera",
         "Camera: ", Ptr(m_currentCam).c_str());
@@ -354,7 +354,7 @@ void RenderManager::RenderScene()
 //void RenderManager::RenderScene()
 //{
 //    if (!m_currentCam) {
-//        Debug::Log("WARNING: RenderManager::RenderScene - Camera not set");
+//        Debug::Log("RenderManager.cpp: WARNING: RenderManager::RenderScene - Camera not set");
 //        return;
 //    }
 //

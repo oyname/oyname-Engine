@@ -5,7 +5,7 @@
 #include <string>
 #include "Mesh.h"
 
-class Shader; // forward
+class Shader; 
 
 class Material
 {
@@ -28,6 +28,7 @@ public:
     // ==================== TEXTURE METHODS ====================
     void SetTexture(const GDXDevice* device);
     void SetTexture(ID3D11Texture2D* texture, ID3D11ShaderResourceView* textureView, ID3D11SamplerState* imageSamplerState);
+    void SetTexture2(ID3D11Texture2D* texture, ID3D11ShaderResourceView* textureView, ID3D11SamplerState* imageSamplerState);
     void UpdateConstantBuffer(ID3D11DeviceContext* context);
 
     // ==================== MATERIAL PROPERTY SETTERS ====================
@@ -62,15 +63,18 @@ public:
     MaterialData properties;  // Alle Material-Properties hier!
 
     // ==================== TEXTURE DATA ====================
-    ID3D11Texture2D* m_texture;
+    ID3D11Texture2D*          m_texture;            // Slot 0: Albedo / Diffuse
     ID3D11ShaderResourceView* m_textureView;
-    ID3D11SamplerState* m_imageSamplerState;
+    ID3D11SamplerState*       m_imageSamplerState;
+
+    ID3D11Texture2D*          m_texture2;           // Slot 1: Detail / Lightmap / Normal
+    ID3D11ShaderResourceView* m_textureView2;
+    ID3D11SamplerState*       m_imageSamplerState2;
+
     ID3D11Buffer* materialBuffer;  // Constant Buffer fuer GPU
 
     // ==================== OBJECT MANAGEMENT ====================
-    /// <summary>Alle Meshes die dieses Material verwenden</summary>
     std::vector<Mesh*> meshes;
-    /// <summary>Shader dieses Materials (Main pass shader)</summary>
     Shader* pRenderShader;
 
     // ==================== MEMORY MANAGEMENT ====================

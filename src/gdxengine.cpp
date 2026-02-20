@@ -320,7 +320,7 @@ void GDXEngine::UpdateWorld()
 	cam->UpdateCamera(position, forward, up);
 
 	// Light
-	m_lightManager.Update(&m_device);
+	// m_lightManager.Update(&m_device);
 }
 
 HRESULT GDXEngine::Cls(float r, float g, float b, float a)

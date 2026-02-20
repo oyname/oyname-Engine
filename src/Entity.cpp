@@ -13,7 +13,7 @@ Entity::Entity() :
     matrixSet.viewMatrix = DirectX::XMMatrixIdentity();
     matrixSet.projectionMatrix = DirectX::XMMatrixIdentity();
 
-    viewport = { 0 };  // ← Initialisiere Viewport
+    viewport = { 0 };  
 }
 
 Entity::~Entity() {
@@ -47,7 +47,7 @@ void Entity::Update(const GDXDevice* device) {
     }
 }
 
-// ← NEU: Matrix-Generierung für alle Entities
+// Matrix-Generierung für alle Entities
 void Entity::GenerateViewMatrix(DirectX::XMVECTOR position,
     DirectX::XMVECTOR lookAt,
     DirectX::XMVECTOR up)
